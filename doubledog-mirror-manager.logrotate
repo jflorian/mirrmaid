@@ -1,0 +1,5 @@
+/var/log/doubledog-mirror-manager {
+    weekly
+    notifempty
+    missingok
+}

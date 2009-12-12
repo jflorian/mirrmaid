@@ -8,9 +8,21 @@
 
 
 SELF=$(basename $0)
-LOCK="/var/lock/${SELF}"
-LOG="/Pound/Systems/log/rsync-jobs/$SELF-$(date +'%F.%T').$$"
-RSYNC_OPTS="-avH --delay-updates --delete-after --numeric-ids --partial-dir=.rsync-partial"
+
+LOCK="/var/lock/$SELF"
+LOG="/var/log/$SELF"
+MIRROR_BASE="/pub/mirrors"
+RSYNC_OPTS="
+    --archive
+    --delay-updates
+    --delete-after
+    --hard-links
+    --partial-dir=.rsync-partial
+    --verbose
+
+    --no-group
+    --no-owner
+    "
 
 
 announce() {
@@ -24,13 +36,12 @@ mention() {
 
 
 doFedora() {
-    branch="$1"
-    source="rsync://mirrors.kernel.org/fedora/$branch/"
-    #source="rsync://fedora.mirrors.tds.net/fedora-enchilada/$branch/"
-    target="/pub/mirrors/fedora/$branch/"
+    local branch="$1"
+    local src="rsync://mirrors.kernel.org/fedora/$branch/"
+    local tgt="$MIRROR_BASE/fedora/$branch/"
     announce "Fedora - $branch"
-    mention "Upstream: $source"
-    mkdir -p $target
+    mention "Upstream Source: $src"
+    mkdir -p $tgt
     rsync $RSYNC_OPTS \
         --exclude="debug" \
         --exclude="*-disc[1-9].iso" \
@@ -41,22 +52,7 @@ doFedora() {
         --exclude="ppc*" \
         --exclude="source" \
         --exclude="SRPMS" \
-        $source $target
-    return $?
-}
-
-
-doUbuntu() {
-    announce "Ubuntu - Releases"
-    rsync $RSYNC_OPTS \
-        --exclude="*amd64*" \
-        --exclude="*.jiggdo" \
-        --exclude="*.torrent" \
-        --exclude="*powerpc*" \
-        --exclude="*sparc*" \
-        --exclude="jigit" \
-        rsync://releases.ubuntu.com/releases/ \
-        /pub/mirrors/ubuntu/
+        $src $tgt
     return $?
 }
 
