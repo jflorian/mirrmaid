@@ -1,5 +1,5 @@
 Name:           doubledog-mirror-manager
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        doubledog.org local mirror manager
 
@@ -51,6 +51,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Dec 12 2009 John Florian <jflorian@doubledog.org> - 0.2-1
+Bug Fix -- Mail Results
+
+Output is supposed to be mailed by default.
 * Sat Dec 12 2009 John Florian <jflorian@doubledog.org> - 0.1-1
 Initial Release
 

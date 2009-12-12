@@ -4,4 +4,4 @@
 
 MAILTO=jflorian
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-32 * * * * root doubledog-mirror-manager 2>&1
+32 * * * * root doubledog-mirror-manager --mail 2>&1
