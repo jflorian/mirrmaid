@@ -1,0 +1,109 @@
+#!/bin/bash
+
+
+# doubledog.org local mirror manager
+# 
+# Copyright 2004-2009 John Florian
+# 
+
+
+SELF=$(basename $0)
+LOCK="/var/lock/${SELF}"
+LOG="/Pound/Systems/log/rsync-jobs/$SELF-$(date +'%F.%T').$$"
+RSYNC_OPTS="-avH --delay-updates --delete-after --numeric-ids --partial-dir=.rsync-partial"
+
+
+announce() {
+    echo -e "\n\n$SELF: >>>  $1  <<<"
+}
+
+
+mention() {
+    echo -e "\n$SELF: $1"
+}
+
+
+doFedora() {
+    branch="$1"
+    source="rsync://mirrors.kernel.org/fedora/$branch/"
+    #source="rsync://fedora.mirrors.tds.net/fedora-enchilada/$branch/"
+    target="/pub/mirrors/fedora/$branch/"
+    announce "Fedora - $branch"
+    mention "Upstream: $source"
+    mkdir -p $target
+    rsync $RSYNC_OPTS \
+        --exclude="debug" \
+        --exclude="*-disc[1-9].iso" \
+        --exclude="drpms" \
+        --exclude="EFI" \
+        --exclude="jiggdo" \
+        --exclude="*-Live.iso" \
+        --exclude="ppc*" \
+        --exclude="source" \
+        --exclude="SRPMS" \
+        $source $target
+    return $?
+}
+
+
+doUbuntu() {
+    announce "Ubuntu - Releases"
+    rsync $RSYNC_OPTS \
+        --exclude="*amd64*" \
+        --exclude="*.jiggdo" \
+        --exclude="*.torrent" \
+        --exclude="*powerpc*" \
+        --exclude="*sparc*" \
+        --exclude="jigit" \
+        rsync://releases.ubuntu.com/releases/ \
+        /pub/mirrors/ubuntu/
+    return $?
+}
+
+
+doAll() {
+    result=1
+    doFedora updates/11 \
+    && doFedora updates/testing/11 \
+    && doFedora releases/11 \
+    && doFedora updates/12 \
+    && doFedora updates/testing/12 \
+    && doFedora releases/12 \
+    && result=0
+    return $result
+}
+
+
+main() {
+    # Only allow one instance to run at a time
+    (
+        if flock --nonblock 200
+        then
+            echo "$SELF started $(date)"
+            echo "Aqcuired lock on local mirror; commmencing mirror operations."
+            doAll
+            result=$?
+            echo "Mirroring done."
+            echo "$SELF finished $(date)"
+            return $result
+        else
+            echo "Local mirror is locked by another process."
+            echo "$SELF finished $(date)"
+            return 1
+        fi
+    ) 200> $LOCK
+}
+
+
+if [ "$1" = "--mail" ]
+then
+    if main > $LOG 2>&1
+    then
+        mailx -s "$SELF finished OK" < $LOG root
+    else
+        mailx -s "$SELF had an ERROR" < $LOG root
+    fi
+else
+    main 2>&1 | tee $LOG 
+fi
+

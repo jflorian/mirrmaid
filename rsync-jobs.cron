@@ -1,0 +1,9 @@
+# cron job to maintain local mirrors
+#
+# $Id$
+#
+# Copyright 2009 John Florian
+
+MAILTO=jflorian
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+32 * * * * root /Pound/Systems/sbin/rsync-jobs 2>&1
