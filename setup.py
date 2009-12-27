@@ -6,13 +6,15 @@ from distutils.core import setup
 if __name__ == "__main__":
     setup(
         name="doubledog_mirror_manager",
-        url="http://mdct-00fs/cgi-bin/cvsweb.cgi/mdct-tools/doubledog-mirror-manager/",
-        description="PICAPS remote archive collection agent for localized backups",
+        url="http://www.doubledog.org/trac/doubledog-mirror-manager/",
+        description="doubledog.org local mirror manager",
         author="John Florian",
         author_email="jflorian@doubledog.org",
-        license="Dart Container Corp. Proprietary",
+        license="GPLv3+",
         packages=["doubledog_mirror_manager"],
         long_description="""
-Collects PICAPS archives from various servers for inclusion in a local Bacula backup.
+This package efficiently maintains synchronized local mirrors of remote
+resources.  This is primarly accomplished by a sophisticated wrapper around
+the venerable rsync package.
 """,
     )
