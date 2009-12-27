@@ -25,9 +25,6 @@ activities of one or more Mirror_Synchronizers.
 
 CONFIG_FILENAME = "/etc/doubledog-mirror-manager.conf"
 LOG_FILENAME = "/var/log/doubledog-mirror-manager"
-# TODO : for dev only
-CONFIG_FILENAME = "doubledog-mirror-manager.conf"
-LOG_FILENAME = "log"
 
 
 class Mirror_Manager(object):
