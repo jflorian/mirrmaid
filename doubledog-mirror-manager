@@ -1,105 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env python
 
 
 # doubledog.org local mirror manager
 # 
-# Copyright 2004-2009 John Florian
+# Copyright 2009, John Florian
 # 
 
 
-SELF=$(basename $0)
-
-LOCK="/var/lock/$SELF"
-LOG="/var/log/$SELF"
-MIRROR_BASE="/pub/mirrors"
-RSYNC_OPTS="
-    --archive
-    --delay-updates
-    --delete-after
-    --hard-links
-    --partial-dir=.rsync-partial
-    --verbose
-
-    --no-group
-    --no-owner
-    "
+__author__ = """John Florian <jflorian@doubledog.org>"""
 
 
-announce() {
-    echo -e "\n\n$SELF: >>>  $1  <<<"
-}
+import sys
+
+from doubledog_mirror_manager.manager import Mirror_Manager
 
 
-mention() {
-    echo -e "\n$SELF: $1"
-}
-
-
-doFedora() {
-    local branch="$1"
-    local src="rsync://mirrors.kernel.org/fedora/$branch/"
-    local tgt="$MIRROR_BASE/fedora/$branch/"
-    announce "Fedora - $branch"
-    mention "Upstream Source: $src"
-    mkdir -p $tgt
-    rsync $RSYNC_OPTS \
-        --exclude="debug" \
-        --exclude="*-disc[1-9].iso" \
-        --exclude="drpms" \
-        --exclude="EFI" \
-        --exclude="jiggdo" \
-        --exclude="*-Live.iso" \
-        --exclude="ppc*" \
-        --exclude="source" \
-        --exclude="SRPMS" \
-        $src $tgt
-    return $?
-}
-
-
-doAll() {
-    result=1
-    doFedora updates/11 \
-    && doFedora updates/testing/11 \
-    && doFedora releases/11 \
-    && doFedora updates/12 \
-    && doFedora updates/testing/12 \
-    && doFedora releases/12 \
-    && result=0
-    return $result
-}
-
-
-main() {
-    # Only allow one instance to run at a time
-    (
-        if flock --nonblock 200
-        then
-            echo "$SELF started $(date)"
-            echo "Aqcuired lock on local mirror; commmencing mirror operations."
-            doAll
-            result=$?
-            echo "Mirroring done."
-            echo "$SELF finished $(date)"
-            return $result
-        else
-            echo "Local mirror is locked by another process."
-            echo "$SELF finished $(date)"
-            return 1
-        fi
-    ) 200> $LOCK
-}
-
-
-if [ "$1" = "--mail" ]
-then
-    if main > $LOG 2>&1
-    then
-        mailx -s "$SELF finished OK" < $LOG root
-    else
-        mailx -s "$SELF had an ERROR" < $LOG root
-    fi
-else
-    main 2>&1 | tee $LOG 
-fi
-
+Mirror_Manager(sys.argv[1:]).run()
+sys.exit(0)

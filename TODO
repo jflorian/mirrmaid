@@ -1,2 +1,0 @@
-Rebase the actual rsync jobs on the MDCT picaps-backup-agent to achieve better
-locking and logging.

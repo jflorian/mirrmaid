@@ -2,4 +2,5 @@
     weekly
     notifempty
     missingok
+    copytruncate
 }

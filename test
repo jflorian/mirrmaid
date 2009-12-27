@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+# 
+# Copyright 2009, John Florian
+# 
+
+
+
+export PYTHONPATH=.
+python -B -3 doubledog-mirror-manager $*
+echo "test harness exit status: $?"
