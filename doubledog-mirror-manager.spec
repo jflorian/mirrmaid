@@ -37,6 +37,7 @@ the venerable rsync package.
 %install
 rm -rf %{buildroot}
 
+install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m 0755 %{name}             %{buildroot}%{_sbindir}/%{name}
@@ -67,7 +68,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Dec 23 2009 John Florian <jflorian@doubledog.org> - 0.3-1
-New - Rewrite in Python for working locking
+New - complete rewrite, now in Python
 * Sat Dec 12 2009 John Florian <jflorian@doubledog.org> - 0.2-1
 Fix - Mail results
 * Sat Dec 12 2009 John Florian <jflorian@doubledog.org> - 0.1-1
