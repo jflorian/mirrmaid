@@ -64,6 +64,7 @@ rm -rf %{buildroot}
 %{_sbindir}/%{name}
 %{_sysconfdir}/cron.d/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
+%{_sysconfdir}/%{name}.conf
 
 
 %changelog
