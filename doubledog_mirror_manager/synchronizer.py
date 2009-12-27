@@ -124,7 +124,8 @@ class Synchronizer(object):
 
     def _update_local_replica(self):
         """Start an instance of rsync with the necessary options and arguments to effect a one-time
-        synchronization.  Capture all stdout/stderr from the process and inject it into the logger.
+        synchronization.  Capture all stdout/stderr from the process and inject it into the logger.  The exit
+        code of the rsync process is returned, where only a value of zero indicates success.
         """
 
         self.log.info("mirror synchronization started")
@@ -135,21 +136,26 @@ class Synchronizer(object):
         self.log.debug("AKA      %s" % " ".join(cmd))
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         self.log.info("rsync pid=%s" % process.pid)
-        try:
-            while True:
-                output = process.stdout.readline()
-                if process.poll():
-                    self.log.warn("terminated; caught signal %s" % -process.returncode)
+        exit = None
+        while True:
+            output = process.stdout.readline()
+            if process.poll():
+                # note returncode, but continue reading to drain source
+                exit = process.returncode
+            if output == "":
+                if exit is None:
+                    exit = process.returncode
+                if exit is not None:
+                    if exit < 0:
+                        self.log.warn("rsync terminated; caught signal %s" % -exit)
+                    else:
+                        level = [logging.INFO, logging.DEBUG][exit == 0]
+                        self.log.log(level, "rsync exit code=%s" % exit)
                     break
-                if output == "":
-                    ok = process.returncode in [None, 0]
-                    level = [logging.INFO, logging.DEBUG][ok]
-                    self.log.log(level, "rsync exit code=%s" % process.returncode)
-                    break
+            else:
                 self.log.info(output.rstrip())
-        except Exception, e:
-            self.log.error("caught exception: %s" % e)
         self.log.info("mirror synchronization finished")
+        return exit
 
     def run(self):
         """Acquire a lock and if successful, update the local replica."""
