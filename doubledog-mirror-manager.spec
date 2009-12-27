@@ -4,7 +4,7 @@
 %define python_module_name doubledog_mirror_manager
 
 Name:           doubledog-mirror-manager
-Version:        0.3
+Version:        0.4
 Release:        1%{?dist}
 Summary:        doubledog.org local mirror manager
 
@@ -68,6 +68,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Dec 27 2009 John Florian <jflorian@doubledog.org> - 0.4-1
+Fix - pipe to rsync not handled correctly
 * Wed Dec 23 2009 John Florian <jflorian@doubledog.org> - 0.3-1
 New - complete rewrite, now in Python
 * Sat Dec 12 2009 John Florian <jflorian@doubledog.org> - 0.2-1
