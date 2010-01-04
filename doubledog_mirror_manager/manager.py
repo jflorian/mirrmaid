@@ -33,8 +33,6 @@ class Mirror_Manager(object):
         self.args = args
         self.options = None
         self.parser = None
-        self.default_conf = Default_Config(CONFIG_FILENAME)
-        self.mirrors_conf = Mirrors_Config(CONFIG_FILENAME)
         self._init_logger()
 
     def _config_logger(self):
@@ -70,12 +68,14 @@ class Mirror_Manager(object):
 
     def _parse_options(self):
         self.parser = OptionParser(usage="Usage: doubledog-mirror-manager [options]")
+        self.parser.add_option("-c", "--config", type="string", dest="config_filename",
+                               help="use alternate configuration file")
         self.parser.add_option("-d", "--debug", action="store_true", dest="debug",
                                help="enable logging to console")
         self.parser.add_option("-l", "--level", type="int", dest="log_level",
                                help="set minimum logging threshold " \
                                     "(1=debug, 2=info[default], 3=warning, 4=error, 5=critical")
-        self.parser.set_defaults(debug=False, log_level=2)
+        self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False, log_level=2)
         self.options, self.args = self.parser.parse_args()
         if len(self.args) != 0:
             self._exit(2, "No arguments expected.", show_help=True)
@@ -86,11 +86,14 @@ class Mirror_Manager(object):
         try:
             self._parse_options()
             self._config_logger()
+            self.log.debug("using config file: %s" % self.options.config_filename)
+            self.default_conf = Default_Config(self.options.config_filename)
+            self.mirrors_conf = Mirrors_Config(self.options.config_filename)
             mirrors = self.mirrors_conf.get_mirrors()
             self.log.debug("enabled mirrors: %s" % mirrors)
             for mirror in mirrors:
                 self.log.debug("processing mirror: '%s'" % mirror)
-                worker = Synchronizer(self.default_conf, Mirror_Config(CONFIG_FILENAME, mirror))
+                worker = Synchronizer(self.default_conf, Mirror_Config(self.options.config_filename, mirror))
                 worker.run()
         except Synchronizer_Exception, e:
             self.log.critical(e)
