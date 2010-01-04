@@ -40,7 +40,7 @@ rm -rf %{buildroot}
 install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
-install -Dp -m 0755 %{name}             %{buildroot}%{_sbindir}/%{name}
+install -Dp -m 0755 %{name}.py          %{buildroot}%{_sbindir}/%{name}
 
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 

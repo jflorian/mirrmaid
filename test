@@ -8,5 +8,5 @@
 
 
 export PYTHONPATH=.
-python -B -3 doubledog-mirror-manager $*
+python -B doubledog-mirror-manager.py $*
 echo "test harness exit status: $?"
