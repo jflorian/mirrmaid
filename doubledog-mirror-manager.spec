@@ -4,7 +4,7 @@
 %define python_module_name doubledog_mirror_manager
 
 Name:           doubledog-mirror-manager
-Version:        0.4
+Version:        0.5
 Release:        1%{?dist}
 Summary:        doubledog.org local mirror manager
 
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jan 03 2010 John Florian <jflorian@doubledog.org> - 0.5-1
+Change - Use new Lock_File
+New - Allow overriding of config file path
 * Sun Dec 27 2009 John Florian <jflorian@doubledog.org> - 0.4-1
 Fix - pipe to rsync not handled correctly
 * Wed Dec 23 2009 John Florian <jflorian@doubledog.org> - 0.3-1
