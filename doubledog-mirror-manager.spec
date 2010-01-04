@@ -19,7 +19,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  python-devel
 Requires:       logrotate
 Requires:       python >= 2.6
-Requires:       python-doubledog >= 0.2
+Requires:       python-doubledog >= 0.4
 Requires:       rsync
 Requires:       vixie-cron
 

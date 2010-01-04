@@ -13,7 +13,7 @@ import logging
 import os
 
 from doubledog.config import Config, Default_Config
-from doubledog.lock import lock, Lock_Exception, unlock
+from doubledog.lock import Lock_Exception, Lock_File
 
 
 """
@@ -38,7 +38,7 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger("manager.synchronizer.%s" % self.mirror_conf.get_mirror_name())
-        self.lock_file = None
+        self.lock_file = Lock_File(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
         """Make the lock directory unless it already exists."""
@@ -85,10 +85,6 @@ class Synchronizer(object):
             target += "/"
         return target
 
-    def _get_time_stamp(self):
-        """Return current system time in ISO 8601 format."""
-        return strftime("%Y-%m-%dT%H:%M:%S%Z")
-
     def _lock_replica(self):
         """Attempt to gain a lock on the local replica.
 
@@ -98,29 +94,21 @@ class Synchronizer(object):
 
         self._ensure_lock_directory_exists()
         try:
-            old_mask = os.umask(0)
-            self.lock_file = open(self._get_lock_name(), "a+", 0666)
-            os.umask(old_mask)
-            lock(self.lock_file, True)
+            self.lock_file.exclusive_lock()
         except Lock_Exception:
-            self.log.info("%s already locked by another process" % self.lock_file.name)
+            self.log.info("%s already locked by another process" % self.lock_file.get_name())
             return False
         else:
-            self.log.info("gained exclusive-lock on %s" % self.lock_file.name)
-            self.lock_file.write("pid %s acquired exclusive-lock %s\n" % (os.getpid(), self._get_time_stamp()))
-            self.lock_file.flush()
+            self.log.info("gained exclusive-lock on %s" % self.lock_file.get_name())
             return True
 
     def _unlock_replica(self):
         """Release the lock on the local replica."""
-        unlock(self.lock_file)
-        self.lock_file.close()
-        self.log.info("released exclusive-lock on %s" % self.lock_file.name)
         try:
-            os.remove(self.lock_file.name)
+            self.lock_file.unlock(delete_file=True)
+            self.log.info("released exclusive-lock on %s" % self.lock_file.get_name())
         except OSError, e:
-            if e[0] != 2:
-                self.log.error("failed to remove lock file: %s because:\n%s" % (self.lock_file.name), e)
+            self.log.error("failed to remove lock file: %s because:\n%s" % (self.lock_file.get_name()), e)
 
     def _update_local_replica(self):
         """Start an instance of rsync with the necessary options and arguments to effect a one-time
