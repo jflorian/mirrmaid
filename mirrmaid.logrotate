@@ -1,4 +1,4 @@
-/var/log/doubledog-mirror-manager {
+/var/log/mirrmaid {
     weekly
     notifempty
     missingok

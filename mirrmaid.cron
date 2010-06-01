@@ -1,0 +1,3 @@
+MAILTO=root
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+32 * * * * root mirrmaid

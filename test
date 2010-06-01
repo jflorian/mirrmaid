@@ -1,12 +1,5 @@
 #!/bin/sh
 
-
-# 
-# Copyright 2009, John Florian
-# 
-
-
-
 export PYTHONPATH=.
-python -B doubledog-mirror-manager.py $*
+python -B mirrmaid.py $*
 echo "test harness exit status: $?"

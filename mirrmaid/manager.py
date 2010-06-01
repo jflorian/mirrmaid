@@ -1,21 +1,20 @@
 # Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
 #
-# This file is part of doubledog-mirror-manager.
+# This file is part of mirrmaid.
 # 
-# doubledog-mirror-manager is free software: you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version so long as this
-# copyright notice remains intact.
+# mirrmaid is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your
+# option) any later version so long as this copyright notice remains
+# intact.
 # 
-# doubledog-mirror-manager is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# mirrmaid is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with doubledog-mirror-manager.  If not, see
-# <http://www.gnu.org/licenses/>.
+# along with mirrmaid.  If not, see <http://www.gnu.org/licenses/>.
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
@@ -27,8 +26,8 @@ import logging
 import sys
 
 from doubledog.config import Config, Default_Config
-from doubledog_mirror_manager.config import Mirror_Config, Mirrors_Config
-from doubledog_mirror_manager.synchronizer import Synchronizer, Synchronizer_Exception
+from mirrmaid.config import Mirror_Config, Mirrors_Config
+from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
 
 """
@@ -37,8 +36,8 @@ activities of one or more Mirror_Synchronizers.
 """
 
 
-CONFIG_FILENAME = "/etc/doubledog-mirror-manager.conf"
-LOG_FILENAME = "/var/log/doubledog-mirror-manager"
+CONFIG_FILENAME = "/etc/mirrmaid.conf"
+LOG_FILENAME = "/var/log/mirrmaid"
 
 
 class Mirror_Manager(object):
@@ -81,7 +80,7 @@ class Mirror_Manager(object):
         self.log = logging.getLogger("manager")
 
     def _parse_options(self):
-        self.parser = OptionParser(usage="Usage: doubledog-mirror-manager [options]")
+        self.parser = OptionParser(usage="Usage: mirrmaid [options]")
         self.parser.add_option("-c", "--config", type="string", dest="config_filename",
                                help="use alternate configuration file")
         self.parser.add_option("-d", "--debug", action="store_true", dest="debug",

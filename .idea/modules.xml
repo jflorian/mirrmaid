@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/doubledog-mirror-manager.iml" filepath="$PROJECT_DIR$/doubledog-mirror-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mirrmaid.iml" filepath="$PROJECT_DIR$/mirrmaid.iml" />
     </modules>
   </component>
 </project>

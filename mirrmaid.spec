@@ -1,12 +1,12 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
-%define python_module_name doubledog_mirror_manager
+%define python_module_name mirrmaid
 
-Name:           doubledog-mirror-manager
+Name:           mirrmaid
 Version:        0.5
 Release:        1%{?dist}
-Summary:        doubledog.org local mirror manager
+Summary:        efficient mirror manager
 
 Group:          Applications/Internet
 Vendor:         doubledog.org
@@ -26,7 +26,10 @@ Requires:       vixie-cron
 %description
 This package efficiently maintains synchronized local mirrors of remote
 resources.  This is primarly accomplished by a sophisticated wrapper around
-the venerable rsync package.
+the venerable rsync package.  The primary advantage of this package over rsync
+is the simple yet powerful configuration, automatic cron scheduling and
+locking to prevent concurrently running instances from working against each
+other.
 
 %prep
 %setup -q

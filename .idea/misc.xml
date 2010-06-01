@@ -26,7 +26,7 @@
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
   <component name="ProjectDetails">
-    <option name="projectName" value="doubledog-mirror-manager" />
+    <option name="projectName" value="mirrmaid" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="Python 2.6" project-jdk-type="Python SDK">
     <output url="file://$PROJECT_DIR$/out" />
