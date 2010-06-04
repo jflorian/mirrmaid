@@ -23,10 +23,11 @@
 __author__ = """John Florian <jflorian@doubledog.org>"""
 
 
+import os
 import sys
 
 from mirrmaid.manager import Mirror_Manager
 
 
 Mirror_Manager(sys.argv[1:]).run()
-sys.exit(0)
+sys.exit(os.EX_OK)

@@ -23,6 +23,7 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 from optparse import OptionParser
 from traceback import format_exc
 import logging
+import os
 import sys
 
 from doubledog.config import Config, Default_Config
@@ -56,7 +57,7 @@ class Mirror_Manager(object):
             console.setFormatter(formatter)
             self.log.addHandler(console)
 
-    def _exit(self, exit_code=0, message=None, show_help=False):
+    def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
         """Cause the current command to exit.
 
         If provided, the message will be shown; presumably containing the reason.  An exit code will be
@@ -91,9 +92,9 @@ class Mirror_Manager(object):
         self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False, log_level=2)
         self.options, self.args = self.parser.parse_args()
         if len(self.args) != 0:
-            self._exit(2, "No arguments expected.", show_help=True)
+            self._exit(os.EX_USAGE, "No arguments expected.", show_help=True)
         if self.options.log_level not in range(1, 6):
-            self._exit(2, "LOG_LEVEL must not be less than 1 nor greater than 5.")
+            self._exit(os.EX_USAGE, "LOG_LEVEL must not be less than 1 nor greater than 5.")
 
     def run(self):
         try:
@@ -110,14 +111,14 @@ class Mirror_Manager(object):
                 worker.run()
         except Synchronizer_Exception, e:
             self.log.critical(e)
-            self._exit(2, e)
+            self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:
             self.log.error("interrupted via SIGINT")
-            self._exit(2)
+            self._exit(os.EX_OSERR)
         except SystemExit:
             pass        # presumably already handled
         except:
             self.log.critical("unhandled exception:\n%s" % format_exc())
-            self._exit(2)
+            self._exit(os.EX_SOFTWARE)
         finally:
             logging.shutdown()

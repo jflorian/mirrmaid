@@ -150,7 +150,7 @@ class Synchronizer(object):
                     if exit < 0:
                         self.log.warn("rsync terminated; caught signal %s" % -exit)
                     else:
-                        level = [logging.INFO, logging.DEBUG][exit == 0]
+                        level = [logging.INFO, logging.DEBUG][exit == os.EX_OK]
                         self.log.log(level, "rsync exit code=%s" % exit)
                     break
             else:
