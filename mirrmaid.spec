@@ -40,6 +40,7 @@ other.
 %install
 rm -rf %{buildroot}
 
+install -d  -m 0755                     %{buildroot}%{_var}/lock/subsys/%{name}
 install -d  -m 0755                     %{buildroot}%{_var}/log/%{name}
 install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
@@ -81,6 +82,7 @@ fi
 %{_sysconfdir}/%{name}/%{name}.conf
 
 %defattr(-,%{name},%{name},-)
+%{_var}/lock/subsys/%{name}
 %{_var}/log/%{name}
 
 
