@@ -38,7 +38,7 @@ activities of one or more Mirror_Synchronizers.
 
 
 CONFIG_FILENAME = "/etc/mirrmaid/mirrmaid.conf"
-LOG_FILENAME = "/var/log/mirrmaid"
+LOG_FILENAME = "/var/log/mirrmaid/mirrmaid"
 
 
 class Mirror_Manager(object):

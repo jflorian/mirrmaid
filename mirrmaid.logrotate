@@ -1,4 +1,4 @@
-/var/log/mirrmaid {
+/var/log/mirrmaid/mirrmaid {
     weekly
     notifempty
     missingok

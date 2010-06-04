@@ -40,6 +40,7 @@ other.
 %install
 rm -rf %{buildroot}
 
+install -d  -m 0755                     %{buildroot}%{_var}/log/%{name}
 install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -78,6 +79,9 @@ fi
 %{_sysconfdir}/cron.d/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
 %{_sysconfdir}/%{name}/%{name}.conf
+
+%defattr(-,%{name},%{name},-)
+%{_var}/log/%{name}
 
 
 %changelog
