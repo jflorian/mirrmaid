@@ -40,7 +40,7 @@ other.
 %install
 rm -rf %{buildroot}
 
-install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}.conf
+install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m 0755 %{name}.py          %{buildroot}%{_sbindir}/%{name}
@@ -49,6 +49,13 @@ install -Dp -m 0755 %{name}.py          %{buildroot}%{_sbindir}/%{name}
 
 %clean
 rm -rf %{buildroot}
+
+%pre
+groupadd -r -f %{name}
+if ! grep -q ^%{name}: /etc/passwd
+then
+    useradd -d /etc/%{name} -g %{name} -M -r %{name}
+fi
 
 %post
 
@@ -67,7 +74,7 @@ rm -rf %{buildroot}
 %{_sbindir}/%{name}
 %{_sysconfdir}/cron.d/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
-%{_sysconfdir}/%{name}.conf
+%{_sysconfdir}/%{name}/%{name}.conf
 
 
 %changelog

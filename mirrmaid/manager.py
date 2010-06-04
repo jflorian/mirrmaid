@@ -36,7 +36,7 @@ activities of one or more Mirror_Synchronizers.
 """
 
 
-CONFIG_FILENAME = "/etc/mirrmaid.conf"
+CONFIG_FILENAME = "/etc/mirrmaid/mirrmaid.conf"
 LOG_FILENAME = "/var/log/mirrmaid"
 
 
