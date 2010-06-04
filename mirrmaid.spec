@@ -5,7 +5,7 @@
 
 Name:           mirrmaid
 Version:        0.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        efficient mirror manager
 
 Group:          Applications/Internet
@@ -81,6 +81,8 @@ fi
 
 
 %changelog
+* Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.6-2
+Fix - detection of user acct not LDAP-friendly
 * Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.6-1
 Change - add license headers to prominent files
 Change - renaming project to mirrmaid
