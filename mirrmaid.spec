@@ -51,8 +51,11 @@ install -Dp -m 0755 %{name}.py          %{buildroot}%{_sbindir}/%{name}
 rm -rf %{buildroot}
 
 %pre
-groupadd -r -f %{name}
-if ! grep -q ^%{name}: /etc/passwd
+if ! getent group %{name}
+then
+    groupadd -r %{name}
+fi
+if ! getent passwd %{name}
 then
     useradd -d /etc/%{name} -g %{name} -M -r %{name}
 fi
