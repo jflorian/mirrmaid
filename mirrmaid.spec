@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.5
+Version:        0.6
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -78,6 +78,11 @@ fi
 
 
 %changelog
+* Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.6-1
+Change - add license headers to prominent files
+Change - renaming project to mirrmaid
+Fix - should not be running as root
+Fix - usage OS standard exit values
 * Sun Jan 03 2010 John Florian <jflorian@doubledog.org> - 0.5-1
 Change - Use new Lock_File
 New - Allow overriding of config file path
