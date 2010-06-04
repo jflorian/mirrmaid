@@ -4,8 +4,8 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.6
-Release:        2%{?dist}
+Version:        0.7
+Release:        1%{?dist}
 Summary:        efficient mirror manager
 
 Group:          Applications/Internet
@@ -87,6 +87,9 @@ fi
 
 
 %changelog
+* Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.7-1
+Fix - lock dir not writable by non-root user
+Fix - log file not writable by non-root user
 * Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.6-2
 Fix - detection of user acct not LDAP-friendly
 * Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.6-1
