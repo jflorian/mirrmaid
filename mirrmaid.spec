@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.7
+Version:        0.8
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -87,6 +87,9 @@ fi
 
 
 %changelog
+* Tue Jun 08 2010 John Florian <jflorian@doubledog.org> - 0.8-1
+Fix - assumes remote==source and local==target
+Fix - default conf should be benign
 * Fri Jun 04 2010 John Florian <jflorian@doubledog.org> - 0.7-1
 Fix - lock dir not writable by non-root user
 Fix - log file not writable by non-root user
