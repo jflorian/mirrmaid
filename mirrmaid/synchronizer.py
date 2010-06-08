@@ -30,8 +30,8 @@ from doubledog.lock import Lock_Exception, Lock_File
 
 
 """
-This module implements a mirror synchronizer that is charged with maintaining a perfect local replica of a
-remote directory structure.  To ensure that only one synchronizer is working on a local replica at a time,
+This module implements a mirror synchronizer that is charged with maintaining a perfect target replica of a
+source directory structure.  To ensure that only one synchronizer is working on a target replica at a time,
 advisory locking is utilized.
 """
 
@@ -62,7 +62,7 @@ class Synchronizer(object):
             raise Synchronizer_Exception("cannot create lock directory: %s" % e)
 
     def _get_lock_name(self):
-        """Return the name of the lock file for the local replica."""
+        """Return the name of the lock file for the target replica."""
 
         return os.path.join(LOCK_DIRECTORY, self.mirror_conf.get_mirror_name())
 
@@ -81,9 +81,7 @@ class Synchronizer(object):
         return eval(self.default_conf.get("rsync_options"))
 
     def _get_source(self):
-        """Return the fully-qualified rsync URI for the remote source of the directory structure to be
-        mirrored.
-        """
+        """Return the fully-qualified rsync URI for the source of the directory structure to be mirrored."""
 
         source = self.mirror_conf.get_source()
         if not source.endswith('/'):
@@ -91,7 +89,7 @@ class Synchronizer(object):
         return source
 
     def _get_target(self):
-        """Return the fully-qualified rsync URI for the local target of the mirroring operation."""
+        """Return the fully-qualified rsync URI for the target target of the mirroring operation."""
 
         target = self.mirror_conf.get_target()
         if not target.endswith('/'):
@@ -99,7 +97,7 @@ class Synchronizer(object):
         return target
 
     def _lock_replica(self):
-        """Attempt to gain a lock on the local replica.
+        """Attempt to gain a lock on the target replica.
 
         Locks are per target so that multiple Synchronizers may be working concurrently so long as it is not
         on the same collection job.
@@ -116,14 +114,14 @@ class Synchronizer(object):
             return True
 
     def _unlock_replica(self):
-        """Release the lock on the local replica."""
+        """Release the lock on the target replica."""
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info("released exclusive-lock on %s" % self.lock_file.get_name())
         except OSError, e:
             self.log.error("failed to remove lock file: %s because:\n%s" % (self.lock_file.get_name()), e)
 
-    def _update_local_replica(self):
+    def _update_replica(self):
         """Start an instance of rsync with the necessary options and arguments to effect a one-time
         synchronization.  Capture all stdout/stderr from the process and inject it into the logger.  The exit
         code of the rsync process is returned, where only a value of zero indicates success.
@@ -159,10 +157,10 @@ class Synchronizer(object):
         return exit
 
     def run(self):
-        """Acquire a lock and if successful, update the local replica."""
+        """Acquire a lock and if successful, update the target replica."""
 
         if self._lock_replica():
             try:
-                self._update_local_replica()
+                self._update_replica()
             finally:
                 self._unlock_replica()
