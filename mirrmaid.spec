@@ -45,7 +45,7 @@ install -d  -m 0755                     %{buildroot}%{_var}/log/%{name}
 install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
-install -Dp -m 0755 %{name}.py          %{buildroot}%{_sbindir}/%{name}
+install -Dp -m 0755 %{name}.py          %{buildroot}%{_bindir}/%{name}
 
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
@@ -76,7 +76,7 @@ fi
 %{python_sitelib}/%{python_module_name}/*.py
 %{python_sitelib}/%{python_module_name}/*.pyc
 %{python_sitelib}/%{python_module_name}/*.pyo
-%{_sbindir}/%{name}
+%{_bindir}/%{name}
 %{_sysconfdir}/cron.d/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
 %{_sysconfdir}/%{name}/%{name}.conf
