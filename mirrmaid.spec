@@ -17,10 +17,12 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python-devel
+Requires:       coreutils
 Requires:       logrotate
 Requires:       python >= 2.6
 Requires:       python-doubledog >= 0.4
 Requires:       rsync
+Requires:       util-linux-ng
 Requires:       vixie-cron
 
 %description
