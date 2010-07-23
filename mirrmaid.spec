@@ -79,9 +79,9 @@ fi
 %{python_sitelib}/%{python_module_name}/*.pyc
 %{python_sitelib}/%{python_module_name}/*.pyo
 %{_bindir}/%{name}
-%{_sysconfdir}/cron.d/%{name}
-%{_sysconfdir}/logrotate.d/%{name}
-%{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %defattr(-,%{name},%{name},-)
 %{_var}/lock/subsys/%{name}
