@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.8
+Version:        0.9
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -89,6 +89,13 @@ fi
 
 
 %changelog
+* Fri Jul 23 2010 John Florian <john_florian@dart.biz> - 0.9-1
+Fix - config files overwritten on upgrade
+Fix - cron job should be disabled by default
+Fix - Invalid_Configuration exceptions uncaught
+Fix - mirrmaid should not be installed in /usr/sbin
+Fix - should run as a nice process
+New - support for inclusion patterns
 * Tue Jun 08 2010 John Florian <jflorian@doubledog.org> - 0.8-1
 Fix - assumes remote==source and local==target
 Fix - default conf should be benign
