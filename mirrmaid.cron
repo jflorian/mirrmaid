@@ -2,4 +2,4 @@ MAILTO=root
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 # Job is disabled by default.  Configure /etc/mirrmaid/mirrmaid.conf and then
 # enable here by uncommenting the following line.
-# 32 * * * * nice ionice -c3 mirrmaid mirrmaid
+# 32 * * * * mirrmaid           nice ionice -c3 mirrmaid
