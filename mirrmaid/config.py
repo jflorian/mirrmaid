@@ -55,8 +55,13 @@ class Mirror_Config(Config):
 
     def get_excludes(self):
         """Return a list of the exclusion patterns for the mirror synchronization."""
-        
+
         return eval(self.get("exclude"))
+
+    def get_includes(self):
+        """Return a list of the inclusion patterns for the mirror synchronization."""
+
+        return eval(self.get("include"))
 
     def get_mirror_name(self):
         """Return the name of the mirror for which this configuration applies."""

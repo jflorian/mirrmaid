@@ -75,6 +75,15 @@ class Synchronizer(object):
             result.append(exclude)
         return result
 
+    def _get_rsync_includes(self):
+        """Return the rsync options to effect the mirror's list of inclusions."""
+
+        result = []
+        for include in self.mirror_conf.get_includes():
+            result.append("--include")
+            result.append(include)
+        return result
+
     def _get_rsync_options(self):
         """Return the default rsync options to be used as a list."""
 
@@ -128,7 +137,10 @@ class Synchronizer(object):
         """
 
         self.log.info("mirror synchronization started")
-        cmd = ["/usr/bin/rsync"] + self._get_rsync_options() + self._get_rsync_excludes()
+        cmd = ( ["/usr/bin/rsync"]
+            + self._get_rsync_options()
+            + self._get_rsync_includes()
+            + self._get_rsync_excludes() )
         cmd.append(self._get_source())
         cmd.append(self._get_target())
         self.log.debug("spawning %s" % cmd)
