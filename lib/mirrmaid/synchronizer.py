@@ -18,6 +18,7 @@
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009, 2010 John Florian"""
 
 
 from subprocess import PIPE, Popen, STDOUT
