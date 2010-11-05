@@ -37,19 +37,19 @@ other.
 %setup -q
 
 %build
-%{__python} setup.py build
+%{__python} pkg_tools/setup.py build
 
 %install
 rm -rf %{buildroot}
 
-install -d  -m 0755                     %{buildroot}%{_var}/lock/subsys/%{name}
-install -d  -m 0755                     %{buildroot}%{_var}/log/%{name}
-install -Dp -m 0644 %{name}.conf        %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
-install -Dp -m 0644 %{name}.cron        %{buildroot}%{_sysconfdir}/cron.d/%{name}
-install -Dp -m 0644 %{name}.logrotate   %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
-install -Dp -m 0755 %{name}.py          %{buildroot}%{_bindir}/%{name}
+install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
+install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
+install -d  -m 0755                             %{buildroot}%{_var}/lock/subsys/%{name}
+install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
-%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+%{__python} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
 
 %clean
 rm -rf %{buildroot}
@@ -73,15 +73,16 @@ fi
 %files
 %defattr(-,root,root,-)
 
-%doc AUTHOR COPYING
+%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%doc doc/AUTHOR
+%doc doc/COPYING
+%{_bindir}/%{name}
 %{python_sitelib}/%{python_module_name}*.egg-info
 %{python_sitelib}/%{python_module_name}/*.py
 %{python_sitelib}/%{python_module_name}/*.pyc
 %{python_sitelib}/%{python_module_name}/*.pyo
-%{_bindir}/%{name}
-%config(noreplace) %{_sysconfdir}/cron.d/%{name}
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %defattr(-,%{name},%{name},-)
 %{_var}/lock/subsys/%{name}
