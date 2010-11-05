@@ -36,12 +36,12 @@ class Mirrors_Config(Config):
         """Construct a Mirrors_Config object for the named configuration file."""
 
         Config.__init__(self, filename)
-        self._set_section("MIRRORS")
+        self._set_section('MIRRORS')
 
     def get_mirrors(self):
         """Return a list of those mirror names that are enabled."""
 
-        return eval(self.get("enabled"))
+        return eval(self.get('enabled'))
 
 
 class Mirror_Config(Config):
@@ -56,12 +56,12 @@ class Mirror_Config(Config):
     def get_excludes(self):
         """Return a list of the exclusion patterns for the mirror synchronization."""
 
-        return eval(self.get("exclude"))
+        return eval(self.get('exclude'))
 
     def get_includes(self):
         """Return a list of the inclusion patterns for the mirror synchronization."""
 
-        return eval(self.get("include"))
+        return eval(self.get('include'))
 
     def get_mirror_name(self):
         """Return the name of the mirror for which this configuration applies."""
@@ -71,9 +71,9 @@ class Mirror_Config(Config):
     def get_source(self):
         """Return the source for the mirror synchronization."""
 
-        return self.get("source")
+        return self.get('source')
 
     def get_target(self):
         """Return the target for the mirror synchronization."""
 
-        return self.get("target")
+        return self.get('target')

@@ -37,8 +37,8 @@ activities of one or more Mirror_Synchronizers.
 """
 
 
-CONFIG_FILENAME = "/etc/mirrmaid/mirrmaid.conf"
-LOG_FILENAME = "/var/log/mirrmaid/mirrmaid"
+CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
+LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
 
 
 class Mirror_Manager(object):
@@ -53,7 +53,7 @@ class Mirror_Manager(object):
         self.log.setLevel(self.options.log_level * 10)
         if self.options.debug:
             console = logging.StreamHandler()
-            formatter = logging.Formatter("%(name)s %(levelname)-8s %(message)s")
+            formatter = logging.Formatter('%(name)s %(levelname)-8s %(message)s')
             console.setFormatter(formatter)
             self.log.addHandler(console)
 
@@ -68,60 +68,60 @@ class Mirror_Manager(object):
             self.parser.print_help()
         if message:
             if exit_code:
-                sys.stderr.write("\n** Error: %s\n" % message)
+                sys.stderr.write('\n** Error: %s\n' % message)
             else:
                 sys.stderr.write(message)
         sys.exit(exit_code)
 
     def _init_logger(self):
         logging.basicConfig(
-                format="%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s",
+                format='%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s',
                 filename=LOG_FILENAME
                 )
-        self.log = logging.getLogger("manager")
+        self.log = logging.getLogger('manager')
 
     def _parse_options(self):
-        self.parser = OptionParser(usage="Usage: mirrmaid [options]")
-        self.parser.add_option("-c", "--config", type="string", dest="config_filename",
-                               help="use alternate configuration file")
-        self.parser.add_option("-d", "--debug", action="store_true", dest="debug",
-                               help="enable logging to console")
-        self.parser.add_option("-l", "--level", type="int", dest="log_level",
-                               help="set minimum logging threshold " \
-                                    "(1=debug, 2=info[default], 3=warning, 4=error, 5=critical")
+        self.parser = OptionParser(usage='Usage: mirrmaid [options]')
+        self.parser.add_option('-c', '--config', type='string', dest='config_filename',
+                               help='use alternate configuration file')
+        self.parser.add_option('-d', '--debug', action='store_true', dest='debug',
+                               help='enable logging to console')
+        self.parser.add_option('-l', '--level', type='int', dest='log_level',
+                               help='set minimum logging threshold ' \
+                                    '(1=debug, 2=info[default], 3=warning, 4=error, 5=critical')
         self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False, log_level=2)
         self.options, self.args = self.parser.parse_args()
         if len(self.args) != 0:
-            self._exit(os.EX_USAGE, "No arguments expected.", show_help=True)
+            self._exit(os.EX_USAGE, 'No arguments expected.', show_help=True)
         if self.options.log_level not in range(1, 6):
-            self._exit(os.EX_USAGE, "LOG_LEVEL must not be less than 1 nor greater than 5.")
+            self._exit(os.EX_USAGE, 'LOG_LEVEL must not be less than 1 nor greater than 5.')
 
     def run(self):
         try:
             self._parse_options()
             self._config_logger()
-            self.log.debug("using config file: %s" % self.options.config_filename)
+            self.log.debug('using config file: %s' % self.options.config_filename)
             self.default_conf = Default_Config(self.options.config_filename)
             self.mirrors_conf = Mirrors_Config(self.options.config_filename)
             mirrors = self.mirrors_conf.get_mirrors()
-            self.log.debug("enabled mirrors: %s" % mirrors)
+            self.log.debug('enabled mirrors: %s' % mirrors)
             for mirror in mirrors:
-                self.log.debug("processing mirror: '%s'" % mirror)
+                self.log.debug('processing mirror: '%s'' % mirror)
                 worker = Synchronizer(self.default_conf, Mirror_Config(self.options.config_filename, mirror))
                 worker.run()
         except Invalid_Configuration, e:
-            self.log.critical("invalid configuration:\n%s" % e)
+            self.log.critical('invalid configuration:\n%s' % e)
             self._exit(os.EX_CONFIG)
         except Synchronizer_Exception, e:
             self.log.critical(e)
             self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:
-            self.log.error("interrupted via SIGINT")
+            self.log.error('interrupted via SIGINT')
             self._exit(os.EX_OSERR)
         except SystemExit:
             pass        # presumably already handled
         except:
-            self.log.critical("unhandled exception:\n%s" % format_exc())
+            self.log.critical('unhandled exception:\n%s' % format_exc())
             self._exit(os.EX_SOFTWARE)
         finally:
             logging.shutdown()
