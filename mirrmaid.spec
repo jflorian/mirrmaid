@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.9
+Version:        0.10
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -88,6 +88,14 @@ fi
 
 
 %changelog
+* Mon Oct 10 2011 John Florian <jflorian@doubledog.org> - 0.10-1
+Fix - fails with lock on tmpfs and net user account
+Fix - no copyright variable in modules
+Fix - shouldn't use env to find python
+Fix - test harness mishandles quoted args
+Janitorial - complete project reorg
+Janitorial - remove trailing whitespace
+Janitorial - use standard Python quoting style
 * Fri Jul 23 2010 John Florian <john_florian@dart.biz> - 0.9-1
 Fix - config files overwritten on upgrade
 Fix - cron job should be disabled by default
