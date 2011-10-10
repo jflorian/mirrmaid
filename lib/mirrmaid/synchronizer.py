@@ -37,7 +37,11 @@ advisory locking is utilized.
 """
 
 
-LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
+# While this would be preferrable ...
+# LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
+# ... it makes it impossible to have the mirrmaid user account in LDAP because
+# systemd-tmpfiles-setup.service runs before network stack is up, so:
+LOCK_DIRECTORY = '/tmp/mirrmaid/'
 
 
 class Synchronizer_Exception(Exception):

@@ -46,7 +46,6 @@ install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{nam
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
-install -d  -m 0755                             %{buildroot}%{_var}/lock/subsys/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
 %{__python} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
@@ -85,7 +84,6 @@ fi
 %{python_sitelib}/%{python_module_name}/*.pyo
 
 %defattr(-,%{name},%{name},-)
-%{_var}/lock/subsys/%{name}
 %{_var}/log/%{name}
 
 
