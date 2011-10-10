@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.10
+Version:        0.11
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -88,7 +88,7 @@ fi
 
 
 %changelog
-* Mon Oct 10 2011 John Florian <jflorian@doubledog.org> - 0.10-1
+* Mon Oct 10 2011 John Florian <jflorian@doubledog.org> - 0.11-1
 Fix - fails with lock on tmpfs and net user account
 Fix - no copyright variable in modules
 Fix - shouldn't use env to find python
