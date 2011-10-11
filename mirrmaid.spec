@@ -4,7 +4,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.11
+Version:        0.12
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -88,6 +88,10 @@ fi
 
 
 %changelog
+* Tue Oct 11 2011 John Florian <john_florian@dart.biz> - 0.12-1
+Fix - quoting error in manager
+Janitorial - PEP-8 conformance
+Refactor - simplify boolean ops
 * Mon Oct 10 2011 John Florian <jflorian@doubledog.org> - 0.11-1
 Fix - fails with lock on tmpfs and net user account
 Fix - no copyright variable in modules
