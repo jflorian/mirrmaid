@@ -101,7 +101,7 @@ class Mirror_Manager(object):
         self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False,
                                  log_level=2)
         self.options, self.args = self.parser.parse_args()
-        if len(self.args) != 0:
+        if len(self.args):
             self._exit(os.EX_USAGE, 'No arguments expected.', show_help=True)
         if self.options.log_level not in range(1, 6):
             self._exit(os.EX_USAGE,
