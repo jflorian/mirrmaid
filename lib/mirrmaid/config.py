@@ -17,17 +17,17 @@
 # along with mirrmaid.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+"""
+This module implements the Configuration_Parser, which parses the
+configuration file to make the directives readily available.
+"""
 
 
 from doubledog.config import Config, Default_Config
 
 
-"""
-This module implements the Configuration_Parser, which parses the
-configuration file to make the directives readily available.
-"""
+__author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009, 2010 John Florian"""
 
 
 class Mirrors_Config(Config):

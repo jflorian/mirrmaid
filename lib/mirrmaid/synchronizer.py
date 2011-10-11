@@ -17,8 +17,12 @@
 # along with mirrmaid.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+"""
+This module implements a mirror synchronizer that is charged with maintaining
+a perfect target replica of a source directory structure.  To ensure that only
+one synchronizer is working on a target replica at a time, advisory locking is
+utilized.
+"""
 
 
 from subprocess import PIPE, Popen, STDOUT
@@ -30,12 +34,8 @@ from doubledog.config import Config, Default_Config
 from doubledog.lock import Lock_Exception, Lock_File
 
 
-"""
-This module implements a mirror synchronizer that is charged with maintaining
-a perfect target replica of a source directory structure.  To ensure that only
-one synchronizer is working on a target replica at a time, advisory locking is
-utilized.
-"""
+__author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009, 2010 John Florian"""
 
 
 # While this would be preferrable ...

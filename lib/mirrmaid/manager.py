@@ -17,8 +17,10 @@
 # along with mirrmaid.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+"""
+This module implements the Mirror_Manager, which directs the mirroring
+activities of one or more Mirror_Synchronizers.
+"""
 
 
 from optparse import OptionParser
@@ -32,10 +34,8 @@ from mirrmaid.config import Mirror_Config, Mirrors_Config
 from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
 
-"""
-This module implements the Mirror_Manager, which directs the mirroring
-activities of one or more Mirror_Synchronizers.
-"""
+__author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009, 2010 John Florian"""
 
 
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
