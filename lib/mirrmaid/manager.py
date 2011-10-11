@@ -107,7 +107,7 @@ class Mirror_Manager(object):
             mirrors = self.mirrors_conf.get_mirrors()
             self.log.debug('enabled mirrors: %s' % mirrors)
             for mirror in mirrors:
-                self.log.debug('processing mirror: '%s'' % mirror)
+                self.log.debug('processing mirror: "%s"' % mirror)
                 worker = Synchronizer(self.default_conf, Mirror_Config(self.options.config_filename, mirror))
                 worker.run()
         except Invalid_Configuration, e:
