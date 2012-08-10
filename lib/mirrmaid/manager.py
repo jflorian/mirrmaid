@@ -113,6 +113,8 @@ class Mirror_Manager(object):
             self._config_logger()
             self.log.debug('using config file: %s' %
                            self.options.config_filename)
+            for k in sorted(os.environ):
+                self.log.debug('environment: %s=%s' % (k, os.environ[k]))
             self.default_conf = Default_Config(self.options.config_filename)
             self.mirrors_conf = Mirrors_Config(self.options.config_filename)
             mirrors = self.mirrors_conf.get_mirrors()
