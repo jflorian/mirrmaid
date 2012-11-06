@@ -108,6 +108,7 @@ class Mirror_Manager(object):
                        'LOG_LEVEL must not be less than 1 nor greater than 5.')
 
     def run(self):
+        #noinspection PyBroadException
         try:
             self._parse_options()
             self._config_logger()
