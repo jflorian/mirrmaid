@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -31,7 +31,7 @@ from doubledog.lock import Lock_Exception, Lock_File
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 # While this would be preferrable ...

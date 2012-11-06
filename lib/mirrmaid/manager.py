@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -35,7 +35,7 @@ from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'

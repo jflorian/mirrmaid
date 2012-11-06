@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -21,6 +21,7 @@
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 import os
