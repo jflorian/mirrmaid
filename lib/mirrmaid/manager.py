@@ -29,7 +29,7 @@ import logging
 import os
 import sys
 
-from doubledog.config import Config, Default_Config, Invalid_Configuration
+from doubledog.config import Default_Config, Invalid_Configuration
 from mirrmaid.config import Mirror_Config, Mirrors_Config
 from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 

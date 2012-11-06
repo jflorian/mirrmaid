@@ -23,7 +23,7 @@ configuration file to make the directives readily available.
 """
 
 
-from doubledog.config import Config, Default_Config
+from doubledog.config import Config
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""

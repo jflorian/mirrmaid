@@ -23,14 +23,10 @@ a perfect target replica of a source directory structure.  To ensure that only
 one synchronizer is working on a target replica at a time, advisory locking is
 utilized.
 """
-
-
-from subprocess import PIPE, Popen, STDOUT
-from time import strftime
+from subprocess import PIPE, Popen
 import logging
 import os
 
-from doubledog.config import Config, Default_Config
 from doubledog.lock import Lock_Exception, Lock_File
 
 
