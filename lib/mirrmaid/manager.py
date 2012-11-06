@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -29,13 +29,13 @@ import logging
 import os
 import sys
 
-from doubledog.config import Config, Default_Config, Invalid_Configuration
+from doubledog.config import Default_Config, Invalid_Configuration
 from mirrmaid.config import Mirror_Config, Mirrors_Config
 from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
@@ -108,6 +108,7 @@ class Mirror_Manager(object):
                        'LOG_LEVEL must not be less than 1 nor greater than 5.')
 
     def run(self):
+        #noinspection PyBroadException
         try:
             self._parse_options()
             self._config_logger()
