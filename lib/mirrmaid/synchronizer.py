@@ -23,7 +23,10 @@ a perfect target replica of a source directory structure.  To ensure that only
 one synchronizer is working on a target replica at a time, advisory locking is
 utilized.
 """
+from select import select
 from subprocess import PIPE, Popen
+import errno
+import fcntl
 import logging
 import os
 
@@ -43,6 +46,22 @@ LOCK_DIRECTORY = '/tmp/mirrmaid/'
 
 class Synchronizer_Exception(Exception):
     pass
+
+class Async_Popen(Popen):
+
+    def make_async(self, fd):
+        fcntl.fcntl(fd, fcntl.F_SETFL,
+                    fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
+
+    # Helper function to read some data from a file descriptor, ignoring EAGAIN errors
+    def read_async(self, fd):
+        try:
+            return fd.readline()
+        except IOError as e:
+            if e.errno != errno.EAGAIN:
+                raise e
+            else:
+                return ''
 
 
 class Synchronizer(object):
@@ -162,15 +181,21 @@ class Synchronizer(object):
         cmd.append(self._get_target())
         self.log.debug('spawning %s' % cmd)
         self.log.debug('AKA      %s' % ' '.join(cmd))
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        process = Async_Popen(cmd, stdout=PIPE, stderr=PIPE)
+        process.make_async(process.stdout)
+        process.make_async(process.stderr)
         self.log.info('rsync pid=%s' % process.pid)
         exit = None
         while True:
-            output = process.stdout.readline()
+            # wait for data to become available
+            select([process.stdout, process.stderr], [], [])
+            # try reading data from each
+            out = process.read_async(process.stdout)
+            err = process.read_async(process.stderr)
             if process.poll():
-                # note returncode, but continue reading to drain source
+                # note returncode, but continue reading to drain sources
                 exit = process.returncode
-            if output == '':
+            if out == '' and err == '':
                 if exit is None:
                     exit = process.returncode
                 if exit is not None:
@@ -182,7 +207,10 @@ class Synchronizer(object):
                         self.log.log(level, 'rsync exit code=%s' % exit)
                     break
             else:
-                self.log.info(output.rstrip())
+                if out:
+                    self.log.info(out.rstrip())
+                if err:
+                    self.log.error(err.rstrip())
         self.log.info('mirror synchronization finished')
         return exit
 
