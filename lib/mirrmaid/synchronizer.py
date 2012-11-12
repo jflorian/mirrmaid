@@ -30,7 +30,7 @@ import fcntl
 import logging
 import os
 
-from doubledog.lock import Lock_Exception, Lock_File
+from doubledog.lock import LockException, LockFile
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
@@ -75,7 +75,7 @@ class Synchronizer(object):
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
             'manager.synchronizer.%s' % self.mirror_conf.get_mirror_name())
-        self.lock_file = Lock_File(self._get_lock_name(), pid=os.getpid())
+        self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
         """Make the lock directory unless it already exists."""
@@ -146,13 +146,13 @@ class Synchronizer(object):
         self._ensure_lock_directory_exists()
         try:
             self.lock_file.exclusive_lock()
-        except Lock_Exception:
+        except LockException:
             self.log.info('%s already locked by another process' %
-                          self.lock_file.get_name())
+                          self.lock_file.name)
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on %s' % self.lock_file.get_name())
+                'gained exclusive-lock on %s' % self.lock_file.name)
             return True
 
     def _unlock_replica(self):
@@ -160,10 +160,10 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on %s' % self.lock_file.get_name())
+                'released exclusive-lock on %s' % self.lock_file.name)
         except OSError as e:
             self.log.error('failed to remove lock file: %s because:\n%s' % (
-            self.lock_file.get_name()), e)
+            self.lock_file.name), e)
 
     def _update_replica(self):
         """Start an instance of rsync with the necessary options and arguments
