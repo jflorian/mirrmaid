@@ -127,10 +127,10 @@ class Mirror_Manager(object):
                     Mirror_Config(self.options.config_filename, mirror)
                 )
                 worker.run()
-        except Invalid_Configuration, e:
+        except Invalid_Configuration as e:
             self.log.critical('invalid configuration:\n%s' % e)
             self._exit(os.EX_CONFIG)
-        except Synchronizer_Exception, e:
+        except Synchronizer_Exception as e:
             self.log.critical(e)
             self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:

@@ -82,7 +82,7 @@ class Synchronizer(object):
         try:
             if not os.path.isdir(LOCK_DIRECTORY):
                 os.makedirs(LOCK_DIRECTORY)
-        except OSError, e:
+        except OSError as e:
             raise Synchronizer_Exception(
                 'cannot create lock directory: %s' % e)
 
@@ -161,7 +161,7 @@ class Synchronizer(object):
             self.lock_file.unlock(delete_file=True)
             self.log.info(
                 'released exclusive-lock on %s' % self.lock_file.get_name())
-        except OSError, e:
+        except OSError as e:
             self.log.error('failed to remove lock file: %s because:\n%s' % (
             self.lock_file.get_name()), e)
 
