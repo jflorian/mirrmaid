@@ -1,5 +1,14 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+# All bytecode files are now in a __pycache__ subdirectory, with a name
+# reflecting the version of the bytecode to permit sharing of python
+# libraries between different runtimes.
+# See http://www.python.org/dev/peps/pep-3147/
+# For example,
+#   foo/bar.py
+# now has bytecode at:
+#   foo/__pycache__/bar.cpython-32.pyc
+#   foo/__pycache__/bar.cpython-32.pyo
+%global bytecode_suffixes .cpython-32.py?
+
 
 %define python_module_name mirrmaid
 
@@ -16,10 +25,10 @@ URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  python-devel
+BuildRequires:  python3-devel
 Requires:       coreutils
 Requires:       logrotate
-Requires:       python >= 2.6
+Requires:       python3 >= 3
 Requires:       python3-doubledog >= 1.1
 Requires:       rsync
 Requires:       util-linux-ng
@@ -37,7 +46,7 @@ other.
 %setup -q
 
 %build
-%{__python} pkg_tools/setup.py build
+%{__python3} pkg_tools/setup.py build
 
 %install
 rm -rf %{buildroot}
@@ -48,7 +57,7 @@ install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logro
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
-%{__python} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
+%{__python3} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
 
 %clean
 rm -rf %{buildroot}
@@ -78,10 +87,9 @@ fi
 %doc doc/AUTHOR
 %doc doc/COPYING
 %{_bindir}/%{name}
-%{python_sitelib}/%{python_module_name}*.egg-info
-%{python_sitelib}/%{python_module_name}/*.py
-%{python_sitelib}/%{python_module_name}/*.pyc
-%{python_sitelib}/%{python_module_name}/*.pyo
+%{python3_sitelib}/%{python_module_name}*.egg-info
+%{python3_sitelib}/%{python_module_name}/*.py
+%{python3_sitelib}/%{python_module_name}/__pycache__/*%{bytecode_suffixes}
 
 %defattr(-,%{name},%{name},-)
 %{_var}/log/%{name}
