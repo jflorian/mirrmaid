@@ -8,5 +8,8 @@
     <orderEntry type="jdk" jdkName="Python 3.2.3 (/usr/bin/python3.2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="" />
+  </component>
 </module>
 

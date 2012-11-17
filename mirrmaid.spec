@@ -1,15 +1,3 @@
-# All bytecode files are now in a __pycache__ subdirectory, with a name
-# reflecting the version of the bytecode to permit sharing of python
-# libraries between different runtimes.
-# See http://www.python.org/dev/peps/pep-3147/
-# For example,
-#   foo/bar.py
-# now has bytecode at:
-#   foo/__pycache__/bar.cpython-32.pyc
-#   foo/__pycache__/bar.cpython-32.pyo
-%global bytecode_suffixes .cpython-32.py?
-
-
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
@@ -20,9 +8,9 @@ Summary:        efficient mirror manager
 Group:          Applications/Internet
 Vendor:         doubledog.org
 License:        GPLv3+
-BuildArch:      noarch
 URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
+BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python3-devel
@@ -84,12 +72,12 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%doc doc/AUTHOR
-%doc doc/COPYING
+%doc doc/*
 %{_bindir}/%{name}
-%{python3_sitelib}/%{python_module_name}*.egg-info
-%{python3_sitelib}/%{python_module_name}/*.py
-%{python3_sitelib}/%{python_module_name}/__pycache__/*%{bytecode_suffixes}
+
+%dir %{python3_sitelib}/%{python_module_name}
+%{python3_sitelib}/%{python_module_name}/*
+%{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
 %{_var}/log/%{name}
