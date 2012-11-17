@@ -29,7 +29,7 @@ BuildRequires:  python3-devel
 Requires:       coreutils
 Requires:       logrotate
 Requires:       python3 >= 3
-Requires:       python3-doubledog >= 1.1
+Requires:       python3-doubledog >= 1.2
 Requires:       rsync
 Requires:       util-linux-ng
 Requires:       vixie-cron
