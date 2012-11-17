@@ -23,21 +23,21 @@ configuration file to make the directives readily available.
 """
 
 
-from doubledog.config import Config
+from doubledog.config import BaseConfig
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-class Mirrors_Config(Config):
+class Mirrors_Config(BaseConfig):
     """Accessor to the MIRRORS configuration section."""
 
     def __init__(self, filename):
         """Construct a Mirrors_Config object for the named configuration file.
         """
 
-        Config.__init__(self, filename)
+        BaseConfig.__init__(self, filename)
         self._set_section('MIRRORS')
 
     def get_mirrors(self):
@@ -46,7 +46,7 @@ class Mirrors_Config(Config):
         return eval(self.get('enabled'))
 
 
-class Mirror_Config(Config):
+class Mirror_Config(BaseConfig):
     """Accessor to a named mirror's configuration section."""
 
     def __init__(self, filename, mirror):
@@ -54,7 +54,7 @@ class Mirror_Config(Config):
         within the named configuration file.
         """
 
-        Config.__init__(self, filename)
+        BaseConfig.__init__(self, filename)
         self._set_section(mirror)
 
     def get_excludes(self):

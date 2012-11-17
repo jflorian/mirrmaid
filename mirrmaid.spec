@@ -1,6 +1,3 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
@@ -11,16 +8,16 @@ Summary:        efficient mirror manager
 Group:          Applications/Internet
 Vendor:         doubledog.org
 License:        GPLv3+
-BuildArch:      noarch
 URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
+BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  python-devel
+BuildRequires:  python3-devel
 Requires:       coreutils
 Requires:       logrotate
-Requires:       python >= 2.6
-Requires:       python-doubledog >= 0.4
+Requires:       python3 >= 3
+Requires:       python3-doubledog >= 1.2
 Requires:       rsync
 Requires:       util-linux-ng
 Requires:       vixie-cron
@@ -37,7 +34,7 @@ other.
 %setup -q
 
 %build
-%{__python} pkg_tools/setup.py build
+%{__python3} pkg_tools/setup.py build
 
 %install
 rm -rf %{buildroot}
@@ -48,7 +45,7 @@ install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logro
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
-%{__python} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
+%{__python3} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
 
 %clean
 rm -rf %{buildroot}
@@ -75,13 +72,12 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%doc doc/AUTHOR
-%doc doc/COPYING
+%doc doc/*
 %{_bindir}/%{name}
-%{python_sitelib}/%{python_module_name}*.egg-info
-%{python_sitelib}/%{python_module_name}/*.py
-%{python_sitelib}/%{python_module_name}/*.pyc
-%{python_sitelib}/%{python_module_name}/*.pyo
+
+%dir %{python3_sitelib}/%{python_module_name}
+%{python3_sitelib}/%{python_module_name}/*
+%{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
 %{_var}/log/%{name}
