@@ -1,4 +1,4 @@
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -23,34 +23,21 @@ a perfect target replica of a source directory structure.  To ensure that only
 one synchronizer is working on a target replica at a time, advisory locking is
 utilized.
 """
-
-
-from subprocess import PIPE, Popen, STDOUT
-from time import strftime
 import logging
 import os
 
-from doubledog.config import Config, Default_Config
-from doubledog.lock import Lock_Exception, Lock_File
+from doubledog.async import AsynchronousStreamingSubprocess
+from doubledog.lock import LockException, LockFile
+
+from mirrmaid.constants import *
+from mirrmaid.exceptions import SynchronizerException
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009, 2010 John Florian"""
-
-
-# While this would be preferrable ...
-# LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
-# ... it makes it impossible to have the mirrmaid user account in LDAP because
-# systemd-tmpfiles-setup.service runs before network stack is up, so:
-LOCK_DIRECTORY = '/tmp/mirrmaid/'
-
-
-class Synchronizer_Exception(Exception):
-    pass
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 class Synchronizer(object):
-
     def __init__(self, default_conf, mirror_conf):
         """Construct a Synchronizer object that observes the default and
         mirror-specific configuration.
@@ -59,29 +46,29 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
-            'manager.synchronizer.%s' % self.mirror_conf.get_mirror_name())
-        self.lock_file = Lock_File(self._get_lock_name(), pid=os.getpid())
+            'manager.synchronizer.%s' % self.mirror_conf.mirror_name)
+        self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
         """Make the lock directory unless it already exists."""
         try:
             if not os.path.isdir(LOCK_DIRECTORY):
                 os.makedirs(LOCK_DIRECTORY)
-        except OSError, e:
-            raise Synchronizer_Exception(
+        except OSError as e:
+            raise SynchronizerException(
                 'cannot create lock directory: %s' % e)
 
     def _get_lock_name(self):
         """Return the name of the lock file for the target replica."""
 
-        return os.path.join(LOCK_DIRECTORY, self.mirror_conf.get_mirror_name())
+        return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
     def _get_rsync_excludes(self):
         """Return the rsync options to effect the mirror's list of exclusions.
         """
 
         result = []
-        for exclude in self.mirror_conf.get_excludes():
+        for exclude in self.mirror_conf.excludes:
             result.append('--exclude')
             result.append(exclude)
         return result
@@ -91,7 +78,7 @@ class Synchronizer(object):
         """
 
         result = []
-        for include in self.mirror_conf.get_includes():
+        for include in self.mirror_conf.includes:
             result.append('--include')
             result.append(include)
         return result
@@ -99,14 +86,14 @@ class Synchronizer(object):
     def _get_rsync_options(self):
         """Return the default rsync options to be used as a list."""
 
-        return eval(self.default_conf.get('rsync_options'))
+        return self.default_conf.get_list('rsync_options')
 
     def _get_source(self):
         """Return the fully-qualified rsync URI for the source of the
         directory structure to be mirrored.
         """
 
-        source = self.mirror_conf.get_source()
+        source = self.mirror_conf.source
         if not source.endswith('/'):
             source += '/'
         return source
@@ -116,7 +103,7 @@ class Synchronizer(object):
         mirroring operation.
         """
 
-        target = self.mirror_conf.get_target()
+        target = self.mirror_conf.target
         if not target.endswith('/'):
             target += '/'
         return target
@@ -131,13 +118,13 @@ class Synchronizer(object):
         self._ensure_lock_directory_exists()
         try:
             self.lock_file.exclusive_lock()
-        except Lock_Exception:
+        except LockException:
             self.log.info('%s already locked by another process' %
-                          self.lock_file.get_name())
+                          self.lock_file.name)
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on %s' % self.lock_file.get_name())
+                'gained exclusive-lock on %s' % self.lock_file.name)
             return True
 
     def _unlock_replica(self):
@@ -145,10 +132,10 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on %s' % self.lock_file.get_name())
-        except OSError, e:
+                'released exclusive-lock on %s' % self.lock_file.name)
+        except OSError as e:
             self.log.error('failed to remove lock file: %s because:\n%s' % (
-            self.lock_file.get_name()), e)
+                self.lock_file.name), e)
 
     def _update_replica(self):
         """Start an instance of rsync with the necessary options and arguments
@@ -166,27 +153,14 @@ class Synchronizer(object):
         cmd.append(self._get_target())
         self.log.debug('spawning %s' % cmd)
         self.log.debug('AKA      %s' % ' '.join(cmd))
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        process = AsynchronousStreamingSubprocess(cmd)
         self.log.info('rsync pid=%s' % process.pid)
-        exit = None
-        while True:
-            output = process.stdout.readline()
-            if process.poll():
-                # note returncode, but continue reading to drain source
-                exit = process.returncode
-            if output == '':
-                if exit is None:
-                    exit = process.returncode
-                if exit is not None:
-                    if exit < 0:
-                        self.log.warn(
-                            'rsync terminated; caught signal %s' % -exit)
-                    else:
-                        level = [logging.INFO, logging.DEBUG][exit == os.EX_OK]
-                        self.log.log(level, 'rsync exit code=%s' % exit)
-                    break
-            else:
-                self.log.info(output.rstrip())
+        exit = process.collect(self.log.info, self.log.error)
+        if exit < 0:
+            self.log.warn('rsync terminated; caught signal %s' % -exit)
+        else:
+            level = [logging.INFO, logging.DEBUG][exit == os.EX_OK]
+            self.log.log(level, 'rsync exit code=%s' % exit)
         self.log.info('mirror synchronization finished')
         return exit
 

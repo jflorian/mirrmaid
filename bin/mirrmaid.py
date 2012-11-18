@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 
-# Copyright 2009, 2010 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -21,13 +21,14 @@
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009-2012 John Florian"""
 
 
 import os
 import sys
 
-from mirrmaid.manager import Mirror_Manager
+from mirrmaid.manager import MirrorManager
 
 
-Mirror_Manager(sys.argv[1:]).run()
+MirrorManager(sys.argv[1:]).run()
 sys.exit(os.EX_OK)
