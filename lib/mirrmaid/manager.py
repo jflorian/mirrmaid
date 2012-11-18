@@ -31,7 +31,7 @@ import sys
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
-from mirrmaid.config import Mirror_Config, Mirrors_Config, MirrmaidConfig
+from mirrmaid.config import Mirror_Config, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
@@ -123,7 +123,7 @@ class MirrorManager(object):
             for k in sorted(os.environ):
                 self.log.debug('environment: %s=%s' % (k, os.environ[k]))
             self.default_conf = DefaultConfig(self.options.config_filename)
-            self.mirrors_conf = Mirrors_Config(self.options.config_filename)
+            self.mirrors_conf = MirrorsConfig(self.options.config_filename)
             mirrors = self.mirrors_conf.get_mirrors()
             self.log.debug('enabled mirrors: %s' % mirrors)
             for mirror in mirrors:

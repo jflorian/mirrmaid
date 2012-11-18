@@ -64,11 +64,11 @@ class MirrmaidConfig(BaseConfig):
                             default=DEFAULT_SUMMARY_SIZE)
 
 
-class Mirrors_Config(BaseConfig):
+class MirrorsConfig(BaseConfig):
     """Accessor to the MIRRORS configuration section."""
 
     def __init__(self, filename):
-        """Construct a Mirrors_Config object for the named configuration file.
+        """Construct a MirrorsConfig object for the named configuration file.
         """
 
         BaseConfig.__init__(self, filename)
