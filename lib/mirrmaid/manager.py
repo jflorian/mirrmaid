@@ -22,28 +22,44 @@ This module implements the Mirror_Manager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
-
 from optparse import OptionParser
 from traceback import format_exc
 import logging
+import logging.handlers
 import os
 import sys
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 from mirrmaid.config import Mirror_Config, Mirrors_Config
+from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
+# CONFIG_FILENAME controls the default run-time configuration file.
+CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
+
+# LOG_FILENAME controls the primary, detailed log file.
+LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
+
+# SUMMARY_FILENAME controls the less-detailed log file, which typically
+# captures only messages at level ERROR or higher.
+SUMMARY_FILENAME = '/var/log/mirrmaid/summary'
+
+# SUMMARY_HISTORY_COUNT controls the number of historical copies of
+# SUMMARY_FILENAME.  While at least one copy must be retained, you may elect
+# to keep more.
+SUMMARY_HISTORY_COUNT = 3
+
+# SUMMARY_MAX_BYTES controls the maximum file size (in bytes) that
+# SUMMARY_FILENAME may reach before a summary is automatically dispatched.
+# This can be useful in alerting the operator that something is awry before
+# the normal SUMMARY_INTERVAL (see summarizer.py) has expired.
+SUMMARY_MAX_BYTES = 20000
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
-LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
-
-
 class Mirror_Manager(object):
-
     def __init__(self, args):
         self.args = args
         self.options = None
@@ -78,12 +94,24 @@ class Mirror_Manager(object):
         sys.exit(exit_code)
 
     def _init_logger(self):
-        logging.basicConfig(
-                format=('%(asctime)s %(name)s[%(process)d] '
-                        '%(levelname)-8s %(message)s'),
-                filename=LOG_FILENAME
-                )
         self.log = logging.getLogger('manager')
+        formatter = logging.Formatter(
+            '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s')
+        handler = logging.handlers.TimedRotatingFileHandler(
+            LOG_FILENAME, when='midnight', backupCount=7)
+        handler.setFormatter(formatter)
+        self.log.addHandler(handler)
+        handler = LogSummarizingHandler(
+            SUMMARY_FILENAME,
+            maxBytes=SUMMARY_MAX_BYTES,
+            backupCount=max(1, SUMMARY_HISTORY_COUNT))
+        handler.setFormatter(formatter)
+        handler.setLevel(logging.ERROR)
+        self.log.addHandler(handler)
+        # Ensure the summary is delivered regularly, even if no messages are
+        # logged there during this run.
+        if handler.summary_due():
+            handler.force_rollover()
 
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')

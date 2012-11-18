@@ -43,6 +43,7 @@ install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{nam
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
+install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
 %{__python3} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
@@ -80,6 +81,7 @@ fi
 %{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
+%{_var}/lib/%{name}
 %{_var}/log/%{name}
 
 

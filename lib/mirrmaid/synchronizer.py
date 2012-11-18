@@ -34,7 +34,7 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-# While this would be preferrable ...
+# While this would be preferable ...
 # LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
 # ... it makes it impossible to have the mirrmaid user account in LDAP because
 # systemd-tmpfiles-setup.service runs before network stack is up, so:
