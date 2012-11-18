@@ -30,14 +30,11 @@ from doubledog.async import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
 from mirrmaid.constants import *
+from mirrmaid.exceptions import SynchronizerException
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
-
-
-class SynchronizerException(Exception):
-    pass
 
 
 class Synchronizer(object):
