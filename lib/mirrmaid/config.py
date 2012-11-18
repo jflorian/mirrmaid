@@ -80,11 +80,11 @@ class MirrorsConfig(BaseConfig):
         return self.get_list('enabled')
 
 
-class Mirror_Config(BaseConfig):
+class MirrorConfig(BaseConfig):
     """Accessor to a named mirror's configuration section."""
 
     def __init__(self, filename, mirror):
-        """Construct a Mirror_Config object for the named mirror section
+        """Construct a MirrorConfig object for the named mirror section
         within the named configuration file.
         """
 

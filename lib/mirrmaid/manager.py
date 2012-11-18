@@ -31,7 +31,7 @@ import sys
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
-from mirrmaid.config import Mirror_Config, MirrorsConfig, MirrmaidConfig
+from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, SynchronizerException
@@ -130,7 +130,7 @@ class MirrorManager(object):
                 self.log.debug('processing mirror: "%s"' % mirror)
                 worker = Synchronizer(
                     self.default_conf,
-                    Mirror_Config(self.options.config_filename, mirror)
+                    MirrorConfig(self.options.config_filename, mirror)
                 )
                 worker.run()
         except InvalidConfiguration as e:
