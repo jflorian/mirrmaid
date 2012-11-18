@@ -16,7 +16,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  python3-devel
 Requires:       coreutils
 Requires:       python3 >= 3
-Requires:       python3-doubledog >= 1.2
+Requires:       python3-doubledog >= 1.3
 Requires:       rsync
 Requires:       util-linux-ng
 Requires:       vixie-cron

@@ -95,7 +95,7 @@ class Synchronizer(object):
     def _get_rsync_options(self):
         """Return the default rsync options to be used as a list."""
 
-        return eval(self.default_conf.get('rsync_options'))
+        return self.default_conf.get_list('rsync_options')
 
     def _get_source(self):
         """Return the fully-qualified rsync URI for the source of the
