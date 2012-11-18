@@ -18,7 +18,7 @@
 
 
 """
-This module implements the Mirror_Manager, which directs the mirroring
+This module implements the MirrorManager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
@@ -40,7 +40,7 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-class Mirror_Manager(object):
+class MirrorManager(object):
     def __init__(self, args):
         self.args = args
         self.options = None
