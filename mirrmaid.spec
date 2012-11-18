@@ -1,7 +1,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.12
+Version:        0.13
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -83,6 +83,37 @@ fi
 
 
 %changelog
+* Sun Nov 18 2012 John Florian <jflorian@doubledog.org> - 0.13-1
+Python 3 Implementation:
+    Change - launch with correct interpreter
+    Change - revise spec for Python 3 packaging
+    Refactor - make compatible with python3-doubledog
+    Refactor - use Python 3 exception syntax
+
+Feature enhancements:
+    New - log summarization feature
+    Change - make operations summaries configurable
+    Change - rsync stderr now logged as ERROR
+    Change - utilize AsynchronousStreamingSubprocess
+    New - debug logging of environment settings
+    Drop - logrotate configuration
+
+Bug Fixes:
+    Fix - spelling errors / improve comments
+    Fix - use of eval() is a security risk
+
+Other Cleanup:
+    Change - simplify python packaging
+    Janitorial - ignore valid broad Exception
+    Janitorial - optimize imports
+    Janitorial - update copyrights
+    New - copyright_update configuration
+    Refactor - implement @property decorators in config
+    Refactor - introduce new exceptions module
+    Refactor - rename Mirror_Config to MirrorConfig
+    Refactor - rename Mirror_Manager to MirrorManager
+    Refactor - rename Mirrors_Config to MirrorsConfig
+    Refactor - rename Synchronizer_Exception to SynchronizerException
 * Tue Oct 11 2011 John Florian <john_florian@dart.biz> - 0.12-1
 Fix - quoting error in manager
 Janitorial - PEP-8 conformance
