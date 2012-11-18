@@ -22,12 +22,46 @@ This module implements the Configuration_Parser, which parses the
 configuration file to make the directives readily available.
 """
 
-
 from doubledog.config import BaseConfig
 
+from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
+
+
+class MirrmaidConfig(BaseConfig):
+    """Accessor to the MIRRMAID configuration section."""
+
+    def __init__(self, filename):
+        """
+        Instantiate a MirrmaidConfig object for the named configuration file.
+
+        @param filename: Name of configuration file containing the
+        C{MIRRMAID} section.
+        """
+        BaseConfig.__init__(self, filename)
+        self._set_section('MIRRMAID')
+
+    @property
+    def summary_history_count(self):
+        return max(1, self.get_int('summary_history_count', required=False,
+                                   default=DEFAULT_SUMMARY_HISTORY_COUNT))
+
+    @property
+    def summary_interval(self):
+        return max(600, self.get_int('summary_interval', required=False,
+                                     default=DEFAULT_SUMMARY_INTERVAL))
+
+    @property
+    def summary_recipients(self):
+        return self.get_list('summary_recipients', required=False,
+                             default=DEFAULT_SUMMARY_RECIPIENTS)
+
+    @property
+    def summary_size(self):
+        return self.get_int('summary_size', required=False,
+                            default=DEFAULT_SUMMARY_SIZE)
 
 
 class Mirrors_Config(BaseConfig):

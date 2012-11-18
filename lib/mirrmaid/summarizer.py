@@ -29,16 +29,7 @@ from time import time, ctime, asctime
 
 from doubledog.mail import MiniMailer
 
-# LOG_STATE controls where mirrmaid will persist internal data regarding the
-# state of its logging and summary features.
-LOG_STATE = '/var/lib/mirrmaid/log_state'
-
-# SUMMARY_INTERVAL controls the maximum number of seconds that may elapse
-# before a summary is automatically dispatched.  This can be useful in ensuring
-# the operator receives periodic summaries, even when nothing special occurred.
-# See also SUMMARY_MAX_BYTES in manager.py.
-SUMMARY_INTERVAL = 24 * 60 * 60         #TODO
-SUMMARY_INTERVAL = 24 * 60
+from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012 John Florian"""
@@ -87,21 +78,26 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     """This class extends the RotatingFileHandler with an additional rollover
     trigger based on the elapsed time since the last rollover.  Thus this
     handler ensure the log gets a rollover whenever maxBytes is exceeded or
-    when the elapsed time exceeds SUMMARY_INTERVAL, whichever occurs first.
+    when the elapsed time exceeds the configured summary_interval, whichever
+    occurs first.
 
     When a rollover does occur, the log content just displaced will be
     delivered via email as a means of summarizing the important messages that
-    had occurred during this most recent SUMMARY_INTERVAL.
+    had occurred during this most recent summary interval.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, mirrmaid_config):
         self._log_state = LogState()
-        super(LogSummarizingHandler, self).__init__(*args, **kwargs)
+        self.mirrmaid_config = mirrmaid_config
+        super(LogSummarizingHandler, self).__init__(
+            SUMMARY_FILENAME,
+            maxBytes=self.mirrmaid_config.summary_size,
+            backupCount=self.mirrmaid_config.summary_history_count)
 
     def _mail_summary(self):
-        # TODO: make recipients configurable
-        MiniMailer().send('mirrmaid', 'root', 'mirrmaid Activity Summary',
-                          self._summary_body())
+        MiniMailer().send('mirrmaid', self.mirrmaid_config.summary_recipients,
+                          'mirrmaid Activity Summary', self._summary_body()
+        )
 
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
@@ -142,7 +138,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     def summary_due(self):
         age = time() - self._log_state.last_rollover
-        return age > SUMMARY_INTERVAL
+        return age > self.mirrmaid_config.summary_interval
 
     def shouldRollover(self, record):
         result = super(LogSummarizingHandler, self).shouldRollover(record)

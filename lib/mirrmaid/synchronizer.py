@@ -29,21 +29,15 @@ import os
 from doubledog.async import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
+from mirrmaid.constants import *
+
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-# While this would be preferable ...
-# LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
-# ... it makes it impossible to have the mirrmaid user account in LDAP because
-# systemd-tmpfiles-setup.service runs before network stack is up, so:
-LOCK_DIRECTORY = '/tmp/mirrmaid/'
-
-
 class Synchronizer_Exception(Exception):
     pass
-
 
 
 class Synchronizer(object):
