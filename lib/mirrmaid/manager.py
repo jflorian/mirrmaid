@@ -22,28 +22,25 @@ This module implements the Mirror_Manager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
-
 from optparse import OptionParser
 from traceback import format_exc
 import logging
+import logging.handlers
 import os
 import sys
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
-from mirrmaid.config import Mirror_Config, Mirrors_Config
-from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
+from mirrmaid.config import Mirror_Config, Mirrors_Config, MirrmaidConfig
+from mirrmaid.constants import *
+from mirrmaid.summarizer import LogSummarizingHandler
+from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
-LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
-
-
 class Mirror_Manager(object):
-
     def __init__(self, args):
         self.args = args
         self.options = None
@@ -54,10 +51,18 @@ class Mirror_Manager(object):
         self.log.setLevel(self.options.log_level * 10)
         if self.options.debug:
             console = logging.StreamHandler()
-            formatter = logging.Formatter(
-                '%(name)s %(levelname)-8s %(message)s')
-            console.setFormatter(formatter)
+            console.setFormatter(CONSOLE_FORMATTER)
             self.log.addHandler(console)
+
+    def _config_summarizer(self):
+        handler = LogSummarizingHandler(self.mirrmaid_conf)
+        handler.setFormatter(LOGGING_FORMATTER)
+        handler.setLevel(logging.ERROR)
+        self.log.addHandler(handler)
+        # Ensure the summary is delivered regularly, even if no messages are
+        # logged there during this run.
+        if handler.summary_due():
+            handler.force_rollover()
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
         """Cause the current command to exit.
@@ -78,12 +83,11 @@ class Mirror_Manager(object):
         sys.exit(exit_code)
 
     def _init_logger(self):
-        logging.basicConfig(
-                format=('%(asctime)s %(name)s[%(process)d] '
-                        '%(levelname)-8s %(message)s'),
-                filename=LOG_FILENAME
-                )
         self.log = logging.getLogger('manager')
+        handler = logging.handlers.TimedRotatingFileHandler(
+            LOG_FILENAME, when='midnight', backupCount=7)
+        handler.setFormatter(LOGGING_FORMATTER)
+        self.log.addHandler(handler)
 
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')
@@ -114,6 +118,8 @@ class Mirror_Manager(object):
             self._config_logger()
             self.log.debug('using config file: %s' %
                            self.options.config_filename)
+            self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
+            self._config_summarizer()
             for k in sorted(os.environ):
                 self.log.debug('environment: %s=%s' % (k, os.environ[k]))
             self.default_conf = DefaultConfig(self.options.config_filename)
