@@ -30,14 +30,11 @@ from doubledog.async import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
 from mirrmaid.constants import *
+from mirrmaid.exceptions import SynchronizerException
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
-
-
-class Synchronizer_Exception(Exception):
-    pass
 
 
 class Synchronizer(object):
@@ -49,7 +46,7 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
-            'manager.synchronizer.%s' % self.mirror_conf.get_mirror_name())
+            'manager.synchronizer.%s' % self.mirror_conf.mirror_name)
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
@@ -58,20 +55,20 @@ class Synchronizer(object):
             if not os.path.isdir(LOCK_DIRECTORY):
                 os.makedirs(LOCK_DIRECTORY)
         except OSError as e:
-            raise Synchronizer_Exception(
+            raise SynchronizerException(
                 'cannot create lock directory: %s' % e)
 
     def _get_lock_name(self):
         """Return the name of the lock file for the target replica."""
 
-        return os.path.join(LOCK_DIRECTORY, self.mirror_conf.get_mirror_name())
+        return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
     def _get_rsync_excludes(self):
         """Return the rsync options to effect the mirror's list of exclusions.
         """
 
         result = []
-        for exclude in self.mirror_conf.get_excludes():
+        for exclude in self.mirror_conf.excludes:
             result.append('--exclude')
             result.append(exclude)
         return result
@@ -81,7 +78,7 @@ class Synchronizer(object):
         """
 
         result = []
-        for include in self.mirror_conf.get_includes():
+        for include in self.mirror_conf.includes:
             result.append('--include')
             result.append(include)
         return result
@@ -96,7 +93,7 @@ class Synchronizer(object):
         directory structure to be mirrored.
         """
 
-        source = self.mirror_conf.get_source()
+        source = self.mirror_conf.source
         if not source.endswith('/'):
             source += '/'
         return source
@@ -106,7 +103,7 @@ class Synchronizer(object):
         mirroring operation.
         """
 
-        target = self.mirror_conf.get_target()
+        target = self.mirror_conf.target
         if not target.endswith('/'):
             target += '/'
         return target

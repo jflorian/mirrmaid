@@ -18,7 +18,7 @@
 
 
 """
-This module implements the Mirror_Manager, which directs the mirroring
+This module implements the MirrorManager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
@@ -31,16 +31,16 @@ import sys
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
-from mirrmaid.config import Mirror_Config, Mirrors_Config, MirrmaidConfig
+from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
-from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
+from mirrmaid.synchronizer import Synchronizer, SynchronizerException
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-class Mirror_Manager(object):
+class MirrorManager(object):
     def __init__(self, args):
         self.args = args
         self.options = None
@@ -123,20 +123,20 @@ class Mirror_Manager(object):
             for k in sorted(os.environ):
                 self.log.debug('environment: %s=%s' % (k, os.environ[k]))
             self.default_conf = DefaultConfig(self.options.config_filename)
-            self.mirrors_conf = Mirrors_Config(self.options.config_filename)
-            mirrors = self.mirrors_conf.get_mirrors()
+            self.mirrors_conf = MirrorsConfig(self.options.config_filename)
+            mirrors = self.mirrors_conf.mirrors
             self.log.debug('enabled mirrors: %s' % mirrors)
             for mirror in mirrors:
                 self.log.debug('processing mirror: "%s"' % mirror)
                 worker = Synchronizer(
                     self.default_conf,
-                    Mirror_Config(self.options.config_filename, mirror)
+                    MirrorConfig(self.options.config_filename, mirror)
                 )
                 worker.run()
         except InvalidConfiguration as e:
             self.log.critical('invalid configuration:\n%s' % e)
             self._exit(os.EX_CONFIG)
-        except Synchronizer_Exception as e:
+        except SynchronizerException as e:
             self.log.critical(e)
             self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:
