@@ -36,7 +36,7 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
 
 
-class Synchronizer_Exception(Exception):
+class SynchronizerException(Exception):
     pass
 
 
@@ -58,7 +58,7 @@ class Synchronizer(object):
             if not os.path.isdir(LOCK_DIRECTORY):
                 os.makedirs(LOCK_DIRECTORY)
         except OSError as e:
-            raise Synchronizer_Exception(
+            raise SynchronizerException(
                 'cannot create lock directory: %s' % e)
 
     def _get_lock_name(self):

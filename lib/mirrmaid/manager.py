@@ -34,7 +34,7 @@ from doubledog.config import DefaultConfig, InvalidConfiguration
 from mirrmaid.config import Mirror_Config, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
-from mirrmaid.synchronizer import Synchronizer, Synchronizer_Exception
+from mirrmaid.synchronizer import Synchronizer, SynchronizerException
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2012 John Florian"""
@@ -136,7 +136,7 @@ class MirrorManager(object):
         except InvalidConfiguration as e:
             self.log.critical('invalid configuration:\n%s' % e)
             self._exit(os.EX_CONFIG)
-        except Synchronizer_Exception as e:
+        except SynchronizerException as e:
             self.log.critical(e)
             self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:
