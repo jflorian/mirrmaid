@@ -15,7 +15,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python3-devel
 Requires:       coreutils
-Requires:       logrotate
 Requires:       python3 >= 3
 Requires:       python3-doubledog >= 1.2
 Requires:       rsync
@@ -41,7 +40,6 @@ rm -rf %{buildroot}
 
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
-install -Dp -m 0644 etc/%{name}.logrotate       %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
@@ -72,7 +70,6 @@ fi
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %doc doc/*
 %{_bindir}/%{name}
 

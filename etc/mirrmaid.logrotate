@@ -1,6 +1,0 @@
-/var/log/mirrmaid/mirrmaid {
-    weekly
-    notifempty
-    missingok
-    copytruncate
-}
