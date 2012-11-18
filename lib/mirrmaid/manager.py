@@ -124,7 +124,7 @@ class MirrorManager(object):
                 self.log.debug('environment: %s=%s' % (k, os.environ[k]))
             self.default_conf = DefaultConfig(self.options.config_filename)
             self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-            mirrors = self.mirrors_conf.get_mirrors()
+            mirrors = self.mirrors_conf.mirrors
             self.log.debug('enabled mirrors: %s' % mirrors)
             for mirror in mirrors:
                 self.log.debug('processing mirror: "%s"' % mirror)

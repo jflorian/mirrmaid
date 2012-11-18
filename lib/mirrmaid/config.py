@@ -74,7 +74,8 @@ class MirrorsConfig(BaseConfig):
         BaseConfig.__init__(self, filename)
         self._set_section('MIRRORS')
 
-    def get_mirrors(self):
+    @property
+    def mirrors(self):
         """Return a list of those mirror names that are enabled."""
 
         return self.get_list('enabled')
@@ -91,32 +92,37 @@ class MirrorConfig(BaseConfig):
         BaseConfig.__init__(self, filename)
         self._set_section(mirror)
 
-    def get_excludes(self):
+    @property
+    def excludes(self):
         """Return a list of the exclusion patterns for the mirror
         synchronization.
         """
 
         return self.get_list('exclude')
 
-    def get_includes(self):
+    @property
+    def includes(self):
         """Return a list of the inclusion patterns for the mirror
         synchronization.
         """
 
         return self.get_list('include')
 
-    def get_mirror_name(self):
+    @property
+    def mirror_name(self):
         """Return the name of the mirror for which this configuration applies.
         """
 
         return self._get_section()
 
-    def get_source(self):
+    @property
+    def source(self):
         """Return the source for the mirror synchronization."""
 
         return self.get('source')
 
-    def get_target(self):
+    @property
+    def target(self):
         """Return the target for the mirror synchronization."""
 
         return self.get('target')
