@@ -43,7 +43,7 @@ class Mirrors_Config(BaseConfig):
     def get_mirrors(self):
         """Return a list of those mirror names that are enabled."""
 
-        return eval(self.get('enabled'))
+        return self.get_list('enabled')
 
 
 class Mirror_Config(BaseConfig):
@@ -62,14 +62,14 @@ class Mirror_Config(BaseConfig):
         synchronization.
         """
 
-        return eval(self.get('exclude'))
+        return self.get_list('exclude')
 
     def get_includes(self):
         """Return a list of the inclusion patterns for the mirror
         synchronization.
         """
 
-        return eval(self.get('include'))
+        return self.get_list('include')
 
     def get_mirror_name(self):
         """Return the name of the mirror for which this configuration applies.
