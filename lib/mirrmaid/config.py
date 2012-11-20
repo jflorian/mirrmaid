@@ -44,6 +44,11 @@ class MirrmaidConfig(BaseConfig):
         self._set_section('MIRRMAID')
 
     @property
+    def summary_group(self):
+        return self.get('summary_group', required=False,
+                        default=DEFAULT_SUMMARY_GROUP)
+
+    @property
     def summary_history_count(self):
         return max(1, self.get_int('summary_history_count', required=False,
                                    default=DEFAULT_SUMMARY_HISTORY_COUNT))

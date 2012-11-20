@@ -32,6 +32,9 @@ CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 # option).
 CONSOLE_FORMATTER = Formatter('%(name)s %(levelname)-8s %(message)s')
 
+# Default operations summary grouping tag.
+DEFAULT_SUMMARY_GROUP = 'My Mirrors'
+
 # Default number of historical operations summaries to keep around.
 DEFAULT_SUMMARY_HISTORY_COUNT = 3
 

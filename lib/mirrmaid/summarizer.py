@@ -22,6 +22,7 @@ This module implements a mirror summarizer for the purpose of keeping one or
 more people informed of the current mirror state.
 """
 import errno
+from hashlib import md5
 import logging
 import logging.handlers
 import shelve
@@ -38,14 +39,22 @@ __copyright__ = """Copyright 2012 John Florian"""
 class LogState(object):
     """A trivial persistent shelf object for recording log rotation state."""
 
+    GROUP_TAG = 'group_tag'
     LAST_ROLLOVER = 'last_rollover'
 
-    def __init__(self):
+    def __init__(self, summary_group):
+        self.summary_group = summary_group
+        self.filename = self.__log_state_filename(summary_group)
         # Establish initial conditions such that it appears a log rollover has
         # just occurred, since that best matches the actual case of having an
         # emtpy log.  This ensures a rollover will occur in
         if self.last_rollover is None:
             self.last_rollover = time()
+
+    def __log_state_filename(self, tag):
+        hash = md5(tag.encode()).hexdigest()
+        return '{0:>s}.{1:>s}'.format(LOG_STATE, hash)
+
 
     @property
     def last_rollover(self):
@@ -53,7 +62,7 @@ class LogState(object):
 
         shelf = None
         try:
-            shelf = shelve.open(LOG_STATE)
+            shelf = shelve.open(self.filename)
             return shelf[self.LAST_ROLLOVER]
         except KeyError:
             return None
@@ -67,7 +76,8 @@ class LogState(object):
 
         shelf = None
         try:
-            shelf = shelve.open(LOG_STATE)
+            shelf = shelve.open(self.filename)
+            shelf[self.GROUP_TAG] = self.summary_group
             shelf[self.LAST_ROLLOVER] = when
         finally:
             if shelf:
@@ -87,16 +97,20 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     """
 
     def __init__(self, mirrmaid_config):
-        self._log_state = LogState()
         self.mirrmaid_config = mirrmaid_config
+        self._log_state = LogState(self.mirrmaid_config.summary_group)
         super(LogSummarizingHandler, self).__init__(
             SUMMARY_FILENAME,
             maxBytes=self.mirrmaid_config.summary_size,
             backupCount=self.mirrmaid_config.summary_history_count)
 
+    def __subject(self):
+        return 'mirrmaid Activity Summary for {0:>s}'.format(
+            self.mirrmaid_config.summary_group)
+
     def _mail_summary(self):
         MiniMailer().send('mirrmaid', self.mirrmaid_config.summary_recipients,
-                          'mirrmaid Activity Summary', self._summary_body()
+                          self.__subject(), self._summary_body()
         )
 
     def _summary_body(self):
