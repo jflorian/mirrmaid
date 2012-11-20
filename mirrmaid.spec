@@ -1,7 +1,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.13
+Version:        0.14
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -83,6 +83,8 @@ fi
 
 
 %changelog
+* Mon Nov 19 2012 John Florian <jflorian@doubledog.org> - 0.14-1
+New - grouping/splitting of operations summaries
 * Sun Nov 18 2012 John Florian <jflorian@doubledog.org> - 0.13-1
 Python 3 Implementation:
     Change - launch with correct interpreter
