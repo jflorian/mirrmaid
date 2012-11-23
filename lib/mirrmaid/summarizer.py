@@ -118,7 +118,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
 
     def __subject(self):
-        return 'mirrmaid Activity Summary for {0:>s}'.format(
+        return 'mirrmaid Activity Summary for {0}'.format(
             self.mirrmaid_config.summary_group)
 
     def _mail_summary(self):
@@ -129,11 +129,11 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
-        with open('{}.1'.format(self.baseFilename), 'r') as f:
+        with open('{0}.1'.format(self.baseFilename), 'r') as f:
             log_content = f.read()
         body = [
-            'Since:\t{}'.format(since),
-            'Until:\t{}'.format(until),
+            'Since:\t{0}'.format(since),
+            'Until:\t{0}'.format(until),
             '\n',
         ]
         if log_content.strip() == '':
