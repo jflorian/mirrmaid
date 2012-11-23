@@ -77,7 +77,7 @@ class MirrorManager(object):
             self.parser.print_help()
         if message:
             if exit_code:
-                sys.stderr.write('\n** Error: %s\n' % message)
+                sys.stderr.write('\n** Error: {0}\n'.format(message))
             else:
                 sys.stderr.write(message)
         sys.exit(exit_code)
@@ -116,25 +116,25 @@ class MirrorManager(object):
         try:
             self._parse_options()
             self._config_logger()
-            self.log.debug('using config file: %s' %
-                           self.options.config_filename)
+            self.log.debug(
+                'using config file: {0}'.format(self.options.config_filename))
             self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
             self._config_summarizer()
             for k in sorted(os.environ):
-                self.log.debug('environment: %s=%s' % (k, os.environ[k]))
+                self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
             self.default_conf = DefaultConfig(self.options.config_filename)
             self.mirrors_conf = MirrorsConfig(self.options.config_filename)
             mirrors = self.mirrors_conf.mirrors
-            self.log.debug('enabled mirrors: %s' % mirrors)
+            self.log.debug('enabled mirrors: {0}'.format(mirrors))
             for mirror in mirrors:
-                self.log.debug('processing mirror: "%s"' % mirror)
+                self.log.debug('processing mirror: "{0}"'.format(mirror))
                 worker = Synchronizer(
                     self.default_conf,
                     MirrorConfig(self.options.config_filename, mirror)
                 )
                 worker.run()
         except InvalidConfiguration as e:
-            self.log.critical('invalid configuration:\n%s' % e)
+            self.log.critical('invalid configuration:\n{0}'.format(e))
             self._exit(os.EX_CONFIG)
         except SynchronizerException as e:
             self.log.critical(e)
@@ -145,7 +145,7 @@ class MirrorManager(object):
         except SystemExit:
             pass        # presumably already handled
         except:
-            self.log.critical('unhandled exception:\n%s' % format_exc())
+            self.log.critical('unhandled exception:\n{0}'.format(format_exc()))
             self._exit(os.EX_SOFTWARE)
         finally:
             logging.shutdown()
