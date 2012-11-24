@@ -1,7 +1,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.14
+Version:        0.15
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -83,6 +83,11 @@ fi
 
 
 %changelog
+* Sat Nov 24 2012 John Florian <jflorian@doubledog.org> - 0.15-1
+Change - simplify logging hierarchy
+Fix - summary log must be unique to summary_group
+Refactor - replace all formatting with new style
+Refactor - simplify format() specifications
 * Mon Nov 19 2012 John Florian <jflorian@doubledog.org> - 0.14-1
 New - grouping/splitting of operations summaries
 * Sun Nov 18 2012 John Florian <jflorian@doubledog.org> - 0.13-1
