@@ -36,6 +36,15 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012 John Florian"""
 
 
+class SummaryGroup(object):
+    def __init__(self, name):
+        self.name = name
+        self.hash = self.hash_name(self.name)
+
+    def hash_name(self, name):
+        return md5(name.encode()).hexdigest()
+
+
 class LogState(object):
     """A trivial persistent shelf object for recording log rotation state."""
 
@@ -44,16 +53,15 @@ class LogState(object):
 
     def __init__(self, summary_group):
         self.summary_group = summary_group
-        self.filename = self.__log_state_filename(summary_group)
+        self.filename = self.__log_state_filename()
         # Establish initial conditions such that it appears a log rollover has
         # just occurred, since that best matches the actual case of having an
         # emtpy log.  This ensures a rollover will occur in
         if self.last_rollover is None:
             self.last_rollover = time()
 
-    def __log_state_filename(self, tag):
-        hash = md5(tag.encode()).hexdigest()
-        return '{0:>s}.{1:>s}'.format(LOG_STATE, hash)
+    def __log_state_filename(self):
+        return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
 
 
     @property
@@ -77,7 +85,7 @@ class LogState(object):
         shelf = None
         try:
             shelf = shelve.open(self.filename)
-            shelf[self.GROUP_TAG] = self.summary_group
+            shelf[self.GROUP_TAG] = self.summary_group.name
             shelf[self.LAST_ROLLOVER] = when
         finally:
             if shelf:
@@ -98,14 +106,19 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     def __init__(self, mirrmaid_config):
         self.mirrmaid_config = mirrmaid_config
-        self._log_state = LogState(self.mirrmaid_config.summary_group)
+        self.summary_group = SummaryGroup(self.mirrmaid_config.summary_group)
+        self._log_state = LogState(self.summary_group)
         super(LogSummarizingHandler, self).__init__(
-            SUMMARY_FILENAME,
+            self.__log_filename(),
             maxBytes=self.mirrmaid_config.summary_size,
             backupCount=self.mirrmaid_config.summary_history_count)
 
+    def __log_filename(self):
+        return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
+
+
     def __subject(self):
-        return 'mirrmaid Activity Summary for {0:>s}'.format(
+        return 'mirrmaid Activity Summary for {0}'.format(
             self.mirrmaid_config.summary_group)
 
     def _mail_summary(self):
@@ -116,11 +129,11 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
-        with open('{}.1'.format(self.baseFilename), 'r') as f:
+        with open('{0}.1'.format(self.baseFilename), 'r') as f:
             log_content = f.read()
         body = [
-            'Since:\t{}'.format(since),
-            'Until:\t{}'.format(until),
+            'Since:\t{0}'.format(since),
+            'Until:\t{0}'.format(until),
             '\n',
         ]
         if log_content.strip() == '':

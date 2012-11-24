@@ -46,7 +46,7 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
-            'manager.synchronizer.%s' % self.mirror_conf.mirror_name)
+            'mirrmaid.{0}'.format(self.mirror_conf.mirror_name))
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
@@ -56,7 +56,7 @@ class Synchronizer(object):
                 os.makedirs(LOCK_DIRECTORY)
         except OSError as e:
             raise SynchronizerException(
-                'cannot create lock directory: %s' % e)
+                'cannot create lock directory: {0}'.format(e))
 
     def _get_lock_name(self):
         """Return the name of the lock file for the target replica."""
@@ -119,12 +119,12 @@ class Synchronizer(object):
         try:
             self.lock_file.exclusive_lock()
         except LockException:
-            self.log.info('%s already locked by another process' %
-                          self.lock_file.name)
+            self.log.info('{0} already locked by another process'.format(
+                self.lock_file.name))
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on %s' % self.lock_file.name)
+                'gained exclusive-lock on {0}'.format(self.lock_file.name))
             return True
 
     def _unlock_replica(self):
@@ -132,10 +132,11 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on %s' % self.lock_file.name)
+                'released exclusive-lock on {0}'.format(self.lock_file.name))
         except OSError as e:
-            self.log.error('failed to remove lock file: %s because:\n%s' % (
-                self.lock_file.name), e)
+            self.log.error(
+                'failed to remove lock file: {0} because:\n{1}'.format(
+                    self.lock_file.name), e)
 
     def _update_replica(self):
         """Start an instance of rsync with the necessary options and arguments
@@ -151,16 +152,16 @@ class Synchronizer(object):
                 + self._get_rsync_excludes() )
         cmd.append(self._get_source())
         cmd.append(self._get_target())
-        self.log.debug('spawning %s' % cmd)
-        self.log.debug('AKA      %s' % ' '.join(cmd))
+        self.log.debug('spawning {0}'.format(cmd))
+        self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
-        self.log.info('rsync pid=%s' % process.pid)
+        self.log.info('rsync pid={0}'.format(process.pid))
         exit = process.collect(self.log.info, self.log.error)
         if exit < 0:
-            self.log.warn('rsync terminated; caught signal %s' % -exit)
+            self.log.warn('rsync terminated; caught signal {0}'.format(-exit))
         else:
             level = [logging.INFO, logging.DEBUG][exit == os.EX_OK]
-            self.log.log(level, 'rsync exit code=%s' % exit)
+            self.log.log(level, 'rsync exit code={0}'.format(exit))
         self.log.info('mirror synchronization finished')
         return exit
 
