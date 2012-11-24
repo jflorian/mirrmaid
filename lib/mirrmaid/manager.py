@@ -83,7 +83,7 @@ class MirrorManager(object):
         sys.exit(exit_code)
 
     def _init_logger(self):
-        self.log = logging.getLogger('manager')
+        self.log = logging.getLogger('mirrmaid')
         handler = logging.handlers.TimedRotatingFileHandler(
             LOG_FILENAME, when='midnight', backupCount=7)
         handler.setFormatter(LOGGING_FORMATTER)

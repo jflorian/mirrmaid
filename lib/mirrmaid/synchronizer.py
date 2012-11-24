@@ -46,7 +46,7 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
-            'manager.synchronizer.{0}'.format(self.mirror_conf.mirror_name))
+            'mirrmaid.{0}'.format(self.mirror_conf.mirror_name))
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     def _ensure_lock_directory_exists(self):
