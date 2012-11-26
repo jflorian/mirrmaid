@@ -26,6 +26,7 @@ from hashlib import md5
 import logging
 import logging.handlers
 import shelve
+from socket import getfqdn
 from time import time, ctime, asctime
 
 from doubledog.mail import MiniMailer
@@ -122,7 +123,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             self.mirrmaid_config.summary_group)
 
     def _mail_summary(self):
-        MiniMailer().send('mirrmaid', self.mirrmaid_config.summary_recipients,
+        sender = 'mirrmaid@{0}'.format(getfqdn())
+        MiniMailer().send(sender, self.mirrmaid_config.summary_recipients,
                           self.__subject(), self._summary_body()
         )
 

@@ -1,7 +1,7 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.15
+Version:        0.16
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -83,6 +83,8 @@ fi
 
 
 %changelog
+* Mon Nov 26 2012 John Florian <jflorian@doubledog.org> - 0.16-1
+Fix - some MTAs may require sender's domain
 * Sat Nov 24 2012 John Florian <jflorian@doubledog.org> - 0.15-1
 Change - simplify logging hierarchy
 Fix - summary log must be unique to summary_group
