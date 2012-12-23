@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -Es
 
 
 # Copyright 2009-2012 John Florian <jflorian@doubledog.org>
