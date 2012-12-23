@@ -44,6 +44,11 @@ class MirrmaidConfig(BaseConfig):
         self._set_section('MIRRMAID')
 
     @property
+    def proxy(self):
+        return self.get('proxy', required=False,
+                        default=DEFAULT_PROXY)
+
+    @property
     def summary_group(self):
         return self.get('summary_group', required=False,
                         default=DEFAULT_SUMMARY_GROUP)
