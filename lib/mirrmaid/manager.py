@@ -134,28 +134,30 @@ class MirrorManager(object):
             self._exit(os.EX_USAGE,
                        'LOG_LEVEL must not be less than 1 nor greater than 5.')
 
+    def _run(self):
+        self._parse_options()
+        self._config_logger()
+        self.log.debug(
+            'using config file: {0}'.format(self.options.config_filename))
+        self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
+        self._config_proxy()
+        self._config_summarizer()
+        self._log_environment()
+        self.default_conf = DefaultConfig(self.options.config_filename)
+        self.mirrors_conf = MirrorsConfig(self.options.config_filename)
+        self.log.debug('enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
+        for mirror in self.mirrors_conf.mirrors:
+            self.log.debug('processing mirror: "{0}"'.format(mirror))
+            worker = Synchronizer(
+                self.default_conf,
+                MirrorConfig(self.options.config_filename, mirror)
+            )
+            worker.run()
+
     def run(self):
         #noinspection PyBroadException
         try:
-            self._parse_options()
-            self._config_logger()
-            self.log.debug(
-                'using config file: {0}'.format(self.options.config_filename))
-            self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
-            self._config_proxy()
-            self._config_summarizer()
-            self._log_environment()
-            self.default_conf = DefaultConfig(self.options.config_filename)
-            self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-            mirrors = self.mirrors_conf.mirrors
-            self.log.debug('enabled mirrors: {0}'.format(mirrors))
-            for mirror in mirrors:
-                self.log.debug('processing mirror: "{0}"'.format(mirror))
-                worker = Synchronizer(
-                    self.default_conf,
-                    MirrorConfig(self.options.config_filename, mirror)
-                )
-                worker.run()
+            self._run()
         except InvalidConfiguration as e:
             self.log.critical('invalid configuration:\n{0}'.format(e))
             self._exit(os.EX_CONFIG)
