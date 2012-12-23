@@ -108,6 +108,10 @@ class MirrorManager(object):
         handler.setFormatter(LOGGING_FORMATTER)
         self.log.addHandler(handler)
 
+    def _log_environment(self):
+        for k in sorted(os.environ):
+            self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
+
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')
         self.parser.add_option('-c', '--config',
@@ -140,8 +144,7 @@ class MirrorManager(object):
             self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
             self._config_proxy()
             self._config_summarizer()
-            for k in sorted(os.environ):
-                self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
+            self._log_environment()
             self.default_conf = DefaultConfig(self.options.config_filename)
             self.mirrors_conf = MirrorsConfig(self.options.config_filename)
             mirrors = self.mirrors_conf.mirrors
