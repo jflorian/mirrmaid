@@ -54,6 +54,25 @@ class MirrorManager(object):
             console.setFormatter(CONSOLE_FORMATTER)
             self.log.addHandler(console)
 
+    def _config_proxy(self):
+        """Configure the rsync proxy."""
+        proxy = self.mirrmaid_conf.proxy
+        if proxy is None:
+            try:
+                del os.environ[RSYNC_PROXY]
+            except KeyError:
+                pass
+            else:
+                self.log.warning(
+                    'environment variable "{0}" has been unset; '
+                    'use the "proxy" setting in {1} instead '
+                    'if proxy support is required'.format(
+                        RSYNC_PROXY, self.options.config_filename))
+            self.log.debug('will not proxy rsync')
+        else:
+            os.environ[RSYNC_PROXY] = proxy
+            self.log.debug('will proxy rsync through "{0}"'.format(proxy))
+
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
         handler.setFormatter(LOGGING_FORMATTER)
@@ -119,6 +138,7 @@ class MirrorManager(object):
             self.log.debug(
                 'using config file: {0}'.format(self.options.config_filename))
             self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
+            self._config_proxy()
             self._config_summarizer()
             for k in sorted(os.environ):
                 self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))

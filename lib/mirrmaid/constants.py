@@ -32,6 +32,10 @@ CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 # option).
 CONSOLE_FORMATTER = Formatter('%(name)s %(levelname)-8s %(message)s')
 
+# Default rsync proxy to use in 'HOST:PORT' format or None if no proxy is
+# required.
+DEFAULT_PROXY = None
+
 # Default operations summary grouping tag.
 DEFAULT_SUMMARY_GROUP = 'My Mirrors'
 
@@ -67,6 +71,9 @@ LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
 # Where mirrmaid will persist internal data regarding the state of its
 # logging and operations summary features.
 LOG_STATE = '/var/lib/mirrmaid/log_state'
+
+# Name of environment variable used to configure rsync for proxy usage.
+RSYNC_PROXY = 'RSYNC_PROXY'
 
 # The operations summary log file, which captures only messages at level
 # ERROR or higher.
