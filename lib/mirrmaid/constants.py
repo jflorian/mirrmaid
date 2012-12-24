@@ -75,6 +75,11 @@ LOG_STATE = '/var/lib/mirrmaid/log_state'
 # Name of environment variable used to configure rsync for proxy usage.
 RSYNC_PROXY = 'RSYNC_PROXY'
 
+# mirrmaid will drop (root) privileges, if necessary, to the following at
+# startup.
+RUNTIME_GROUP = 'mirrmaid'
+RUNTIME_USER = 'mirrmaid'
+
 # The operations summary log file, which captures only messages at level
 # ERROR or higher.
 SUMMARY_FILENAME = '/var/log/mirrmaid/summary'

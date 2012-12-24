@@ -22,12 +22,14 @@ This module implements the MirrorManager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
-from optparse import OptionParser
-from traceback import format_exc
+import grp
 import logging
 import logging.handlers
+from optparse import OptionParser
 import os
+import pwd
 import sys
+from traceback import format_exc
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
@@ -43,6 +45,7 @@ __copyright__ = """Copyright 2009-2012 John Florian"""
 class MirrorManager(object):
     def __init__(self, args):
         self.args = args
+        self._drop_privileges()
         self.options = None
         self.parser = None
         self._init_logger()
@@ -82,6 +85,22 @@ class MirrorManager(object):
         # logged there during this run.
         if handler.summary_due():
             handler.force_rollover()
+
+    def _drop_privileges(self):
+        """Drop privileges, if necessary, to run as correct user/group."""
+        runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
+        runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
+        if os.getuid() != runtime_uid and os.getgid() != runtime_gid:
+            try:
+                os.setgroups([])
+                os.setgid(runtime_gid)
+                os.setuid(runtime_uid)
+            except OSError as e:
+                self._exit(os.EX_OSERR,
+                           'could not drop privileges to USER/GROUP "{0}/{1}" '
+                           'because: {2}'.format(RUNTIME_USER, RUNTIME_GROUP,
+                                                 e))
+        os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
         """Cause the current command to exit.
