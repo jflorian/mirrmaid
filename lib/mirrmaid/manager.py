@@ -22,12 +22,14 @@ This module implements the MirrorManager, which directs the mirroring
 activities of one or more Mirror_Synchronizers.
 """
 
-from optparse import OptionParser
-from traceback import format_exc
+import grp
 import logging
 import logging.handlers
+from optparse import OptionParser
 import os
+import pwd
 import sys
+from traceback import format_exc
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
@@ -43,6 +45,7 @@ __copyright__ = """Copyright 2009-2012 John Florian"""
 class MirrorManager(object):
     def __init__(self, args):
         self.args = args
+        self._drop_privileges()
         self.options = None
         self.parser = None
         self._init_logger()
@@ -54,6 +57,25 @@ class MirrorManager(object):
             console.setFormatter(CONSOLE_FORMATTER)
             self.log.addHandler(console)
 
+    def _config_proxy(self):
+        """Configure the rsync proxy."""
+        proxy = self.mirrmaid_conf.proxy
+        if proxy is None:
+            try:
+                del os.environ[RSYNC_PROXY]
+            except KeyError:
+                pass
+            else:
+                self.log.warning(
+                    'environment variable "{0}" has been unset; '
+                    'use the "proxy" setting in {1} instead '
+                    'if proxy support is required'.format(
+                        RSYNC_PROXY, self.options.config_filename))
+            self.log.debug('will not proxy rsync')
+        else:
+            os.environ[RSYNC_PROXY] = proxy
+            self.log.debug('will proxy rsync through "{0}"'.format(proxy))
+
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
         handler.setFormatter(LOGGING_FORMATTER)
@@ -63,6 +85,22 @@ class MirrorManager(object):
         # logged there during this run.
         if handler.summary_due():
             handler.force_rollover()
+
+    def _drop_privileges(self):
+        """Drop privileges, if necessary, to run as correct user/group."""
+        runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
+        runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
+        if os.getuid() != runtime_uid and os.getgid() != runtime_gid:
+            try:
+                os.setgroups([])
+                os.setgid(runtime_gid)
+                os.setuid(runtime_uid)
+            except OSError as e:
+                self._exit(os.EX_OSERR,
+                           'could not drop privileges to USER/GROUP "{0}/{1}" '
+                           'because: {2}'.format(RUNTIME_USER, RUNTIME_GROUP,
+                                                 e))
+        os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
         """Cause the current command to exit.
@@ -89,6 +127,10 @@ class MirrorManager(object):
         handler.setFormatter(LOGGING_FORMATTER)
         self.log.addHandler(handler)
 
+    def _log_environment(self):
+        for k in sorted(os.environ):
+            self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
+
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')
         self.parser.add_option('-c', '--config',
@@ -111,28 +153,30 @@ class MirrorManager(object):
             self._exit(os.EX_USAGE,
                        'LOG_LEVEL must not be less than 1 nor greater than 5.')
 
+    def _run(self):
+        self._parse_options()
+        self._config_logger()
+        self.log.debug(
+            'using config file: {0}'.format(self.options.config_filename))
+        self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
+        self._config_proxy()
+        self._config_summarizer()
+        self._log_environment()
+        self.default_conf = DefaultConfig(self.options.config_filename)
+        self.mirrors_conf = MirrorsConfig(self.options.config_filename)
+        self.log.debug('enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
+        for mirror in self.mirrors_conf.mirrors:
+            self.log.debug('processing mirror: "{0}"'.format(mirror))
+            worker = Synchronizer(
+                self.default_conf,
+                MirrorConfig(self.options.config_filename, mirror)
+            )
+            worker.run()
+
     def run(self):
         #noinspection PyBroadException
         try:
-            self._parse_options()
-            self._config_logger()
-            self.log.debug(
-                'using config file: {0}'.format(self.options.config_filename))
-            self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
-            self._config_summarizer()
-            for k in sorted(os.environ):
-                self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
-            self.default_conf = DefaultConfig(self.options.config_filename)
-            self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-            mirrors = self.mirrors_conf.mirrors
-            self.log.debug('enabled mirrors: {0}'.format(mirrors))
-            for mirror in mirrors:
-                self.log.debug('processing mirror: "{0}"'.format(mirror))
-                worker = Synchronizer(
-                    self.default_conf,
-                    MirrorConfig(self.options.config_filename, mirror)
-                )
-                worker.run()
+            self._run()
         except InvalidConfiguration as e:
             self.log.critical('invalid configuration:\n{0}'.format(e))
             self._exit(os.EX_CONFIG)
