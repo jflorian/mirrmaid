@@ -19,7 +19,7 @@ Requires:       python3 >= 3
 Requires:       python3-doubledog >= 1.3
 Requires:       rsync
 Requires:       util-linux-ng
-Requires:       vixie-cron
+Requires:       cronie
 
 %description
 This package efficiently maintains synchronized target mirrors of source
