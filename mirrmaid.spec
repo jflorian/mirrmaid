@@ -1,8 +1,8 @@
 %define python_module_name mirrmaid
 
 Name:           mirrmaid
-Version:        0.17
-Release:        2%{?dist}
+Version:        0.18
+Release:        1%{?dist}
 Summary:        efficient mirror manager
 
 Group:          Applications/Internet
@@ -83,6 +83,8 @@ fi
 
 
 %changelog
+* Sun Jan 05 2014 John Florian <jflorian@doubledog.org> - 0.18-1
+Janitorial - update copyrights
 * Mon Dec 24 2012 John Florian <jflorian@doubledog.org> - 0.17-1
 Change - sanitize Python environment
 New - drop privileges at startup

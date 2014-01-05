@@ -1,4 +1,4 @@
-# Copyright 2012 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -21,7 +21,7 @@ This module implements all Exception classes for the mirrmaid package.
 """
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012 John Florian"""
+__copyright__ = """Copyright 2012-2014 John Florian"""
 
 
 class SynchronizerException(Exception):

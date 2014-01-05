@@ -1,4 +1,4 @@
-# Copyright 2012 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -34,7 +34,7 @@ from doubledog.mail import MiniMailer
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012 John Florian"""
+__copyright__ = """Copyright 2012-2014 John Florian"""
 
 
 class SummaryGroup(object):
