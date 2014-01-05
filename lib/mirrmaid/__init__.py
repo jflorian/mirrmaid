@@ -1,4 +1,4 @@
-# Copyright 2009-2012 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 # 
@@ -18,4 +18,4 @@
 
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2012 John Florian"""
+__copyright__ = """Copyright 2009-2014 John Florian"""
