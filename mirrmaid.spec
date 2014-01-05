@@ -2,7 +2,7 @@
 
 Name:           mirrmaid
 Version:        0.17
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        efficient mirror manager
 
 Group:          Applications/Internet
