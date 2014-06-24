@@ -33,7 +33,7 @@ other.
 %setup -q
 
 %build
-%{__python3} pkg_tools/setup.py build
+%{__python3} lib/setup.py build
 
 %install
 rm -rf %{buildroot}
@@ -44,7 +44,7 @@ install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
-%{__python3} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
+%{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
 %clean
 rm -rf %{buildroot}
