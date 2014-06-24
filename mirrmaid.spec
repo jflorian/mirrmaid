@@ -1,6 +1,6 @@
 # vim: foldmethod=marker
 
-%define python_module_name mirrmaid
+%define python_package_name mirrmaid
 
 # {{{1 package meta-data
 Name:           mirrmaid
@@ -80,8 +80,8 @@ fi
 %doc doc/*
 %{_bindir}/%{name}
 
-%dir %{python3_sitelib}/%{python_module_name}
-%{python3_sitelib}/%{python_module_name}/*
+%dir %{python3_sitelib}/%{python_package_name}
+%{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
