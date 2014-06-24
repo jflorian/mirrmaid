@@ -4,7 +4,7 @@
 
 # {{{1 package meta-data
 Name:           mirrmaid
-Version:        0.18
+Version:        0.19
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -91,6 +91,12 @@ fi
 
 # {{{1 changelog
 %changelog
+* Tue Jun 24 2014 John Florian <john_florian@dart.biz> - 0.19-1
+ - Change - global macro preferred over define in spec (john_florian@dart.biz)
+ - Fix - inaccurate terminology (john_florian@dart.biz)
+ - New - vim folding markers in spec (john_florian@dart.biz)
+ - Change - PyCharm prefers setup.py with lib/ (john_florian@dart.biz)
+
 * Sun Jan 05 2014 John Florian <jflorian@doubledog.org> - 0.18-1
 Janitorial - update copyrights
 * Mon Dec 24 2012 John Florian <jflorian@doubledog.org> - 0.17-1
