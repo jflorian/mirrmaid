@@ -1,5 +1,8 @@
+# vim: foldmethod=marker
+
 %define python_module_name mirrmaid
 
+# {{{1 package meta-data
 Name:           mirrmaid
 Version:        0.18
 Release:        1%{?dist}
@@ -29,12 +32,14 @@ is the simple yet powerful configuration, automatic cron scheduling and
 locking to prevent concurrently running instances from working against each
 other.
 
+# {{{1 prep & build
 %prep
 %setup -q
 
 %build
 %{__python3} lib/setup.py build
 
+# {{{1 install
 %install
 rm -rf %{buildroot}
 
@@ -46,6 +51,7 @@ install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
+# {{{1 clean, pre & post
 %clean
 rm -rf %{buildroot}
 
@@ -65,6 +71,7 @@ fi
 
 %postun
 
+# {{{1 files
 %files
 %defattr(-,root,root,-)
 
@@ -82,6 +89,7 @@ fi
 %{_var}/log/%{name}
 
 
+# {{{1 changelog
 %changelog
 * Sun Jan 05 2014 John Florian <jflorian@doubledog.org> - 0.18-1
 Janitorial - update copyrights
