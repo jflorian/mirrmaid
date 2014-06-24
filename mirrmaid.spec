@@ -1,6 +1,6 @@
 # vim: foldmethod=marker
 
-%define python_package_name mirrmaid
+%global python_package_name mirrmaid
 
 # {{{1 package meta-data
 Name:           mirrmaid
