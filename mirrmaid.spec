@@ -1,7 +1,10 @@
-%define python_module_name mirrmaid
+# vim: foldmethod=marker
 
+%global python_package_name mirrmaid
+
+# {{{1 package meta-data
 Name:           mirrmaid
-Version:        0.18
+Version:        0.19
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -29,12 +32,14 @@ is the simple yet powerful configuration, automatic cron scheduling and
 locking to prevent concurrently running instances from working against each
 other.
 
+# {{{1 prep & build
 %prep
 %setup -q
 
 %build
-%{__python3} pkg_tools/setup.py build
+%{__python3} lib/setup.py build
 
+# {{{1 install
 %install
 rm -rf %{buildroot}
 
@@ -44,8 +49,9 @@ install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
-%{__python3} pkg_tools/setup.py install -O1 --skip-build --root %{buildroot}
+%{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
+# {{{1 clean, pre & post
 %clean
 rm -rf %{buildroot}
 
@@ -65,6 +71,7 @@ fi
 
 %postun
 
+# {{{1 files
 %files
 %defattr(-,root,root,-)
 
@@ -73,8 +80,8 @@ fi
 %doc doc/*
 %{_bindir}/%{name}
 
-%dir %{python3_sitelib}/%{python_module_name}
-%{python3_sitelib}/%{python_module_name}/*
+%dir %{python3_sitelib}/%{python_package_name}
+%{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
@@ -82,7 +89,14 @@ fi
 %{_var}/log/%{name}
 
 
+# {{{1 changelog
 %changelog
+* Tue Jun 24 2014 John Florian <john_florian@dart.biz> - 0.19-1
+ - Change - global macro preferred over define in spec (john_florian@dart.biz)
+ - Fix - inaccurate terminology (john_florian@dart.biz)
+ - New - vim folding markers in spec (john_florian@dart.biz)
+ - Change - PyCharm prefers setup.py with lib/ (john_florian@dart.biz)
+
 * Sun Jan 05 2014 John Florian <jflorian@doubledog.org> - 0.18-1
 Janitorial - update copyrights
 * Mon Dec 24 2012 John Florian <jflorian@doubledog.org> - 0.17-1
