@@ -38,6 +38,7 @@ from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, SynchronizerException
 
+
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2014 John Florian"""
 
@@ -164,7 +165,8 @@ class MirrorManager(object):
         self._log_environment()
         self.default_conf = DefaultConfig(self.options.config_filename)
         self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-        self.log.debug('enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
+        self.log.debug(
+            'enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
         for mirror in self.mirrors_conf.mirrors:
             self.log.debug('processing mirror: "{0}"'.format(mirror))
             worker = Synchronizer(
@@ -174,7 +176,7 @@ class MirrorManager(object):
             worker.run()
 
     def run(self):
-        #noinspection PyBroadException
+        # noinspection PyBroadException
         try:
             self._run()
         except InvalidConfiguration as e:
@@ -187,7 +189,7 @@ class MirrorManager(object):
             self.log.error('interrupted via SIGINT')
             self._exit(os.EX_OSERR)
         except SystemExit:
-            pass        # presumably already handled
+            pass  # presumably already handled
         except:
             self.log.critical('unhandled exception:\n{0}'.format(format_exc()))
             self._exit(os.EX_SOFTWARE)

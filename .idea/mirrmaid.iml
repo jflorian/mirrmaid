@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/bin" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.2.3 (/usr/bin/python3.2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.3.0 (/usr/bin/python3.3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

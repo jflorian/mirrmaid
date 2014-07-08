@@ -33,6 +33,7 @@ from doubledog.mail import MiniMailer
 
 from mirrmaid.constants import *
 
+
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012-2014 John Florian"""
 
@@ -200,7 +201,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         due = age > self.mirrmaid_config.summary_interval
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
-        # whereas the class state is what has been true since last notification.
+        # whereas the class state is what has been true since last
+        # notification.
         self._rolled_for_age |= due
         return due
 
@@ -221,7 +223,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         for_age = self.summary_due()
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
-        # whereas the class state is what has been true since last notification.
+        # whereas the class state is what has been true since last
+        # notification.
         self._rolled_for_size |= for_size
         return for_age or for_size
 
