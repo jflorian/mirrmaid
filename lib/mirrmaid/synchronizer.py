@@ -158,14 +158,15 @@ class Synchronizer(object):
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
         self.log.info('rsync pid={0}'.format(process.pid))
-        exit = process.collect(self.log.info, self.log.error)
-        if exit < 0:
-            self.log.warn('rsync terminated; caught signal {0}'.format(-exit))
+        exit_code = process.collect(self.log.info, self.log.error)
+        if exit_code < 0:
+            self.log.warn(
+                'rsync terminated; caught signal {0}'.format(-exit_code))
         else:
-            level = [logging.INFO, logging.DEBUG][exit == os.EX_OK]
-            self.log.log(level, 'rsync exit code={0}'.format(exit))
+            level = [logging.INFO, logging.DEBUG][exit_code == os.EX_OK]
+            self.log.log(level, 'rsync exit code={0}'.format(exit_code))
         self.log.info('mirror synchronization finished')
-        return exit
+        return exit_code
 
     def run(self):
         """Acquire a lock and if successful, update the target replica."""
