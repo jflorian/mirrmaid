@@ -49,7 +49,8 @@ class Synchronizer(object):
             'mirrmaid.{0}'.format(self.mirror_conf.mirror_name))
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
-    def _ensure_lock_directory_exists(self):
+    @staticmethod
+    def _ensure_lock_directory_exists():
         """Make the lock directory unless it already exists."""
         try:
             if not os.path.isdir(LOCK_DIRECTORY):

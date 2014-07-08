@@ -43,7 +43,8 @@ class SummaryGroup(object):
         self.name = name
         self.hash = self.hash_name(self.name)
 
-    def hash_name(self, name):
+    @staticmethod
+    def hash_name(name):
         return md5(name.encode()).hexdigest()
 
 
