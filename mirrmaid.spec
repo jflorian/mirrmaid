@@ -155,7 +155,7 @@ Fix - fails with lock on tmpfs and net user account
 Fix - no copyright variable in modules
 Fix - shouldn't use env to find python
 Fix - test harness mishandles quoted args
-Janitorial - complete project reorg
+Janitorial - complete project reorganization
 Janitorial - remove trailing whitespace
 Janitorial - use standard Python quoting style
 * Fri Jul 23 2010 John Florian <john_florian@dart.biz> - 0.9-1

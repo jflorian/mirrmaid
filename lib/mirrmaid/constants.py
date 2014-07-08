@@ -29,8 +29,7 @@ __copyright__ = """Copyright 2012-2014 John Florian"""
 # The default run-time configuration file.
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 
-# Format to be used when logging to console (i.e., when using mirrmaid's '-d'
-# option).
+# Format to be used when logging to console (i.e., when using the '-d' option).
 CONSOLE_FORMATTER = Formatter('%(name)s %(levelname)-8s %(message)s')
 
 # Default rsync proxy to use in 'HOST:PORT' format or None if no proxy is
