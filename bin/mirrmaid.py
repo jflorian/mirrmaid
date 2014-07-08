@@ -1,4 +1,5 @@
 #!/usr/bin/python3 -Es
+# coding=utf-8
 
 
 # Copyright 2009-2014 John Florian <jflorian@doubledog.org>
