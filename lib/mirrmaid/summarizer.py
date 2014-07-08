@@ -154,7 +154,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
-        with open('{0}.1'.format(self.baseFilename), 'r') as f:
+        with open('{0}.1'.format(self.baseFilename)) as f:
             log_content = f.read()
         heading = '{0:>25}:  {1}'
         body = [
