@@ -148,10 +148,10 @@ class Synchronizer(object):
         """
 
         self.log.info('mirror synchronization started')
-        cmd = ( ['/usr/bin/rsync']
-                + self._get_rsync_options()
-                + self._get_rsync_includes()
-                + self._get_rsync_excludes() )
+        cmd = (['/usr/bin/rsync']
+               + self._get_rsync_options()
+               + self._get_rsync_includes()
+               + self._get_rsync_excludes())
         cmd.append(self._get_source())
         cmd.append(self._get_target())
         self.log.debug('spawning {0}'.format(cmd))

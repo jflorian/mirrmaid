@@ -67,7 +67,6 @@ class LogState(object):
     def __log_state_filename(self):
         return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
 
-
     @property
     def last_rollover(self):
         """Return the number of seconds since the last rollover."""
@@ -121,15 +120,17 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def __log_filename(self):
         return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
 
-
     def __subject(self):
         return 'mirrmaid Activity Summary for {0}'.format(
             self.mirrmaid_config.summary_group)
 
     def _mail_summary(self):
         sender = 'mirrmaid@{0}'.format(getfqdn())
-        MiniMailer().send(sender, self.mirrmaid_config.summary_recipients,
-                          self.__subject(), self._summary_body()
+        MiniMailer().send(
+            sender,
+            self.mirrmaid_config.summary_recipients,
+            self.__subject(),
+            self._summary_body()
         )
         self._reset_reasons()
 
