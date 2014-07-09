@@ -28,6 +28,7 @@ import logging
 import logging.handlers
 import shelve
 from socket import getfqdn
+import sys
 from time import time, ctime, asctime
 
 from doubledog.mail import MiniMailer
@@ -126,12 +127,15 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     def _mail_summary(self):
         sender = 'mirrmaid@{0}'.format(getfqdn())
-        MiniMailer().send(
-            sender,
-            self.mirrmaid_config.summary_recipients,
-            self.__subject(),
-            self._summary_body()
-        )
+        try:
+            MiniMailer().send(
+                sender,
+                self.mirrmaid_config.summary_recipients,
+                self.__subject(),
+                self._summary_body()
+            )
+        except ConnectionError as e:
+            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
         self._reset_reasons()
 
     def _reason(self):
