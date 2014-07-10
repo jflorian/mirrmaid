@@ -56,8 +56,7 @@ class MirrmaidConfig(BaseConfig):
             the application default will be returned instead.
         @rtype:     str
         """
-        return self.get('proxy', required=False,
-                        default=DEFAULT_PROXY)
+        return self.get('proxy', required=False, default=DEFAULT_PROXY)
 
     @property
     def summary_group(self):
@@ -77,8 +76,11 @@ class MirrmaidConfig(BaseConfig):
             instead.
         @rtype:     int
         """
-        return max(1, self.get_int('summary_history_count', required=False,
-                                   default=DEFAULT_SUMMARY_HISTORY_COUNT))
+        return max(
+            1,
+            self.get_int('summary_history_count', required=False,
+                         default=DEFAULT_SUMMARY_HISTORY_COUNT)
+        )
 
     @property
     def summary_interval(self):
@@ -87,8 +89,11 @@ class MirrmaidConfig(BaseConfig):
             If unset, the application default will be returned instead.
         @rtype:     int
         """
-        return max(600, self.get_int('summary_interval', required=False,
-                                     default=DEFAULT_SUMMARY_INTERVAL))
+        return max(
+            600,
+            self.get_int('summary_interval', required=False,
+                         default=DEFAULT_SUMMARY_INTERVAL)
+        )
 
     @property
     def summary_recipients(self):

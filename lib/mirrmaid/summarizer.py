@@ -125,7 +125,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         super(LogSummarizingHandler, self).__init__(
             self.__log_filename(),
             maxBytes=self.mirrmaid_config.summary_size,
-            backupCount=self.mirrmaid_config.summary_history_count)
+            backupCount=self.mirrmaid_config.summary_history_count
+        )
 
     def __log_filename(self):
         return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
@@ -158,8 +159,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         if self._rolled_for_size:
             reasons.append('size')
         if len(reasons):
-            return '{0} of logged messages'.format(
-                ' and '.join(reasons))
+            return '{0} of logged messages'.format(' and '.join(reasons))
         else:
             return 'forced'
 

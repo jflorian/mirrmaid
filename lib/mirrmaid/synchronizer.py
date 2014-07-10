@@ -59,7 +59,8 @@ class Synchronizer(object):
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
-            'mirrmaid.{0}'.format(self.mirror_conf.mirror_name))
+            'mirrmaid.{0}'.format(self.mirror_conf.mirror_name)
+        )
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
     @staticmethod
@@ -154,12 +155,15 @@ class Synchronizer(object):
         try:
             self.lock_file.exclusive_lock()
         except LockException:
-            self.log.info('{0} already locked by another process'.format(
-                self.lock_file.name))
+            self.log.info(
+                '{0} already locked by another process'
+                .format(self.lock_file.name)
+            )
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on {0}'.format(self.lock_file.name))
+                'gained exclusive-lock on {0}'.format(self.lock_file.name)
+            )
             return True
 
     def _unlock_replica(self):
@@ -167,11 +171,13 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on {0}'.format(self.lock_file.name))
+                'released exclusive-lock on {0}'.format(self.lock_file.name)
+            )
         except OSError as e:
             self.log.error(
-                'failed to remove lock file: {0} because:\n{1}'.format(
-                    self.lock_file.name), e)
+                'failed to remove lock-file: {0} because:\n{1}'
+                .format(self.lock_file.name), e
+            )
 
     def _update_replica(self):
         """
@@ -187,10 +193,12 @@ class Synchronizer(object):
         """
 
         self.log.info('mirror synchronization started')
-        cmd = (['/usr/bin/rsync']
-               + self._get_rsync_options()
-               + self._get_rsync_includes()
-               + self._get_rsync_excludes())
+        cmd = (
+            ['/usr/bin/rsync']
+            + self._get_rsync_options()
+            + self._get_rsync_includes()
+            + self._get_rsync_excludes()
+        )
         cmd.append(self._get_source())
         cmd.append(self._get_target())
         self.log.debug('spawning {0}'.format(cmd))
@@ -200,7 +208,8 @@ class Synchronizer(object):
         exit_code = process.collect(self.log.info, self.log.error)
         if exit_code < 0:
             self.log.warn(
-                'rsync terminated; caught signal {0}'.format(-exit_code))
+                'rsync terminated; caught signal {0}'.format(-exit_code)
+            )
         else:
             level = [logging.INFO, logging.DEBUG][exit_code == os.EX_OK]
             self.log.log(level, 'rsync exit code={0}'.format(exit_code))

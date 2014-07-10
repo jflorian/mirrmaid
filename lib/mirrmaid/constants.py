@@ -56,7 +56,8 @@ DEFAULT_SUMMARY_SIZE = 20000
 # Format to be used when logging to the main log file and the operations
 # summary log file.
 LOGGING_FORMATTER = Formatter(
-    '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s')
+    '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s'
+)
 
 # Where run-time advisory lock files are created. While it would be
 # preferable to have:

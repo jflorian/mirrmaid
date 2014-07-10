@@ -71,8 +71,9 @@ class MirrorManager(object):
                 self.log.warning(
                     'environment variable "{0}" has been unset; '
                     'use the "proxy" setting in {1} instead '
-                    'if proxy support is required'.format(
-                        RSYNC_PROXY, self.options.config_filename))
+                    'if proxy support is required'
+                    .format(RSYNC_PROXY, self.options.config_filename)
+                )
             self.log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
@@ -138,31 +139,42 @@ class MirrorManager(object):
 
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')
-        self.parser.add_option('-c', '--config',
-                               type='string', dest='config_filename',
-                               help='use alternate configuration file')
-        self.parser.add_option('-d', '--debug',
-                               action='store_true', dest='debug',
-                               help='enable logging to console')
-        self.parser.add_option('-l', '--level',
-                               type='int', dest='log_level',
-                               help=('set minimum logging threshold '
-                                     '(1=debug, 2=info[default], 3=warning, '
-                                     '4=error, 5=critical'))
-        self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False,
-                                 log_level=2)
+        self.parser.add_option(
+            '-c', '--config',
+            type='string', dest='config_filename',
+            help='use alternate configuration file'
+        )
+        self.parser.add_option(
+            '-d', '--debug',
+            action='store_true', dest='debug',
+            help='enable logging to console'
+        )
+        self.parser.add_option(
+            '-l', '--level',
+            type='int', dest='log_level',
+            help=('set minimum logging threshold (1=debug, 2=info[default], '
+                  '3=warning, 4=error, 5=critical')
+        )
+        self.parser.set_defaults(
+            config_filename=CONFIG_FILENAME,
+            debug=False,
+            log_level=2,
+        )
         self.options, self.args = self.parser.parse_args()
         if len(self.args):
             self._exit(os.EX_USAGE, 'No arguments expected.', show_help=True)
         if self.options.log_level not in range(1, 6):
-            self._exit(os.EX_USAGE,
-                       'LOG_LEVEL must not be less than 1 nor greater than 5.')
+            self._exit(
+                os.EX_USAGE,
+                'LOG_LEVEL must not be less than 1 nor greater than 5.'
+            )
 
     def _run(self):
         self._parse_options()
         self._config_logger()
         self.log.debug(
-            'using config file: {0}'.format(self.options.config_filename))
+            'using config file: {0}'.format(self.options.config_filename)
+        )
         self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
         self._config_proxy()
         self._config_summarizer()
@@ -170,7 +182,8 @@ class MirrorManager(object):
         self.default_conf = DefaultConfig(self.options.config_filename)
         self.mirrors_conf = MirrorsConfig(self.options.config_filename)
         self.log.debug(
-            'enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
+            'enabled mirrors: {0}'.format(self.mirrors_conf.mirrors)
+        )
         for mirror in self.mirrors_conf.mirrors:
             self.log.debug('processing mirror: "{0}"'.format(mirror))
             worker = Synchronizer(
