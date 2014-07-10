@@ -51,7 +51,7 @@ class SummaryGroup(object):
 
 
 class LogState(object):
-    """A trivial persistent shelf object for recording log rotation state."""
+    """A trivial, persistent shelf object for recording log rotation state."""
 
     GROUP_TAG = 'group_tag'
     LAST_ROLLOVER = 'last_rollover'
@@ -70,7 +70,10 @@ class LogState(object):
 
     @property
     def last_rollover(self):
-        """Return the number of seconds since the last rollover."""
+        """
+        @return:    The number of seconds since the last rollover.
+        @rtype:     float
+        """
 
         shelf = None
         try:
@@ -84,7 +87,12 @@ class LogState(object):
 
     @last_rollover.setter
     def last_rollover(self, when):
-        """Record the time of rollover."""
+        """
+        Record the time of rollover.
+
+        @param when:    The time when the rollover occurred.
+        @type when:     float
+        """
 
         shelf = None
         try:
@@ -97,7 +105,8 @@ class LogState(object):
 
 
 class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
-    """This class extends the RotatingFileHandler with an additional rollover
+    """
+    This class extends the RotatingFileHandler with an additional rollover
     trigger based on the elapsed time since the last rollover.  Thus this
     handler ensure the log gets a rollover whenever maxBytes is exceeded or
     when the elapsed time exceeds the configured summary_interval, whichever
@@ -140,8 +149,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     def _reason(self):
         """
-        @return: Formatted message stating reason(s) for rollover.
-        @rtype: str
+        @return:    Formatted message stating reason(s) for rollover.
+        @rtype:     str
         """
         reasons = []
         if self._rolled_for_age:
@@ -179,8 +188,9 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         return '\n'.join(body)
 
     def doRollover(self):
-        """Overridden method.  Perform all inherited behavior and mail any
-        content just rolled out of the current log file.
+        """
+        Overridden method.  Perform all inherited behavior and mail any content
+        just rolled out of the current log file.
         """
 
         super(LogSummarizingHandler, self).doRollover()
@@ -201,8 +211,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         """
         Determine if a summary is needed based on age.
 
-        @return: C{True} if and only if logged messages are sufficiently aged.
-        @rtype: bool
+        @return:    C{True} iff logged messages are sufficiently aged.
+        @rtype:     bool
         """
         age = time() - self._log_state.last_rollover
         due = age > self.mirrmaid_config.summary_interval
@@ -221,10 +231,11 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             1) the log attains a certain minimum size
             2) the log contains content that has attained a certain minimum age
 
-        @param record: Log record about to be committed.
-        @type record: LogRecord
-        @return: C{True} if and only if a rollover is needed for any reason.
-        @rtype: bool
+        @param record:  Log record about to be committed.
+        @type record:   LogRecord
+
+        @return:    C{True} iff a rollover is needed for any reason.
+        @rtype:     bool
         """
         for_size = super(LogSummarizingHandler, self).shouldRollover(record)
         for_age = self.summary_due()

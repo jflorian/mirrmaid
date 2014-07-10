@@ -98,14 +98,17 @@ class MirrorManager(object):
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self._exit(os.EX_OSERR,
-                           'could not drop privileges to USER/GROUP "{0}/{1}" '
-                           'because: {2}'.format(RUNTIME_USER, RUNTIME_GROUP,
-                                                 e))
+                self._exit(
+                    os.EX_OSERR,
+                    'could not drop privileges to USER/GROUP "{0}/{1}" '
+                    'because: {2}'
+                    .format(RUNTIME_USER, RUNTIME_GROUP, e)
+                )
         os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
-        """Cause the current command to exit.
+        """
+        Cause the current command to exit.
 
         If provided, the message will be shown; presumably containing the
         reason.  An exit code will be provided for the caller and if this

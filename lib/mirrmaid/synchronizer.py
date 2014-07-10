@@ -39,9 +39,21 @@ __copyright__ = """Copyright 2009-2014 John Florian"""
 
 
 class Synchronizer(object):
+    """
+    This is effectively a Python wrapper around the venerable rsync, but made
+    suitable for mirrmaid use.  The options and arguments for rsync are mostly
+    derived from the mirrmaid configuration file.  A Synchronizer object works
+    on a single mirror.  Multiple Synchronizers may run concurrently provided
+    they are operating on distinct mirrors.  This is enforced via lock-files
+    on a per-mirror basis.
+    """
+
     def __init__(self, default_conf, mirror_conf):
-        """Construct a Synchronizer object that observes the default and
-        mirror-specific configuration.
+        """
+        Initialize the Synchronizer object.
+
+        This will happen according to the default and mirror-specific
+        sections of the configuration file..
         """
 
         self.default_conf = default_conf
@@ -58,15 +70,22 @@ class Synchronizer(object):
                 os.makedirs(LOCK_DIRECTORY)
         except OSError as e:
             raise SynchronizerException(
-                'cannot create lock directory: {0}'.format(e))
+                'cannot create lock directory: {0}'.format(e)
+            )
 
     def _get_lock_name(self):
-        """Return the name of the lock file for the target replica."""
+        """
+        @return:    The name of the lock-file for the target replica.
+        @rtype:     str
+        """
 
         return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
     def _get_rsync_excludes(self):
-        """Return the rsync options to effect the mirror's list of exclusions.
+        """
+        @return:    The rsync options to effect the mirror's list of
+            exclusions.
+        @rtype:     list of str
         """
 
         result = []
@@ -76,7 +95,10 @@ class Synchronizer(object):
         return result
 
     def _get_rsync_includes(self):
-        """Return the rsync options to effect the mirror's list of inclusions.
+        """
+        @return:    The rsync options to effect the mirror's list of
+            inclusions.
+        @rtype:     list of str
         """
 
         result = []
@@ -86,13 +108,18 @@ class Synchronizer(object):
         return result
 
     def _get_rsync_options(self):
-        """Return the default rsync options to be used as a list."""
+        """
+        @return:    The default rsync options to be used.
+        @rtype:     list of str
+        """
 
         return self.default_conf.get_list('rsync_options')
 
     def _get_source(self):
-        """Return the fully-qualified rsync URI for the source of the
-        directory structure to be mirrored.
+        """
+        @return:    The fully-qualified rsync URI for the source of the
+            directory structure to be mirrored.
+        @rtype:     str
         """
 
         source = self.mirror_conf.source
@@ -101,8 +128,10 @@ class Synchronizer(object):
         return source
 
     def _get_target(self):
-        """Return the fully-qualified rsync URI for the target target of the
-        mirroring operation.
+        """
+        @return:    The fully-qualified rsync URI for the target target of the
+            mirroring operation.
+        @rtype:     str
         """
 
         target = self.mirror_conf.target
@@ -111,10 +140,14 @@ class Synchronizer(object):
         return target
 
     def _lock_replica(self):
-        """Attempt to gain a lock on the target replica.
+        """
+        Attempt to gain a lock on the target replica.
 
         Locks are per target so that multiple Synchronizers may be working
         concurrently so long as it is not on the same collection job.
+
+        @return:    C{True} iff the lock was gained.
+        @rtype:     bool
         """
 
         self._ensure_lock_directory_exists()
@@ -141,10 +174,16 @@ class Synchronizer(object):
                     self.lock_file.name), e)
 
     def _update_replica(self):
-        """Start an instance of rsync with the necessary options and arguments
-        to effect a one-time synchronization.  Capture all stdout/stderr from
-        the process and inject it into the logger.  The exit code of the rsync
-        process is returned, where only a value of zero indicates success.
+        """
+        Effect a one-time synchronization.
+
+        Start an instance of rsync with the necessary options and arguments,
+        capturing all stdout/stderr from the process and inject it into the
+        logger.
+
+        @return:    The exit code of the rsync process, where only a value of
+            zero indicates success.
+        @rtype:     int
         """
 
         self.log.info('mirror synchronization started')
