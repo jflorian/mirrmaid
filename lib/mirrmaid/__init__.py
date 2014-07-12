@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2009-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.

@@ -4,7 +4,7 @@
 
 # {{{1 package meta-data
 Name:           mirrmaid
-Version:        0.19
+Version:        0.20
 Release:        1%{?dist}
 Summary:        efficient mirror manager
 
@@ -91,6 +91,22 @@ fi
 
 # {{{1 changelog
 %changelog
+* Sat Jul 12 2014 John Florian <jflorian@doubledog.org> - 0.20-1
+ - Fix - correct releasers config (jflorian@doubledog.org)
+ - Initialized to use tito. (john_florian@dart.biz)
+ - Change - default configuration improvements (john_florian@dart.biz)
+ - Change - quote values smartly, using repr() (john_florian@dart.biz)
+ - Janitorial - code format (john_florian@dart.biz)
+ - Janitorial - documentation improvements (john_florian@dart.biz)
+ - Fix - ConnectionError exception is unhandled (john_florian@dart.biz)
+ - Fix - spelling (john_florian@dart.biz)
+ - Refactor - 'exit' shadows built-in name (john_florian@dart.biz)
+ - Janitorial - PEP-8 conformance (john_florian@dart.biz)
+ - Fix - no encoding specified for files (john_florian@dart.biz)
+ - Refactor - methods may be static (john_florian@dart.biz)
+ - Refactor - argument equals default value (john_florian@dart.biz)
+ - Janitorial - reformat project (john_florian@dart.biz)
+
 * Tue Jun 24 2014 John Florian <john_florian@dart.biz> - 0.19-1
  - Change - global macro preferred over define in spec (john_florian@dart.biz)
  - Fix - inaccurate terminology (john_florian@dart.biz)
@@ -155,7 +171,7 @@ Fix - fails with lock on tmpfs and net user account
 Fix - no copyright variable in modules
 Fix - shouldn't use env to find python
 Fix - test harness mishandles quoted args
-Janitorial - complete project reorg
+Janitorial - complete project reorganization
 Janitorial - remove trailing whitespace
 Janitorial - use standard Python quoting style
 * Fri Jul 23 2010 John Florian <john_florian@dart.biz> - 0.9-1

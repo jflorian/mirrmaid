@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2012-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
@@ -27,11 +28,13 @@ import logging
 import logging.handlers
 import shelve
 from socket import getfqdn
+import sys
 from time import time, ctime, asctime
 
 from doubledog.mail import MiniMailer
 
 from mirrmaid.constants import *
+
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012-2014 John Florian"""
@@ -42,12 +45,13 @@ class SummaryGroup(object):
         self.name = name
         self.hash = self.hash_name(self.name)
 
-    def hash_name(self, name):
+    @staticmethod
+    def hash_name(name):
         return md5(name.encode()).hexdigest()
 
 
 class LogState(object):
-    """A trivial persistent shelf object for recording log rotation state."""
+    """A trivial, persistent shelf object for recording log rotation state."""
 
     GROUP_TAG = 'group_tag'
     LAST_ROLLOVER = 'last_rollover'
@@ -64,10 +68,12 @@ class LogState(object):
     def __log_state_filename(self):
         return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
 
-
     @property
     def last_rollover(self):
-        """Return the number of seconds since the last rollover."""
+        """
+        @return:    The number of seconds since the last rollover.
+        @rtype:     float
+        """
 
         shelf = None
         try:
@@ -81,7 +87,12 @@ class LogState(object):
 
     @last_rollover.setter
     def last_rollover(self, when):
-        """Record the time of rollover."""
+        """
+        Record the time of rollover.
+
+        @param when:    The time when the rollover occurred.
+        @type when:     float
+        """
 
         shelf = None
         try:
@@ -94,7 +105,8 @@ class LogState(object):
 
 
 class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
-    """This class extends the RotatingFileHandler with an additional rollover
+    """
+    This class extends the RotatingFileHandler with an additional rollover
     trigger based on the elapsed time since the last rollover.  Thus this
     handler ensure the log gets a rollover whenever maxBytes is exceeded or
     when the elapsed time exceeds the configured summary_interval, whichever
@@ -113,11 +125,11 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         super(LogSummarizingHandler, self).__init__(
             self.__log_filename(),
             maxBytes=self.mirrmaid_config.summary_size,
-            backupCount=self.mirrmaid_config.summary_history_count)
+            backupCount=self.mirrmaid_config.summary_history_count
+        )
 
     def __log_filename(self):
         return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
-
 
     def __subject(self):
         return 'mirrmaid Activity Summary for {0}'.format(
@@ -125,15 +137,21 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     def _mail_summary(self):
         sender = 'mirrmaid@{0}'.format(getfqdn())
-        MiniMailer().send(sender, self.mirrmaid_config.summary_recipients,
-                          self.__subject(), self._summary_body()
-        )
+        try:
+            MiniMailer().send(
+                sender,
+                self.mirrmaid_config.summary_recipients,
+                self.__subject(),
+                self._summary_body()
+            )
+        except ConnectionError as e:
+            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
         self._reset_reasons()
 
     def _reason(self):
         """
-        @return: Formatted message stating reason(s) for rollover.
-        @rtype: str
+        @return:    Formatted message stating reason(s) for rollover.
+        @rtype:     str
         """
         reasons = []
         if self._rolled_for_age:
@@ -141,8 +159,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         if self._rolled_for_size:
             reasons.append('size')
         if len(reasons):
-            return '{0} of logged messages'.format(
-                ' and '.join(reasons))
+            return '{0} of logged messages'.format(' and '.join(reasons))
         else:
             return 'forced'
 
@@ -153,7 +170,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
-        with open('{0}.1'.format(self.baseFilename), 'r') as f:
+        with open('{0}.1'.format(self.baseFilename)) as f:
             log_content = f.read()
         heading = '{0:>25}:  {1}'
         body = [
@@ -171,8 +188,9 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         return '\n'.join(body)
 
     def doRollover(self):
-        """Overridden method.  Perform all inherited behavior and mail any
-        content just rolled out of the current log file.
+        """
+        Overridden method.  Perform all inherited behavior and mail any content
+        just rolled out of the current log file.
         """
 
         super(LogSummarizingHandler, self).doRollover()
@@ -193,14 +211,15 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         """
         Determine if a summary is needed based on age.
 
-        @return: C{True} if and only if logged messages are sufficiently aged.
-        @rtype: bool
+        @return:    C{True} iff logged messages are sufficiently aged.
+        @rtype:     bool
         """
         age = time() - self._log_state.last_rollover
         due = age > self.mirrmaid_config.summary_interval
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
-        # whereas the class state is what has been true since last notification.
+        # whereas the class state is what has been true since last
+        # notification.
         self._rolled_for_age |= due
         return due
 
@@ -212,16 +231,18 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             1) the log attains a certain minimum size
             2) the log contains content that has attained a certain minimum age
 
-        @param record: Log record about to be committed.
-        @type record: LogRecord
-        @return: C{True} if and only if a rollover is needed for any reason.
-        @rtype: bool
+        @param record:  Log record about to be committed.
+        @type record:   LogRecord
+
+        @return:    C{True} iff a rollover is needed for any reason.
+        @rtype:     bool
         """
         for_size = super(LogSummarizingHandler, self).shouldRollover(record)
         for_age = self.summary_due()
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
-        # whereas the class state is what has been true since last notification.
+        # whereas the class state is what has been true since last
+        # notification.
         self._rolled_for_size |= for_size
         return for_age or for_size
 

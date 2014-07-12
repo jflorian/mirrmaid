@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2012-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
@@ -28,8 +29,7 @@ __copyright__ = """Copyright 2012-2014 John Florian"""
 # The default run-time configuration file.
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 
-# Format to be used when logging to console (i.e., when using mirrmaid's '-d'
-# option).
+# Format to be used when logging to console (i.e., when using the '-d' option).
 CONSOLE_FORMATTER = Formatter('%(name)s %(levelname)-8s %(message)s')
 
 # Default rsync proxy to use in 'HOST:PORT' format or None if no proxy is
@@ -56,7 +56,8 @@ DEFAULT_SUMMARY_SIZE = 20000
 # Format to be used when logging to the main log file and the operations
 # summary log file.
 LOGGING_FORMATTER = Formatter(
-    '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s')
+    '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s'
+)
 
 # Where run-time advisory lock files are created. While it would be
 # preferable to have:

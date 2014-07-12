@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2009-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
@@ -38,6 +39,7 @@ from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, SynchronizerException
 
+
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2014 John Florian"""
 
@@ -67,14 +69,15 @@ class MirrorManager(object):
                 pass
             else:
                 self.log.warning(
-                    'environment variable "{0}" has been unset; '
+                    'environment variable {0} has been unset; '
                     'use the "proxy" setting in {1} instead '
-                    'if proxy support is required'.format(
-                        RSYNC_PROXY, self.options.config_filename))
+                    'if proxy support is required'
+                    .format(repr(RSYNC_PROXY), self.options.config_filename)
+                )
             self.log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
-            self.log.debug('will proxy rsync through "{0}"'.format(proxy))
+            self.log.debug('will proxy rsync through {0}'.format(repr(proxy)))
 
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
@@ -96,14 +99,17 @@ class MirrorManager(object):
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self._exit(os.EX_OSERR,
-                           'could not drop privileges to USER/GROUP "{0}/{1}" '
-                           'because: {2}'.format(RUNTIME_USER, RUNTIME_GROUP,
-                                                 e))
+                self._exit(
+                    os.EX_OSERR,
+                    'could not drop privileges to USER/GROUP {0}/{1} '
+                    'because: {2}'
+                    .format(repr(RUNTIME_USER), repr(RUNTIME_GROUP), e)
+                )
         os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
-        """Cause the current command to exit.
+        """
+        Cause the current command to exit.
 
         If provided, the message will be shown; presumably containing the
         reason.  An exit code will be provided for the caller and if this
@@ -129,44 +135,59 @@ class MirrorManager(object):
 
     def _log_environment(self):
         for k in sorted(os.environ):
-            self.log.debug('environment: {0}={1}'.format(k, os.environ[k]))
+            self.log.debug(
+                'environment: {0}={1}'.format(k, repr(os.environ[k]))
+            )
 
     def _parse_options(self):
         self.parser = OptionParser(usage='Usage: mirrmaid [options]')
-        self.parser.add_option('-c', '--config',
-                               type='string', dest='config_filename',
-                               help='use alternate configuration file')
-        self.parser.add_option('-d', '--debug',
-                               action='store_true', dest='debug',
-                               help='enable logging to console')
-        self.parser.add_option('-l', '--level',
-                               type='int', dest='log_level',
-                               help=('set minimum logging threshold '
-                                     '(1=debug, 2=info[default], 3=warning, '
-                                     '4=error, 5=critical'))
-        self.parser.set_defaults(config_filename=CONFIG_FILENAME, debug=False,
-                                 log_level=2)
+        self.parser.add_option(
+            '-c', '--config',
+            type='string', dest='config_filename',
+            help='use alternate configuration file'
+        )
+        self.parser.add_option(
+            '-d', '--debug',
+            action='store_true', dest='debug',
+            help='enable logging to console'
+        )
+        self.parser.add_option(
+            '-l', '--level',
+            type='int', dest='log_level',
+            help=('set minimum logging threshold (1=debug, 2=info[default], '
+                  '3=warning, 4=error, 5=critical')
+        )
+        self.parser.set_defaults(
+            config_filename=CONFIG_FILENAME,
+            debug=False,
+            log_level=2,
+        )
         self.options, self.args = self.parser.parse_args()
         if len(self.args):
             self._exit(os.EX_USAGE, 'No arguments expected.', show_help=True)
         if self.options.log_level not in range(1, 6):
-            self._exit(os.EX_USAGE,
-                       'LOG_LEVEL must not be less than 1 nor greater than 5.')
+            self._exit(
+                os.EX_USAGE,
+                'LOG_LEVEL must not be less than 1 nor greater than 5.'
+            )
 
     def _run(self):
         self._parse_options()
         self._config_logger()
         self.log.debug(
-            'using config file: {0}'.format(self.options.config_filename))
+            'using config file: {0}'.format(repr(self.options.config_filename))
+        )
         self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
         self._config_proxy()
         self._config_summarizer()
         self._log_environment()
         self.default_conf = DefaultConfig(self.options.config_filename)
         self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-        self.log.debug('enabled mirrors: {0}'.format(self.mirrors_conf.mirrors))
+        self.log.debug(
+            'enabled mirrors: {0}'.format(repr(self.mirrors_conf.mirrors))
+        )
         for mirror in self.mirrors_conf.mirrors:
-            self.log.debug('processing mirror: "{0}"'.format(mirror))
+            self.log.debug('processing mirror: {0}'.format(repr(mirror)))
             worker = Synchronizer(
                 self.default_conf,
                 MirrorConfig(self.options.config_filename, mirror)
@@ -174,7 +195,7 @@ class MirrorManager(object):
             worker.run()
 
     def run(self):
-        #noinspection PyBroadException
+        # noinspection PyBroadException
         try:
             self._run()
         except InvalidConfiguration as e:
@@ -187,7 +208,7 @@ class MirrorManager(object):
             self.log.error('interrupted via SIGINT')
             self._exit(os.EX_OSERR)
         except SystemExit:
-            pass        # presumably already handled
+            pass  # presumably already handled
         except:
             self.log.critical('unhandled exception:\n{0}'.format(format_exc()))
             self._exit(os.EX_SOFTWARE)

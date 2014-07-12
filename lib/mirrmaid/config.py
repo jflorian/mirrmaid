@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2009-2014 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
@@ -31,54 +32,104 @@ __copyright__ = """Copyright 2009-2014 John Florian"""
 
 
 class MirrmaidConfig(BaseConfig):
-    """Accessor to the MIRRMAID configuration section."""
+    """
+    Accessor to the C{'MIRRMAID'} section within the mirrmaid configuration
+    file.
+    """
 
     def __init__(self, filename):
         """
-        Instantiate a MirrmaidConfig object for the named configuration file.
+        Initialize the MirrmaidConfig object for the configuration file..
 
-        @param filename: Name of configuration file containing the
-        C{MIRRMAID} section.
+        This file must contain a section named C{'MIRRMAID'}.
+
+        @param filename:    Name of configuration file.
+        @type filename:     str
         """
         BaseConfig.__init__(self, filename)
         self._set_section('MIRRMAID')
 
     @property
     def proxy(self):
-        return self.get('proxy', required=False,
-                        default=DEFAULT_PROXY)
+        """
+        @return:    The value of the optional C{'proxy'} setting.  If unset,
+            the application default will be returned instead.
+        @rtype:     str
+        """
+        return self.get('proxy', required=False, default=DEFAULT_PROXY)
 
     @property
     def summary_group(self):
+        """
+        @return:    The value of the optional C{'summary_group'} setting.  If
+            unset, the application default will be returned instead.
+        @rtype:     str
+        """
         return self.get('summary_group', required=False,
                         default=DEFAULT_SUMMARY_GROUP)
 
     @property
     def summary_history_count(self):
-        return max(1, self.get_int('summary_history_count', required=False,
-                                   default=DEFAULT_SUMMARY_HISTORY_COUNT))
+        """
+        @return:    The value of the optional C{'summary_history_count'}
+            setting.  If unset, the application default will be returned
+            instead.
+        @rtype:     int
+        """
+        return max(
+            1,
+            self.get_int('summary_history_count', required=False,
+                         default=DEFAULT_SUMMARY_HISTORY_COUNT)
+        )
 
     @property
     def summary_interval(self):
-        return max(600, self.get_int('summary_interval', required=False,
-                                     default=DEFAULT_SUMMARY_INTERVAL))
+        """
+        @return:    The value of the optional C{'summary_interval'} setting.
+            If unset, the application default will be returned instead.
+        @rtype:     int
+        """
+        return max(
+            600,
+            self.get_int('summary_interval', required=False,
+                         default=DEFAULT_SUMMARY_INTERVAL)
+        )
 
     @property
     def summary_recipients(self):
+        """
+        @return:    The value of the optional C{'summary_recipients'} setting.
+            If unset, the application default will be returned instead.
+        @rtype:     list of str
+        """
         return self.get_list('summary_recipients', required=False,
                              default=DEFAULT_SUMMARY_RECIPIENTS)
 
     @property
     def summary_size(self):
+        """
+        @return:    The value of the optional C{'summary_size'} setting.  If
+            unset, the application default will be returned instead.
+        @rtype:     int
+        """
         return self.get_int('summary_size', required=False,
                             default=DEFAULT_SUMMARY_SIZE)
 
 
 class MirrorsConfig(BaseConfig):
-    """Accessor to the MIRRORS configuration section."""
+    """
+    Accessor to the C{'MIRRORS'} section within the mirrmaid configuration
+    file.
+    """
 
     def __init__(self, filename):
-        """Construct a MirrorsConfig object for the named configuration file.
+        """
+        Initialize the MirrorsConfig object for the configuration file.
+
+        This file must contain a section named C{'MIRRORS'}.
+
+        @param filename:    Name of configuration file.
+        @type filename:     str
         """
 
         BaseConfig.__init__(self, filename)
@@ -86,17 +137,37 @@ class MirrorsConfig(BaseConfig):
 
     @property
     def mirrors(self):
-        """Return a list of those mirror names that are enabled."""
+        """
+        Return a list of those mirror names that are enabled.
+
+        @return:    The value of the required C{'enabled'} setting.
+        @rtype:     list of str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
+        """
 
         return self.get_list('enabled')
 
 
 class MirrorConfig(BaseConfig):
+    """
+    Accessor to a specific mirror's section within the mirrmaid configuration
+    file.
+    """
     """Accessor to a named mirror's configuration section."""
 
     def __init__(self, filename, mirror):
-        """Construct a MirrorConfig object for the named mirror section
-        within the named configuration file.
+        """
+        Initialize the MirrorConfig object for the configuration file.
+
+        This file must contain a section named I{mirror}.
+
+        @param filename:    Name of configuration file.
+        @type filename:     str
+
+        @param mirror:  Name of configuration section for a specific mirror.
+        @type filename: str
         """
 
         BaseConfig.__init__(self, filename)
@@ -104,35 +175,68 @@ class MirrorConfig(BaseConfig):
 
     @property
     def excludes(self):
-        """Return a list of the exclusion patterns for the mirror
-        synchronization.
+        """
+        Return a list of the exclusion patterns for the mirror synchronization.
+
+        @return:    The value of the required C{'exclude'} setting.
+        @rtype:     list of str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
         """
 
         return self.get_list('exclude')
 
     @property
     def includes(self):
-        """Return a list of the inclusion patterns for the mirror
-        synchronization.
+        """
+        Return a list of the inclusion patterns for the mirror synchronization.
+
+        @return:    The value of the required C{'include'} setting.
+        @rtype:     list of str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
         """
 
         return self.get_list('include')
 
     @property
     def mirror_name(self):
-        """Return the name of the mirror for which this configuration applies.
+        """
+        @return:    The name of the mirror.
+        @rtype:     str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
         """
 
         return self._get_section()
 
     @property
     def source(self):
-        """Return the source for the mirror synchronization."""
+        """
+        Return the source for the mirror synchronization.
+
+        @return:    The value of the required C{'source'} setting.
+        @rtype:     str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
+        """
 
         return self.get('source')
 
     @property
     def target(self):
-        """Return the target for the mirror synchronization."""
+        """
+        Return the target for the mirror synchronization.
+
+        @return:    The value of the required C{'target'} setting.
+        @rtype:     str
+
+        @raise NoOptionError:   If the setting is absent.
+        @raise NoSectionError:  If the section is absent.
+        """
 
         return self.get('target')
