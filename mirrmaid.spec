@@ -18,11 +18,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python3-devel
 Requires:       coreutils
+Requires:       crontabs
 Requires:       python3 >= 3
 Requires:       python3-doubledog >= 1.3
 Requires:       rsync
 Requires:       util-linux-ng
-Requires:       cronie
 
 %description
 This package efficiently maintains synchronized target mirrors of source
