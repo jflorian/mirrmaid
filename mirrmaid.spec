@@ -2,10 +2,11 @@
 
 %global python_package_name mirrmaid
 
-# {{{1 package meta-data
 Name:           mirrmaid
-Version:        0.20
+Version:        0.21
 Release:        1%{?dist}
+
+# {{{1 package meta-data
 Summary:        efficient mirror manager
 
 Group:          Applications/Internet
@@ -18,11 +19,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python3-devel
 Requires:       coreutils
+Requires:       crontabs
 Requires:       python3 >= 3
 Requires:       python3-doubledog >= 1.3
 Requires:       rsync
 Requires:       util-linux-ng
-Requires:       cronie
 
 %description
 This package efficiently maintains synchronized target mirrors of source
@@ -91,6 +92,12 @@ fi
 
 # {{{1 changelog
 %changelog
+* Fri Feb 27 2015 John Florian <jflorian@doubledog.org> - 0.21-1
+ - Janitorial - update Copyrights (jflorian@doubledog.org)
+ - New - Fedora 21 release targets (jflorian@doubledog.org)
+ - Change - new packaging requirements for cron jobs (jflorian@doubledog.org)
+ - New - optimized tito releaser configuration (jflorian@doubledog.org)
+
 * Sat Jul 12 2014 John Florian <jflorian@doubledog.org> - 0.20-1
  - Fix - correct releasers config (jflorian@doubledog.org)
  - Initialized to use tito. (john_florian@dart.biz)

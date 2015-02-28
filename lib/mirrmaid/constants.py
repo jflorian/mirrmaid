@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2012-2014 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2015 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -23,7 +23,7 @@ This defines various constants for the mirrmaid package.
 from logging import Formatter
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012-2014 John Florian"""
+__copyright__ = """Copyright 2012-2015 John Florian"""
 
 
 # The default run-time configuration file.
