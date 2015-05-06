@@ -92,7 +92,7 @@ fi
 
 # {{{1 changelog
 %changelog
-* Wed May 06 2015 John Florian <jflorian@doubledog.org> - 0.21-2
+* Wed May 06 2015 John Florian <jflorian@doubledog.org> 0.21-2
  - Change - use ReleaseTagger instead of VersionTagger (jflorian@doubledog.org)
  - New - "koji" and "koji-dart" release targets (jflorian@doubledog.org)
 
