@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -92,6 +92,10 @@ fi
 
 # {{{1 changelog
 %changelog
+* Wed May 06 2015 John Florian <jflorian@doubledog.org> - 0.21-2
+ - Change - use ReleaseTagger instead of VersionTagger (jflorian@doubledog.org)
+ - New - "koji" and "koji-dart" release targets (jflorian@doubledog.org)
+
 * Fri Feb 27 2015 John Florian <jflorian@doubledog.org> - 0.21-1
  - Janitorial - update Copyrights (jflorian@doubledog.org)
  - New - Fedora 21 release targets (jflorian@doubledog.org)
