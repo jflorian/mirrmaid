@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        2%{?dist}
+Release:        4%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -92,6 +92,12 @@ fi
 
 # {{{1 changelog
 %changelog
+* Tue Jul 07 2015 John Florian <jflorian@doubledog.org> 0.21-4
+- New - f22 target for Koji at Dart (jflorian@doubledog.org)
+
+* Mon May 11 2015 John Florian <john_florian@dart.biz> 0.21-3
+- New - f21 target for Koji at Dart (john_florian@dart.biz)
+
 * Wed May 06 2015 John Florian <jflorian@doubledog.org> 0.21-2
  - Change - use ReleaseTagger instead of VersionTagger (jflorian@doubledog.org)
  - New - "koji" and "koji-dart" release targets (jflorian@doubledog.org)
