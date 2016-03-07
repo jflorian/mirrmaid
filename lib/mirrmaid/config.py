@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2009-2015 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2016 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 #
@@ -28,7 +28,7 @@ from doubledog.config import BaseConfig
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2015 John Florian"""
+__copyright__ = """Copyright 2009-2016 John Florian"""
 
 
 class MirrmaidConfig(BaseConfig):
