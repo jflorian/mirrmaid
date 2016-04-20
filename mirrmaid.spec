@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        6%{?dist}
+Release:        7%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -17,11 +17,12 @@ Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+
 Requires:       coreutils
 Requires:       crontabs
-Requires:       python3 >= 3
-Requires:       python3-doubledog >= 1.3
+Requires:       python%{python3_pkgversion}
+Requires:       python%{python3_pkgversion}-doubledog
 Requires:       rsync
 Requires:       util-linux-ng
 
@@ -92,6 +93,9 @@ fi
 
 # {{{1 changelog
 %changelog
+* Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-7
+- Change - adapt spec for Fedora/EPEL builds (jflorian@doubledog.org)
+
 * Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-6
 - Change - several tito configuration issues (jflorian@doubledog.org)
 
