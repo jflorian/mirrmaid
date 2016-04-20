@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        5%{?dist}
+Release:        6%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -92,6 +92,9 @@ fi
 
 # {{{1 changelog
 %changelog
+* Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-6
+- Change - several tito configuration issues (jflorian@doubledog.org)
+
 * Mon Mar 07 2016 John Florian <jflorian@doubledog.org> 0.21-5
 - Janitorial - update copyrights (jflorian@doubledog.org)
 - Change - redo tito config for koji (jflorian@doubledog.org)

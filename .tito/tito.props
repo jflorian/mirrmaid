@@ -4,8 +4,8 @@ tagger = tito.tagger.ReleaseTagger
 changelog_do_not_remove_cherrypick = 0
 changelog_format = %s (%ae)
 
-[el7]
-disttag = .el7
+[epel7]
+disttag = .el7.centos
 
 [f22]
 disttag = .fc22
