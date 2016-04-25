@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        7%{?dist}
+Release:        8%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -93,6 +93,9 @@ fi
 
 # {{{1 changelog
 %changelog
+* Mon Apr 25 2016 John Florian <jflorian@doubledog.org> 0.21-8
+- Bug - test targets using wrong releaser (jflorian@doubledog.org)
+
 * Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-7
 - Change - adapt spec for Fedora/EPEL builds (jflorian@doubledog.org)
 
