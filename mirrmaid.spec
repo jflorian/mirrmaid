@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        8%{?dist}
+Release:        9%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -22,7 +22,7 @@ BuildRequires:  python%{python3_pkgversion}-devel
 Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
-Requires:       python%{python3_pkgversion}-doubledog
+Requires:       python3-doubledog
 Requires:       rsync
 Requires:       util-linux-ng
 
@@ -93,6 +93,11 @@ fi
 
 # {{{1 changelog
 %changelog
+* Sun Jun 26 2016 John Florian <jflorian@doubledog.org> 0.21-9
+- Bug - python3-doubledog isn't python34-doubledog for EPEL
+  (jflorian@doubledog.org)
+- Bug - test releasers don't need git_url (jflorian@doubledog.org)
+
 * Mon Apr 25 2016 John Florian <jflorian@doubledog.org> 0.21-8
 - Bug - test targets using wrong releaser (jflorian@doubledog.org)
 
