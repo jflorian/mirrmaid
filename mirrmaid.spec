@@ -22,7 +22,7 @@ BuildRequires:  python%{python3_pkgversion}-devel
 Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
-Requires:       python%{python3_pkgversion}-doubledog
+Requires:       python3-doubledog
 Requires:       rsync
 Requires:       util-linux-ng
 
