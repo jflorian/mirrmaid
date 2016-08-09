@@ -4,7 +4,7 @@
 
 Name:           mirrmaid
 Version:        0.21
-Release:        9%{?dist}
+Release:        10%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -93,6 +93,9 @@ fi
 
 # {{{1 changelog
 %changelog
+* Tue Aug 09 2016 John Florian <jflorian@doubledog.org> 0.21-10
+- New - tito releaser for Fedora 24 (jflorian@doubledog.org)
+
 * Sun Jun 26 2016 John Florian <jflorian@doubledog.org> 0.21-9
 - Bug - python3-doubledog isn't python34-doubledog for EPEL
   (jflorian@doubledog.org)
