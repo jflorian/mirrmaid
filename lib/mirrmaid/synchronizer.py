@@ -63,17 +63,6 @@ class Synchronizer(object):
         )
         self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
 
-    @staticmethod
-    def _ensure_lock_directory_exists():
-        """Make the lock directory unless it already exists."""
-        try:
-            if not os.path.isdir(LOCK_DIRECTORY):
-                os.makedirs(LOCK_DIRECTORY)
-        except OSError as e:
-            raise SynchronizerException(
-                'cannot create lock directory: {0}'.format(e)
-            )
-
     def _get_lock_name(self):
         """
         @return:    The name of the lock-file for the target replica.
@@ -151,7 +140,6 @@ class Synchronizer(object):
         @rtype:     bool
         """
 
-        self._ensure_lock_directory_exists()
         try:
             self.lock_file.exclusive_lock()
         except LockException:
