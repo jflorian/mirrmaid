@@ -2,6 +2,19 @@
 
 %global python_package_name mirrmaid
 
+# These values were arbitrarily chosen so as to be within the range of modern
+# (201-999) and legacy (201-499) SYS_UID_MIN/SYS_UID_MAX.
+# For a proper Fedora/EPEL package these would require assignment from FPC.
+# In our case were exempt from their rules, but also subject to potential,
+# eventual breakage, hence a fairly high value but still in a safe range.
+# See also:
+#   - http://fedoraproject.org/wiki/Packaging:UsersAndGroups
+#   - /etc/login.defs for SYS_UID_MIN and SYS_UID_MAX
+#   - /usr/share/doc/setup*/uidgid for soft static allocations already
+#   assigned by FPC.
+%global sys_uid 468
+%global sys_gid 468
+
 Name:           mirrmaid
 Version:        0.21
 Release:        10%{?dist}
@@ -60,14 +73,19 @@ install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 rm -rf %{buildroot}
 
 %pre
-if ! getent group %{name}
+getent group %{name} >/dev/null || groupadd -f -g %{sys_gid} -r %{name}
+if ! getent passwd %{name} >/dev/null
 then
-    groupadd -r %{name}
+    if ! getent passwd %{sys_uid} >/dev/null
+    then
+        useradd -r -u %{sys_uid} -g %{name} -d /etc/%{name} -s /sbin/nologin \
+                -c 'efficient mirror manager' %{name}
+    else
+        useradd -r -g %{name} -d /etc/%{name} -s /sbin/nologin \
+                -c 'efficient mirror manager' %{name}
+    fi
 fi
-if ! getent passwd %{name}
-then
-    useradd -d /etc/%{name} -g %{name} -M -r %{name}
-fi
+exit 0
 
 %post
 
