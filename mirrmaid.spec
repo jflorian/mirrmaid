@@ -16,8 +16,8 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.21
-Release:        10%{?dist}
+Version:        0.22
+Release:        1%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -118,6 +118,14 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Thu Aug 18 2016 John Florian <jflorian@doubledog.org> 0.22-1
+- Drop - run-time creation of lock directory (jflorian@doubledog.org)
+- Change - location of advisory lock files (jflorian@doubledog.org)
+- Change - use soft static user/group account allocation
+  (jflorian@doubledog.org)
+- Bug - missing Requires(pre) on shadow-utils (jflorian@doubledog.org)
+- Change - Python interpreter for Fedora 24 (jflorian@doubledog.org)
+
 * Tue Aug 09 2016 John Florian <jflorian@doubledog.org> 0.21-10
 - New - tito releaser for Fedora 24 (jflorian@doubledog.org)
 
@@ -155,25 +163,3 @@ exit 0
  - New - Fedora 21 release targets (jflorian@doubledog.org)
  - Change - new packaging requirements for cron jobs (jflorian@doubledog.org)
  - New - optimized tito releaser configuration (jflorian@doubledog.org)
-
-* Sat Jul 12 2014 John Florian <jflorian@doubledog.org> - 0.20-1
- - Fix - correct releasers config (jflorian@doubledog.org)
- - Initialized to use tito. (john_florian@dart.biz)
- - Change - default configuration improvements (john_florian@dart.biz)
- - Change - quote values smartly, using repr() (john_florian@dart.biz)
- - Janitorial - code format (john_florian@dart.biz)
- - Janitorial - documentation improvements (john_florian@dart.biz)
- - Fix - ConnectionError exception is unhandled (john_florian@dart.biz)
- - Fix - spelling (john_florian@dart.biz)
- - Refactor - 'exit' shadows built-in name (john_florian@dart.biz)
- - Janitorial - PEP-8 conformance (john_florian@dart.biz)
- - Fix - no encoding specified for files (john_florian@dart.biz)
- - Refactor - methods may be static (john_florian@dart.biz)
- - Refactor - argument equals default value (john_florian@dart.biz)
- - Janitorial - reformat project (john_florian@dart.biz)
-
-* Tue Jun 24 2014 John Florian <john_florian@dart.biz> - 0.19-1
- - Change - global macro preferred over define in spec (john_florian@dart.biz)
- - Fix - inaccurate terminology (john_florian@dart.biz)
- - New - vim folding markers in spec (john_florian@dart.biz)
- - Change - PyCharm prefers setup.py with lib/ (john_florian@dart.biz)
