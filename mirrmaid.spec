@@ -19,6 +19,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python%{python3_pkgversion}-devel
 
+Requires(pre):  shadow-utils
+
 Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
