@@ -2,6 +2,19 @@
 
 %global python_package_name mirrmaid
 
+# These values were arbitrarily chosen so as to be within the range of modern
+# (201-999) and legacy (201-499) SYS_UID_MIN/SYS_UID_MAX.
+# For a proper Fedora/EPEL package these would require assignment from FPC.
+# In our case were exempt from their rules, but also subject to potential,
+# eventual breakage, hence a fairly high value but still in a safe range.
+# See also:
+#   - http://fedoraproject.org/wiki/Packaging:UsersAndGroups
+#   - /etc/login.defs for SYS_UID_MIN and SYS_UID_MAX
+#   - /usr/share/doc/setup*/uidgid for soft static allocations already
+#   assigned by FPC.
+%global sys_uid 468
+%global sys_gid 468
+
 Name:           mirrmaid
 Version:        0.21
 Release:        10%{?dist}
@@ -47,11 +60,14 @@ other.
 %install
 rm -rf %{buildroot}
 
+install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
+install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
+install -d  -m 0755 %{buildroot}/run/lock/%{name}
+
+install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
-install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
-install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
@@ -60,14 +76,19 @@ install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 rm -rf %{buildroot}
 
 %pre
-if ! getent group %{name}
+getent group %{name} >/dev/null || groupadd -f -g %{sys_gid} -r %{name}
+if ! getent passwd %{name} >/dev/null
 then
-    groupadd -r %{name}
+    if ! getent passwd %{sys_uid} >/dev/null
+    then
+        useradd -r -u %{sys_uid} -g %{name} -d /etc/%{name} -s /sbin/nologin \
+                -c 'efficient mirror manager' %{name}
+    else
+        useradd -r -g %{name} -d /etc/%{name} -s /sbin/nologin \
+                -c 'efficient mirror manager' %{name}
+    fi
 fi
-if ! getent passwd %{name}
-then
-    useradd -d /etc/%{name} -g %{name} -M -r %{name}
-fi
+exit 0
 
 %post
 
@@ -81,16 +102,18 @@ fi
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%dir %{python3_sitelib}/%{python_package_name}
 %doc doc/*
 %{_bindir}/%{name}
-
-%dir %{python3_sitelib}/%{python_package_name}
 %{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
+
+%{_sysconfdir}/tmpfiles.d/%{name}.conf
 %{_var}/lib/%{name}
 %{_var}/log/%{name}
+/run/lock/%{name}
 
 
 # {{{1 changelog
