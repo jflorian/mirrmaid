@@ -60,11 +60,14 @@ other.
 %install
 rm -rf %{buildroot}
 
+install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
+install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
+install -d  -m 0755 %{buildroot}/run/lock/%{name}
+
+install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
-install -d  -m 0755                             %{buildroot}%{_var}/lib/%{name}
-install -d  -m 0755                             %{buildroot}%{_var}/log/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
@@ -99,16 +102,18 @@ exit 0
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%dir %{python3_sitelib}/%{python_package_name}
 %doc doc/*
 %{_bindir}/%{name}
-
-%dir %{python3_sitelib}/%{python_package_name}
 %{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
 %defattr(-,%{name},%{name},-)
+
+%{_sysconfdir}/tmpfiles.d/%{name}.conf
 %{_var}/lib/%{name}
 %{_var}/log/%{name}
+/run/lock/%{name}
 
 
 # {{{1 changelog
