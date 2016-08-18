@@ -59,12 +59,8 @@ LOGGING_FORMATTER = Formatter(
     '%(asctime)s %(name)s[%(process)d] %(levelname)-8s %(message)s'
 )
 
-# Where run-time advisory lock files are created. While it would be
-# preferable to have:
-#       LOCK_DIRECTORY = '/var/lock/subsys/mirrmaid/'
-# That would make it impossible to have the mirrmaid user account in LDAP
-# because systemd-tmpfiles-setup.service runs before network stack is up, so:
-LOCK_DIRECTORY = '/tmp/mirrmaid/'
+# Where run-time advisory lock files are created.
+LOCK_DIRECTORY = '/run/lock/mirrmaid/'
 
 # The main log file.
 LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
