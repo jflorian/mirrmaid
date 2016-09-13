@@ -164,7 +164,7 @@ class Synchronizer(object):
         except OSError as e:
             self.log.error(
                 'failed to remove lock-file: {0} because:\n{1}'
-                    .format(repr(self.lock_file.name)), e
+                    .format(repr(self.lock_file.name), e)
             )
 
     def _update_replica(self):
