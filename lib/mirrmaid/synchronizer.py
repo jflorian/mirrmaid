@@ -53,7 +53,6 @@ class Synchronizer(object):
         This will happen according to the default and mirror-specific
         sections of the configuration file..
         """
-
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
@@ -62,22 +61,19 @@ class Synchronizer(object):
         self.lock_file = LockFile(self._lock_name, pid=os.getpid())
 
     @property
-    def _lock_name(self):
+    def _lock_name(self) -> str:
         """
-        @return:    The name of the lock-file for the target replica.
-        @rtype:     str
+        :return:
+            The name of the lock-file for the target replica.
         """
-
         return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
     @property
-    def _rsync_excludes(self):
+    def _rsync_excludes(self) -> list:
         """
-        @return:    The rsync options to effect the mirror's list of
-            exclusions.
-        @rtype:     list of str
+        :return:
+            The rsync options to effect the mirror's list of exclusions.
         """
-
         result = []
         for exclude in self.mirror_conf.excludes:
             result.append('--exclude')
@@ -85,13 +81,11 @@ class Synchronizer(object):
         return result
 
     @property
-    def _rsync_includes(self):
+    def _rsync_includes(self) -> list:
         """
-        @return:    The rsync options to effect the mirror's list of
-            inclusions.
-        @rtype:     list of str
+        :return:
+            The rsync options to effect the mirror's list of inclusions.
         """
-
         result = []
         for include in self.mirror_conf.includes:
             result.append('--include')
@@ -99,51 +93,47 @@ class Synchronizer(object):
         return result
 
     @property
-    def _rsync_options(self):
+    def _rsync_options(self) -> list:
         """
-        @return:    The default rsync options to be used.
-        @rtype:     list of str
+        :return:
+            The default rsync options to be used.
         """
-
         return self.default_conf.get_list('rsync_options')
 
     @property
-    def _source(self):
+    def _source(self) -> str:
         """
-        @return:    The fully-qualified rsync URI for the source of the
-            directory structure to be mirrored.
-        @rtype:     str
+        :return:
+            The fully-qualified rsync URI for the source of the directory
+            structure to be mirrored.
         """
-
         source = self.mirror_conf.source
         if not source.endswith('/'):
             source += '/'
         return source
 
     @property
-    def _target(self):
+    def _target(self) -> str:
         """
-        @return:    The fully-qualified rsync URI for the target target of the
-            mirroring operation.
-        @rtype:     str
+        :return:
+            The fully-qualified rsync URI for the target target of the mirroring
+            operation.
         """
-
         target = self.mirror_conf.target
         if not target.endswith('/'):
             target += '/'
         return target
 
-    def _lock_replica(self):
+    def _lock_replica(self) -> bool:
         """
         Attempt to gain a lock on the target replica.
 
         Locks are per target so that multiple Synchronizers may be working
         concurrently so long as it is not on the same collection job.
 
-        @return:    C{True} iff the lock was gained.
-        @rtype:     bool
+        :return:
+            ``True`` iff the lock was gained.
         """
-
         try:
             self.lock_file.exclusive_lock()
         except LockException:
@@ -176,7 +166,7 @@ class Synchronizer(object):
                 )
             )
 
-    def _update_replica(self):
+    def _update_replica(self) -> int:
         """
         Effect a one-time synchronization.
 
@@ -184,11 +174,10 @@ class Synchronizer(object):
         capturing all stdout/stderr from the process and inject it into the
         logger.
 
-        @return:    The exit code of the rsync process, where only a value of
-            zero indicates success.
-        @rtype:     int
+        :return:
+            The exit code of the rsync process, where only a value of zero
+            indicates success.
         """
-
         self.log.info('mirror synchronization started')
         cmd = (
             ['/usr/bin/rsync']
@@ -215,7 +204,6 @@ class Synchronizer(object):
 
     def run(self):
         """Acquire a lock and if successful, update the target replica."""
-
         if self._lock_replica():
             try:
                 self._update_replica()

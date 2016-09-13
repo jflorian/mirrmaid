@@ -27,6 +27,7 @@ import logging.handlers
 import shelve
 import sys
 from hashlib import md5
+from logging import LogRecord
 from socket import getfqdn
 from time import time, ctime, asctime
 
@@ -63,12 +64,11 @@ class LogState(object):
         return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
 
     @property
-    def last_rollover(self):
+    def last_rollover(self) -> float:
         """
-        @return:    The number of seconds since the last rollover.
-        @rtype:     float
+        :return:
+            The number of seconds since the last rollover.
         """
-
         shelf = None
         try:
             shelf = shelve.open(self.filename)
@@ -80,14 +80,13 @@ class LogState(object):
                 shelf.close()
 
     @last_rollover.setter
-    def last_rollover(self, when):
+    def last_rollover(self, when: float):
         """
         Record the time of rollover.
 
-        @param when:    The time when the rollover occurred.
-        @type when:     float
+        :param when:
+            The time when the rollover occurred.
         """
-
         shelf = None
         try:
             shelf = shelve.open(self.filename)
@@ -133,10 +132,10 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         )
 
     @property
-    def _reason(self):
+    def _reason(self) -> str:
         """
-        @return:    Formatted message stating reason(s) for rollover.
-        @rtype:     str
+        :return:
+            Formatted message stating reason(s) for rollover.
         """
         reasons = []
         if self._rolled_for_age:
@@ -170,12 +169,12 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         return '\n'.join(body)
 
     @property
-    def summary_due(self):
+    def summary_due(self) -> bool:
         """
         Determine if a summary is needed based on age.
 
-        @return:    C{True} iff logged messages are sufficiently aged.
-        @rtype:     bool
+        :return:
+            ``True`` iff logged messages are sufficiently aged.
         """
         age = time() - self._log_state.last_rollover
         due = age > self.mirrmaid_config.summary_interval
@@ -230,19 +229,19 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             if e.errno != errno.ENOENT:
                 raise
 
-    def shouldRollover(self, record):
+    def shouldRollover(self, record: LogRecord) -> bool:
         """
         Determine if a rollover is needed.
 
         A rollover is needed whenever:
-            1) the log attains a certain minimum size
-            2) the log contains content that has attained a certain minimum age
+            1. the log attains a certain minimum size
+            2. the log contains content that has attained a certain minimum age
 
-        @param record:  Log record about to be committed.
-        @type record:   LogRecord
+        :param record:
+            Log record about to be committed.
 
-        @return:    C{True} iff a rollover is needed for any reason.
-        @rtype:     bool
+        :return:
+            ``True`` iff a rollover is needed for any reason.
         """
         for_size = super().shouldRollover(record)
         for_age = self.summary_due
