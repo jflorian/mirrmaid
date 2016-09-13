@@ -70,7 +70,8 @@ class Synchronizer(object):
 
         return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
-    def _get_rsync_excludes(self):
+    @property
+    def _rsync_excludes(self):
         """
         @return:    The rsync options to effect the mirror's list of
             exclusions.
@@ -186,7 +187,7 @@ class Synchronizer(object):
             ['/usr/bin/rsync']
             + self._get_rsync_options()
             + self._get_rsync_includes()
-            + self._get_rsync_excludes()
+            + self._rsync_excludes
         )
         cmd.append(self._get_source())
         cmd.append(self._get_target())
