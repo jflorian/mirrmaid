@@ -151,23 +151,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         else:
             return 'forced'
 
-    def _mail_summary(self):
-        sender = 'mirrmaid@{0}'.format(getfqdn())
-        try:
-            MiniMailer().send(
-                sender,
-                self.mirrmaid_config.summary_recipients,
-                self.__subject,
-                self._summary_body()
-            )
-        except ConnectionError as e:
-            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
-        self._reset_reasons()
-
-    def _reset_reasons(self):
-        self._rolled_for_age = False
-        self._rolled_for_size = False
-
+    @property
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
@@ -187,6 +171,23 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             body.append(log_content)
             body.append('=== End of Warning/Error Summary ===')
         return '\n'.join(body)
+
+    def _mail_summary(self):
+        sender = 'mirrmaid@{0}'.format(getfqdn())
+        try:
+            MiniMailer().send(
+                sender,
+                self.mirrmaid_config.summary_recipients,
+                self.__subject,
+                self._summary_body
+            )
+        except ConnectionError as e:
+            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
+        self._reset_reasons()
+
+    def _reset_reasons(self):
+        self._rolled_for_age = False
+        self._rolled_for_size = False
 
     def doRollover(self):
         """
