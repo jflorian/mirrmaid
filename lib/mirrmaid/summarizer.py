@@ -172,6 +172,23 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             body.append('=== End of Warning/Error Summary ===')
         return '\n'.join(body)
 
+    @property
+    def summary_due(self):
+        """
+        Determine if a summary is needed based on age.
+
+        @return:    C{True} iff logged messages are sufficiently aged.
+        @rtype:     bool
+        """
+        age = time() - self._log_state.last_rollover
+        due = age > self.mirrmaid_config.summary_interval
+        # Class state is for summary body, which is cumulative via boolean OR.
+        # Method return value must remain distinct as to what is true right now
+        # whereas the class state is what has been true since last
+        # notification.
+        self._rolled_for_age |= due
+        return due
+
     def _mail_summary(self):
         sender = 'mirrmaid@{0}'.format(getfqdn())
         try:
@@ -209,22 +226,6 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             if e.errno != errno.ENOENT:
                 raise
 
-    def summary_due(self):
-        """
-        Determine if a summary is needed based on age.
-
-        @return:    C{True} iff logged messages are sufficiently aged.
-        @rtype:     bool
-        """
-        age = time() - self._log_state.last_rollover
-        due = age > self.mirrmaid_config.summary_interval
-        # Class state is for summary body, which is cumulative via boolean OR.
-        # Method return value must remain distinct as to what is true right now
-        # whereas the class state is what has been true since last
-        # notification.
-        self._rolled_for_age |= due
-        return due
-
     def shouldRollover(self, record):
         """
         Determine if a rollover is needed.
@@ -240,7 +241,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         @rtype:     bool
         """
         for_size = super(LogSummarizingHandler, self).shouldRollover(record)
-        for_age = self.summary_due()
+        for_age = self.summary_due
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
         # whereas the class state is what has been true since last

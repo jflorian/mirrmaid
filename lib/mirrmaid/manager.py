@@ -86,7 +86,7 @@ class MirrorManager(object):
         self.log.addHandler(handler)
         # Ensure the summary is delivered regularly, even if no messages are
         # logged there during this run.
-        if handler.summary_due():
+        if handler.summary_due:
             handler.force_rollover()
 
     def _drop_privileges(self):
