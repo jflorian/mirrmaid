@@ -129,7 +129,8 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     @property
     def __subject(self):
         return 'mirrmaid Activity Summary for {0}'.format(
-            self.mirrmaid_config.summary_group)
+            self.mirrmaid_config.summary_group,
+        )
 
     @property
     def _reason(self):

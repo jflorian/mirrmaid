@@ -69,10 +69,11 @@ class MirrorManager(object):
                 pass
             else:
                 self.log.warning(
-                    'environment variable {!r} has been unset; '
-                    'use the "proxy" setting in {} instead '
-                    'if proxy support is required'
-                        .format(RSYNC_PROXY, self.options.config_filename)
+                    'environment variable {!r} has been unset; use the "proxy" '
+                    'setting in {} instead if proxy support is required'.format(
+                        RSYNC_PROXY,
+                        self.options.config_filename,
+                    )
                 )
             self.log.debug('will not proxy rsync')
         else:
@@ -102,7 +103,11 @@ class MirrorManager(object):
                 self._exit(
                     os.EX_OSERR,
                     'could not drop privileges to USER/GROUP {!r}/{!r} '
-                    'because: {}'.format(RUNTIME_USER, RUNTIME_GROUP, e)
+                    'because: {}'.format(
+                        RUNTIME_USER,
+                        RUNTIME_GROUP,
+                        e,
+                    )
                 )
         os.umask(0o077)
 

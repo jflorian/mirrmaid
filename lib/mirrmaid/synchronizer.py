@@ -148,14 +148,16 @@ class Synchronizer(object):
             self.lock_file.exclusive_lock()
         except LockException:
             self.log.info(
-                '{!r} already locked by another process'
-                    .format(self.lock_file.name)
+                '{!r} already locked by another process'.format(
+                    self.lock_file.name,
+                )
             )
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on {!r}'
-                    .format(self.lock_file.name)
+                'gained exclusive-lock on {!r}'.format(
+                    self.lock_file.name,
+                )
             )
             return True
 
@@ -164,13 +166,14 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on {!r}'
-                    .format(self.lock_file.name)
+                'released exclusive-lock on {!r}'.format(self.lock_file.name)
             )
         except OSError as e:
             self.log.error(
-                'failed to remove lock-file: {!r} because:\n{}'
-                    .format(self.lock_file.name, e)
+                'failed to remove lock-file: {!r} because:\n{}'.format(
+                    self.lock_file.name,
+                    e,
+                )
             )
 
     def _update_replica(self):
