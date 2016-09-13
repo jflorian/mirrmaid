@@ -120,7 +120,8 @@ class Synchronizer(object):
             source += '/'
         return source
 
-    def _get_target(self):
+    @property
+    def _target(self):
         """
         @return:    The fully-qualified rsync URI for the target target of the
             mirroring operation.
@@ -193,7 +194,7 @@ class Synchronizer(object):
             + self._rsync_excludes
         )
         cmd.append(self._source)
-        cmd.append(self._get_target())
+        cmd.append(self._target)
         self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
