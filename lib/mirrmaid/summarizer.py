@@ -121,11 +121,12 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         self._log_state = LogState(self.summary_group)
         self._reset_reasons()
         super(LogSummarizingHandler, self).__init__(
-            self.__log_filename(),
+            self.__log_filename,
             maxBytes=self.mirrmaid_config.summary_size,
             backupCount=self.mirrmaid_config.summary_history_count
         )
 
+    @property
     def __log_filename(self):
         return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
 
