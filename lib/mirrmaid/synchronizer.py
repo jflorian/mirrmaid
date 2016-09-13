@@ -84,7 +84,8 @@ class Synchronizer(object):
             result.append(exclude)
         return result
 
-    def _get_rsync_includes(self):
+    @property
+    def _rsync_includes(self):
         """
         @return:    The rsync options to effect the mirror's list of
             inclusions.
@@ -186,7 +187,7 @@ class Synchronizer(object):
         cmd = (
             ['/usr/bin/rsync']
             + self._get_rsync_options()
-            + self._get_rsync_includes()
+            + self._rsync_includes
             + self._rsync_excludes
         )
         cmd.append(self._get_source())
