@@ -107,7 +107,8 @@ class Synchronizer(object):
 
         return self.default_conf.get_list('rsync_options')
 
-    def _get_source(self):
+    @property
+    def _source(self):
         """
         @return:    The fully-qualified rsync URI for the source of the
             directory structure to be mirrored.
@@ -191,7 +192,7 @@ class Synchronizer(object):
             + self._rsync_includes
             + self._rsync_excludes
         )
-        cmd.append(self._get_source())
+        cmd.append(self._source)
         cmd.append(self._get_target())
         self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
