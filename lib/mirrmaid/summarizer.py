@@ -135,19 +135,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         return 'mirrmaid Activity Summary for {0}'.format(
             self.mirrmaid_config.summary_group)
 
-    def _mail_summary(self):
-        sender = 'mirrmaid@{0}'.format(getfqdn())
-        try:
-            MiniMailer().send(
-                sender,
-                self.mirrmaid_config.summary_recipients,
-                self.__subject,
-                self._summary_body()
-            )
-        except ConnectionError as e:
-            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
-        self._reset_reasons()
-
+    @property
     def _reason(self):
         """
         @return:    Formatted message stating reason(s) for rollover.
@@ -163,6 +151,19 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         else:
             return 'forced'
 
+    def _mail_summary(self):
+        sender = 'mirrmaid@{0}'.format(getfqdn())
+        try:
+            MiniMailer().send(
+                sender,
+                self.mirrmaid_config.summary_recipients,
+                self.__subject,
+                self._summary_body()
+            )
+        except ConnectionError as e:
+            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
+        self._reset_reasons()
+
     def _reset_reasons(self):
         self._rolled_for_age = False
         self._rolled_for_size = False
@@ -176,7 +177,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         body = [
             heading.format('Since', since),
             heading.format('Until', until),
-            heading.format('Reason for Notification', self._reason()),
+            heading.format('Reason for Notification', self._reason),
             '\n',
         ]
         if log_content.strip() == '':
