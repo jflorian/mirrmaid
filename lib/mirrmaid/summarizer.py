@@ -211,7 +211,15 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         Overridden method.  Perform all inherited behavior and mail any content
         just rolled out of the current log file.
         """
-        super().doRollover()
+        try:
+            super().doRollover()
+        except FileNotFoundError:
+            # http://bugs.python.org/issue18940 was resolved poorly by
+            # introducing a race condition, but perhaps the RotatingFileHandler
+            # wasn't intended for multi-process access to the same log target.
+            # If the source is missing, we can assume that another process has
+            # already performed the rollover.
+            pass
         self._mail_summary()
         self._log_state.last_rollover = time()
 
