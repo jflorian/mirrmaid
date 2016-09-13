@@ -98,7 +98,8 @@ class Synchronizer(object):
             result.append(include)
         return result
 
-    def _get_rsync_options(self):
+    @property
+    def _rsync_options(self):
         """
         @return:    The default rsync options to be used.
         @rtype:     list of str
@@ -186,7 +187,7 @@ class Synchronizer(object):
         self.log.info('mirror synchronization started')
         cmd = (
             ['/usr/bin/rsync']
-            + self._get_rsync_options()
+            + self._rsync_options
             + self._rsync_includes
             + self._rsync_excludes
         )
