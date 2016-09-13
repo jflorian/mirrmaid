@@ -25,7 +25,6 @@ from logging import Formatter
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012-2016 John Florian"""
 
-
 # The default run-time configuration file.
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 
@@ -80,4 +79,3 @@ RUNTIME_USER = 'mirrmaid'
 # The operations summary log file, which captures only messages at level
 # ERROR or higher.
 SUMMARY_FILENAME = '/var/log/mirrmaid/summary'
-

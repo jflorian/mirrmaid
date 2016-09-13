@@ -16,7 +16,7 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.22
+Version:        0.23
 Release:        1%{?dist}
 
 # {{{1 package meta-data
@@ -67,7 +67,7 @@ install -d  -m 0755 %{buildroot}/run/lock/%{name}
 install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
-install -Dp -m 0755 bin/%{name}.py              %{buildroot}%{_bindir}/%{name}
+install -Dp -m 0755 bin/%{name}                 %{buildroot}%{_bindir}/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
@@ -118,6 +118,35 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Tue Sep 13 2016 John Florian <jflorian@doubledog.org> 0.23-1
+- Change - Epytext to reStructeredText (jflorian@doubledog.org)
+- Janitorial - improve style of longer format() calls (jflorian@doubledog.org)
+- Change - simplify SummaryGroup initialization (jflorian@doubledog.org)
+- Bug - FileNotFoundError raised in log rollover (jflorian@doubledog.org)
+- Refactor - use simpler form of super() calls (jflorian@doubledog.org)
+- Refactor - convert summary_due() to property (jflorian@doubledog.org)
+- Refactor - convert _summary_body() to property (jflorian@doubledog.org)
+- Refactor - convert _reason() to property (jflorian@doubledog.org)
+- Refactor - convert __subject() to property (jflorian@doubledog.org)
+- Refactor - convert __log_filename() to property (jflorian@doubledog.org)
+- Bug - privileges dropped only when both UID/GID are wrong
+  (jflorian@doubledog.org)
+- Refactor - convert _get_target() to property (jflorian@doubledog.org)
+- Refactor - convert _get_source() to property (jflorian@doubledog.org)
+- Refactor - convert _get_rsync_options() to property (jflorian@doubledog.org)
+- Refactor - convert _get_rsync_includes() to property (jflorian@doubledog.org)
+- Refactor - convert _get_rsync_excludes() to property (jflorian@doubledog.org)
+- Refactor - convert _get_lock_name() to _lock_name property
+  (jflorian@doubledog.org)
+- Refactor - use string.format's intrinsic repr() (jflorian@doubledog.org)
+- Change - squelch 'module level import not at top of file'
+  (jflorian@doubledog.org)
+- Change - squelch 'import resolves to its containing file'
+  (jflorian@doubledog.org)
+- Bug - unresolved reference in format string (jflorian@doubledog.org)
+- Bug - unresolved reference 'SynchronizerException' (jflorian@doubledog.org)
+- Janitorial - complete project reformat (jflorian@doubledog.org)
+
 * Thu Aug 18 2016 John Florian <jflorian@doubledog.org> 0.22-1
 - Drop - run-time creation of lock directory (jflorian@doubledog.org)
 - Change - location of advisory lock files (jflorian@doubledog.org)

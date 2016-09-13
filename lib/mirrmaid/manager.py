@@ -26,19 +26,19 @@ activities of one or more Mirror_Synchronizers.
 import grp
 import logging
 import logging.handlers
-from optparse import OptionParser
 import os
 import pwd
 import sys
+from optparse import OptionParser
 from traceback import format_exc
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
+from mirrmaid.exceptions import SynchronizerException
 from mirrmaid.summarizer import LogSummarizingHandler
-from mirrmaid.synchronizer import Synchronizer, SynchronizerException
-
+from mirrmaid.synchronizer import Synchronizer
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
@@ -69,15 +69,16 @@ class MirrorManager(object):
                 pass
             else:
                 self.log.warning(
-                    'environment variable {0} has been unset; '
-                    'use the "proxy" setting in {1} instead '
-                    'if proxy support is required'
-                    .format(repr(RSYNC_PROXY), self.options.config_filename)
+                    'environment variable {!r} has been unset; use the "proxy" '
+                    'setting in {} instead if proxy support is required'.format(
+                        RSYNC_PROXY,
+                        self.options.config_filename,
+                    )
                 )
             self.log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
-            self.log.debug('will proxy rsync through {0}'.format(repr(proxy)))
+            self.log.debug('will proxy rsync through {!r}'.format(proxy))
 
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
@@ -86,14 +87,14 @@ class MirrorManager(object):
         self.log.addHandler(handler)
         # Ensure the summary is delivered regularly, even if no messages are
         # logged there during this run.
-        if handler.summary_due():
+        if handler.summary_due:
             handler.force_rollover()
 
     def _drop_privileges(self):
         """Drop privileges, if necessary, to run as correct user/group."""
         runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
         runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
-        if os.getuid() != runtime_uid and os.getgid() != runtime_gid:
+        if os.getuid() != runtime_uid or os.getgid() != runtime_gid:
             try:
                 os.setgroups([])
                 os.setgid(runtime_gid)
@@ -101,9 +102,12 @@ class MirrorManager(object):
             except OSError as e:
                 self._exit(
                     os.EX_OSERR,
-                    'could not drop privileges to USER/GROUP {0}/{1} '
-                    'because: {2}'
-                    .format(repr(RUNTIME_USER), repr(RUNTIME_GROUP), e)
+                    'could not drop privileges to USER/GROUP {!r}/{!r} '
+                    'because: {}'.format(
+                        RUNTIME_USER,
+                        RUNTIME_GROUP,
+                        e,
+                    )
                 )
         os.umask(0o077)
 
@@ -136,7 +140,7 @@ class MirrorManager(object):
     def _log_environment(self):
         for k in sorted(os.environ):
             self.log.debug(
-                'environment: {0}={1}'.format(k, repr(os.environ[k]))
+                'environment: {}={!r}'.format(k, os.environ[k])
             )
 
     def _parse_options(self):
@@ -175,7 +179,7 @@ class MirrorManager(object):
         self._parse_options()
         self._config_logger()
         self.log.debug(
-            'using config file: {0}'.format(repr(self.options.config_filename))
+            'using config file: {!r}'.format(self.options.config_filename)
         )
         self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
         self._config_proxy()
@@ -184,10 +188,10 @@ class MirrorManager(object):
         self.default_conf = DefaultConfig(self.options.config_filename)
         self.mirrors_conf = MirrorsConfig(self.options.config_filename)
         self.log.debug(
-            'enabled mirrors: {0}'.format(repr(self.mirrors_conf.mirrors))
+            'enabled mirrors: {!r}'.format(self.mirrors_conf.mirrors)
         )
         for mirror in self.mirrors_conf.mirrors:
-            self.log.debug('processing mirror: {0}'.format(repr(mirror)))
+            self.log.debug('processing mirror: {!r}'.format(mirror))
             worker = Synchronizer(
                 self.default_conf,
                 MirrorConfig(self.options.config_filename, mirror)

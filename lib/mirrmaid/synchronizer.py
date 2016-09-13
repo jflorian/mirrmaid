@@ -31,8 +31,6 @@ from doubledog.async import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
 from mirrmaid.constants import *
-from mirrmaid.exceptions import SynchronizerException
-
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
@@ -55,103 +53,101 @@ class Synchronizer(object):
         This will happen according to the default and mirror-specific
         sections of the configuration file..
         """
-
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
             'mirrmaid.{0}'.format(self.mirror_conf.mirror_name)
         )
-        self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
+        self.lock_file = LockFile(self._lock_name, pid=os.getpid())
 
-    def _get_lock_name(self):
+    @property
+    def _lock_name(self) -> str:
         """
-        @return:    The name of the lock-file for the target replica.
-        @rtype:     str
+        :return:
+            The name of the lock-file for the target replica.
         """
-
         return os.path.join(LOCK_DIRECTORY, self.mirror_conf.mirror_name)
 
-    def _get_rsync_excludes(self):
+    @property
+    def _rsync_excludes(self) -> list:
         """
-        @return:    The rsync options to effect the mirror's list of
-            exclusions.
-        @rtype:     list of str
+        :return:
+            The rsync options to effect the mirror's list of exclusions.
         """
-
         result = []
         for exclude in self.mirror_conf.excludes:
             result.append('--exclude')
             result.append(exclude)
         return result
 
-    def _get_rsync_includes(self):
+    @property
+    def _rsync_includes(self) -> list:
         """
-        @return:    The rsync options to effect the mirror's list of
-            inclusions.
-        @rtype:     list of str
+        :return:
+            The rsync options to effect the mirror's list of inclusions.
         """
-
         result = []
         for include in self.mirror_conf.includes:
             result.append('--include')
             result.append(include)
         return result
 
-    def _get_rsync_options(self):
+    @property
+    def _rsync_options(self) -> list:
         """
-        @return:    The default rsync options to be used.
-        @rtype:     list of str
+        :return:
+            The default rsync options to be used.
         """
-
         return self.default_conf.get_list('rsync_options')
 
-    def _get_source(self):
+    @property
+    def _source(self) -> str:
         """
-        @return:    The fully-qualified rsync URI for the source of the
-            directory structure to be mirrored.
-        @rtype:     str
+        :return:
+            The fully-qualified rsync URI for the source of the directory
+            structure to be mirrored.
         """
-
         source = self.mirror_conf.source
         if not source.endswith('/'):
             source += '/'
         return source
 
-    def _get_target(self):
+    @property
+    def _target(self) -> str:
         """
-        @return:    The fully-qualified rsync URI for the target target of the
-            mirroring operation.
-        @rtype:     str
+        :return:
+            The fully-qualified rsync URI for the target target of the mirroring
+            operation.
         """
-
         target = self.mirror_conf.target
         if not target.endswith('/'):
             target += '/'
         return target
 
-    def _lock_replica(self):
+    def _lock_replica(self) -> bool:
         """
         Attempt to gain a lock on the target replica.
 
         Locks are per target so that multiple Synchronizers may be working
         concurrently so long as it is not on the same collection job.
 
-        @return:    C{True} iff the lock was gained.
-        @rtype:     bool
+        :return:
+            ``True`` iff the lock was gained.
         """
-
         try:
             self.lock_file.exclusive_lock()
         except LockException:
             self.log.info(
-                '{0} already locked by another process'
-                .format(repr(self.lock_file.name))
+                '{!r} already locked by another process'.format(
+                    self.lock_file.name,
+                )
             )
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on {0}'
-                .format(repr(self.lock_file.name))
+                'gained exclusive-lock on {!r}'.format(
+                    self.lock_file.name,
+                )
             )
             return True
 
@@ -160,16 +156,17 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on {0}'
-                .format(repr(self.lock_file.name))
+                'released exclusive-lock on {!r}'.format(self.lock_file.name)
             )
         except OSError as e:
             self.log.error(
-                'failed to remove lock-file: {0} because:\n{1}'
-                .format(repr(self.lock_file.name)), e
+                'failed to remove lock-file: {!r} because:\n{}'.format(
+                    self.lock_file.name,
+                    e,
+                )
             )
 
-    def _update_replica(self):
+    def _update_replica(self) -> int:
         """
         Effect a one-time synchronization.
 
@@ -177,38 +174,36 @@ class Synchronizer(object):
         capturing all stdout/stderr from the process and inject it into the
         logger.
 
-        @return:    The exit code of the rsync process, where only a value of
-            zero indicates success.
-        @rtype:     int
+        :return:
+            The exit code of the rsync process, where only a value of zero
+            indicates success.
         """
-
         self.log.info('mirror synchronization started')
         cmd = (
             ['/usr/bin/rsync']
-            + self._get_rsync_options()
-            + self._get_rsync_includes()
-            + self._get_rsync_excludes()
+            + self._rsync_options
+            + self._rsync_includes
+            + self._rsync_excludes
         )
-        cmd.append(self._get_source())
-        cmd.append(self._get_target())
-        self.log.debug('spawning {0}'.format(repr(cmd)))
+        cmd.append(self._source)
+        cmd.append(self._target)
+        self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
-        self.log.info('rsync pid={0}'.format(repr(process.pid)))
+        self.log.info('rsync pid={!r}'.format(process.pid))
         exit_code = process.collect(self.log.info, self.log.error)
         if exit_code < 0:
             self.log.warn(
-                'rsync terminated; caught signal {0}'.format(repr(-exit_code))
+                'rsync terminated; caught signal {!r}'.format(-exit_code)
             )
         else:
             level = [logging.INFO, logging.DEBUG][exit_code == os.EX_OK]
-            self.log.log(level, 'rsync exit code={0}'.format(repr(exit_code)))
+            self.log.log(level, 'rsync exit code={!r}'.format(exit_code))
         self.log.info('mirror synchronization finished')
         return exit_code
 
     def run(self):
         """Acquire a lock and if successful, update the target replica."""
-
         if self._lock_replica():
             try:
                 self._update_replica()
