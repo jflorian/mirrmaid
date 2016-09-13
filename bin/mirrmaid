@@ -21,15 +21,13 @@
 # along with mirrmaid.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2016 John Florian"""
-
-
 import os
 import sys
 
 from mirrmaid.manager import MirrorManager
 
+__author__ = """John Florian <jflorian@doubledog.org>"""
+__copyright__ = """Copyright 2009-2016 John Florian"""
 
 MirrorManager(sys.argv[1:]).run()
 sys.exit(os.EX_OK)
