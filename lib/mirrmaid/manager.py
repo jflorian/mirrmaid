@@ -93,7 +93,7 @@ class MirrorManager(object):
         """Drop privileges, if necessary, to run as correct user/group."""
         runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
         runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
-        if os.getuid() != runtime_uid and os.getgid() != runtime_gid:
+        if os.getuid() != runtime_uid or os.getgid() != runtime_gid:
             try:
                 os.setgroups([])
                 os.setgid(runtime_gid)
