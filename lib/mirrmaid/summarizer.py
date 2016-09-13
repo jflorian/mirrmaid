@@ -41,11 +41,7 @@ __copyright__ = """Copyright 2012-2016 John Florian"""
 class SummaryGroup(object):
     def __init__(self, name):
         self.name = name
-        self.hash = self.hash_name(self.name)
-
-    @staticmethod
-    def hash_name(name):
-        return md5(name.encode()).hexdigest()
+        self.hash = md5(name.encode()).hexdigest()
 
 
 class LogState(object):
