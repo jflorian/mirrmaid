@@ -59,9 +59,10 @@ class Synchronizer(object):
         self.log = logging.getLogger(
             'mirrmaid.{0}'.format(self.mirror_conf.mirror_name)
         )
-        self.lock_file = LockFile(self._get_lock_name(), pid=os.getpid())
+        self.lock_file = LockFile(self._lock_name, pid=os.getpid())
 
-    def _get_lock_name(self):
+    @property
+    def _lock_name(self):
         """
         @return:    The name of the lock-file for the target replica.
         @rtype:     str
