@@ -120,7 +120,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         self.summary_group = SummaryGroup(self.mirrmaid_config.summary_group)
         self._log_state = LogState(self.summary_group)
         self._reset_reasons()
-        super(LogSummarizingHandler, self).__init__(
+        super().__init__(
             self.__log_filename,
             maxBytes=self.mirrmaid_config.summary_size,
             backupCount=self.mirrmaid_config.summary_history_count
@@ -211,8 +211,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         Overridden method.  Perform all inherited behavior and mail any content
         just rolled out of the current log file.
         """
-
-        super(LogSummarizingHandler, self).doRollover()
+        super().doRollover()
         self._mail_summary()
         self._log_state.last_rollover = time()
 
@@ -240,7 +239,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         @return:    C{True} iff a rollover is needed for any reason.
         @rtype:     bool
         """
-        for_size = super(LogSummarizingHandler, self).shouldRollover(record)
+        for_size = super().shouldRollover(record)
         for_age = self.summary_due
         # Class state is for summary body, which is cumulative via boolean OR.
         # Method return value must remain distinct as to what is true right now
