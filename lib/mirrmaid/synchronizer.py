@@ -142,14 +142,14 @@ class Synchronizer(object):
             self.lock_file.exclusive_lock()
         except LockException:
             self.log.info(
-                '{0} already locked by another process'
-                    .format(repr(self.lock_file.name))
+                '{!r} already locked by another process'
+                    .format(self.lock_file.name)
             )
             return False
         else:
             self.log.info(
-                'gained exclusive-lock on {0}'
-                    .format(repr(self.lock_file.name))
+                'gained exclusive-lock on {!r}'
+                    .format(self.lock_file.name)
             )
             return True
 
@@ -158,13 +158,13 @@ class Synchronizer(object):
         try:
             self.lock_file.unlock(delete_file=True)
             self.log.info(
-                'released exclusive-lock on {0}'
-                    .format(repr(self.lock_file.name))
+                'released exclusive-lock on {!r}'
+                    .format(self.lock_file.name)
             )
         except OSError as e:
             self.log.error(
-                'failed to remove lock-file: {0} because:\n{1}'
-                    .format(repr(self.lock_file.name), e)
+                'failed to remove lock-file: {!r} because:\n{}'
+                    .format(self.lock_file.name, e)
             )
 
     def _update_replica(self):
@@ -189,18 +189,18 @@ class Synchronizer(object):
         )
         cmd.append(self._get_source())
         cmd.append(self._get_target())
-        self.log.debug('spawning {0}'.format(repr(cmd)))
+        self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
-        self.log.info('rsync pid={0}'.format(repr(process.pid)))
+        self.log.info('rsync pid={!r}'.format(process.pid))
         exit_code = process.collect(self.log.info, self.log.error)
         if exit_code < 0:
             self.log.warn(
-                'rsync terminated; caught signal {0}'.format(repr(-exit_code))
+                'rsync terminated; caught signal {!r}'.format(-exit_code)
             )
         else:
             level = [logging.INFO, logging.DEBUG][exit_code == os.EX_OK]
-            self.log.log(level, 'rsync exit code={0}'.format(repr(exit_code)))
+            self.log.log(level, 'rsync exit code={!r}'.format(exit_code))
         self.log.info('mirror synchronization finished')
         return exit_code
 
