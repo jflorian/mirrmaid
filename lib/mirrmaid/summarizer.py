@@ -130,6 +130,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def __log_filename(self):
         return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
 
+    @property
     def __subject(self):
         return 'mirrmaid Activity Summary for {0}'.format(
             self.mirrmaid_config.summary_group)
@@ -140,7 +141,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
             MiniMailer().send(
                 sender,
                 self.mirrmaid_config.summary_recipients,
-                self.__subject(),
+                self.__subject,
                 self._summary_body()
             )
         except ConnectionError as e:
