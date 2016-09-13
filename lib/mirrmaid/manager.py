@@ -26,10 +26,10 @@ activities of one or more Mirror_Synchronizers.
 import grp
 import logging
 import logging.handlers
-from optparse import OptionParser
 import os
 import pwd
 import sys
+from optparse import OptionParser
 from traceback import format_exc
 
 from doubledog.config import DefaultConfig, InvalidConfiguration
@@ -38,7 +38,6 @@ from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer, SynchronizerException
-
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
@@ -72,7 +71,7 @@ class MirrorManager(object):
                     'environment variable {0} has been unset; '
                     'use the "proxy" setting in {1} instead '
                     'if proxy support is required'
-                    .format(repr(RSYNC_PROXY), self.options.config_filename)
+                        .format(repr(RSYNC_PROXY), self.options.config_filename)
                 )
             self.log.debug('will not proxy rsync')
         else:
@@ -103,7 +102,7 @@ class MirrorManager(object):
                     os.EX_OSERR,
                     'could not drop privileges to USER/GROUP {0}/{1} '
                     'because: {2}'
-                    .format(repr(RUNTIME_USER), repr(RUNTIME_GROUP), e)
+                        .format(repr(RUNTIME_USER), repr(RUNTIME_GROUP), e)
                 )
         os.umask(0o077)
 

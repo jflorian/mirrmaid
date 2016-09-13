@@ -23,18 +23,16 @@ This module implements a mirror summarizer for the purpose of keeping one or
 more people informed of the current mirror state.
 """
 import errno
-from hashlib import md5
-import logging
 import logging.handlers
 import shelve
-from socket import getfqdn
 import sys
+from hashlib import md5
+from socket import getfqdn
 from time import time, ctime, asctime
 
 from doubledog.mail import MiniMailer
 
 from mirrmaid.constants import *
-
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2012-2016 John Florian"""
@@ -245,4 +243,3 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         # notification.
         self._rolled_for_size |= for_size
         return for_age or for_size
-

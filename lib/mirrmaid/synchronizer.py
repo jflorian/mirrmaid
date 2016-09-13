@@ -31,8 +31,6 @@ from doubledog.async import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
 from mirrmaid.constants import *
-from mirrmaid.exceptions import SynchronizerException
-
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
@@ -145,13 +143,13 @@ class Synchronizer(object):
         except LockException:
             self.log.info(
                 '{0} already locked by another process'
-                .format(repr(self.lock_file.name))
+                    .format(repr(self.lock_file.name))
             )
             return False
         else:
             self.log.info(
                 'gained exclusive-lock on {0}'
-                .format(repr(self.lock_file.name))
+                    .format(repr(self.lock_file.name))
             )
             return True
 
@@ -161,12 +159,12 @@ class Synchronizer(object):
             self.lock_file.unlock(delete_file=True)
             self.log.info(
                 'released exclusive-lock on {0}'
-                .format(repr(self.lock_file.name))
+                    .format(repr(self.lock_file.name))
             )
         except OSError as e:
             self.log.error(
                 'failed to remove lock-file: {0} because:\n{1}'
-                .format(repr(self.lock_file.name)), e
+                    .format(repr(self.lock_file.name)), e
             )
 
     def _update_replica(self):
