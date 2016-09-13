@@ -36,8 +36,9 @@ from doubledog.config import DefaultConfig, InvalidConfiguration
 
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
+from mirrmaid.exceptions import SynchronizerException
 from mirrmaid.summarizer import LogSummarizingHandler
-from mirrmaid.synchronizer import Synchronizer, SynchronizerException
+from mirrmaid.synchronizer import Synchronizer
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
