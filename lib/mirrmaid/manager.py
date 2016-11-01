@@ -34,7 +34,7 @@ from argparse import ArgumentParser
 from traceback import format_exc
 
 import yaml
-from doubledog.config import DefaultConfig, InvalidConfiguration
+from doubledog.config.sectioned import DefaultConfig, InvalidConfiguration
 
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
