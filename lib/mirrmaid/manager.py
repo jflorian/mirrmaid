@@ -25,6 +25,7 @@ activities of one or more Mirror_Synchronizers.
 
 import grp
 import logging
+import logging.config
 import logging.handlers
 import os
 import pwd
@@ -32,6 +33,7 @@ import sys
 from optparse import OptionParser
 from traceback import format_exc
 
+import yaml
 from doubledog.config import DefaultConfig, InvalidConfiguration
 
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
@@ -53,11 +55,10 @@ class MirrorManager(object):
         self._init_logger()
 
     def _config_logger(self):
-        self.log.setLevel(self.options.log_level * 10)
-        if self.options.debug:
-            console = logging.StreamHandler()
-            console.setFormatter(CONSOLE_FORMATTER)
-            self.log.addHandler(console)
+        # Override the configuration of all handlers on the root logger per
+        # run-time options for the requested verbosity.
+        for handler in logging.getLogger().handlers:
+            handler.setLevel(self.options.log_level * 10)
 
     def _config_proxy(self):
         """Configure the rsync proxy."""
@@ -130,12 +131,10 @@ class MirrorManager(object):
                 sys.stderr.write(message)
         sys.exit(exit_code)
 
-    def _init_logger(self):
-        self.log = logging.getLogger('mirrmaid')
-        handler = logging.handlers.TimedRotatingFileHandler(
-            LOG_FILENAME, when='midnight', backupCount=7)
-        handler.setFormatter(LOGGING_FORMATTER)
-        self.log.addHandler(handler)
+    @staticmethod
+    def _init_logger():
+        with open(LOGGING_CONFIG_FILENAME) as f:
+            logging.config.dictConfig(yaml.safe_load(f.read()))
 
     def _log_environment(self):
         for k in sorted(os.environ):

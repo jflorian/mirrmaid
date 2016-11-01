@@ -1,0 +1,54 @@
+---
+
+version:                    1
+disable_existing_loggers:   False
+
+formatters:
+
+    file:
+        format:         '{asctime} {name}[{process:d}] {levelname:8s} {message}'
+        style:          '{'
+
+    long:
+        format:         '{asctime}  {levelname}  {threadName}  {name}:{lineno}  ({funcName}) {message}'
+        style:          '{'
+
+    short:
+        format:         '{levelname} - {message}'
+        style:          '{'
+
+    # Want more context?  No need to change the format here.  Just use:
+    #       journalctl -o verbose
+    #
+    # The following journal fields are always sent: MESSAGE, PRIORITY,
+    # THREAD_NAME, CODE_FILE, CODE_LINE, CODE_FUNC, LOGGER (name as supplied
+    # to getLogger call), MESSAGE_ID (optional, see JournalHandler class
+    # docs), SYSLOG_IDENTIFIER (defaults to sys.argv[0]).
+    systemd:
+        format:         '[{name}] {message}'
+        style:          '{'
+        datefmt:
+
+handlers:
+    # Logging levels are ingored here since they're overridden at run-time
+    # based on command-line options.
+
+    logfile:
+        class:          logging.handlers.TimedRotatingFileHandler
+        formatter:      file
+        filename:       /var/log/mirrmaid/mirrmaid
+        when:           midnight
+        backupCount:    7
+
+    console:
+        class:          logging.StreamHandler
+        formatter:      short
+
+#   journal:
+#       class:          systemd.journal.JournalHandler
+#       level:          DEBUG
+#       formatter:      systemd
+
+root:
+    level:              DEBUG
+    handlers:           [logfile, console]

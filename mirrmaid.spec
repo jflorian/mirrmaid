@@ -36,6 +36,7 @@ Requires(pre):  shadow-utils
 Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
+Requires:       python%{python3_pkgversion}-PyYAML
 Requires:       python3-doubledog
 Requires:       rsync
 Requires:       util-linux
@@ -64,6 +65,7 @@ install -d  -m 0755 %{buildroot}/run/lock/%{name}
 
 install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0755 bin/%{name}                 %{buildroot}%{_bindir}/%{name}
 
@@ -90,6 +92,7 @@ exit 0
 %defattr(-,root,root,-)
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}/logging.yaml
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %dir %{python3_sitelib}/%{python_package_name}
 %doc doc/*
