@@ -39,6 +39,7 @@ from doubledog.config import DefaultConfig, InvalidConfiguration
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.exceptions import SynchronizerException
+from mirrmaid.logging.kludge import race_friendly_rotator
 from mirrmaid.logging.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer
 
@@ -61,6 +62,8 @@ class MirrorManager(object):
         # run-time options for the requested verbosity.
         for handler in logging.getLogger().handlers:
             handler.setLevel(self.options.log_level * 10)
+            if isinstance(handler, logging.handlers.BaseRotatingHandler):
+                handler.rotator = race_friendly_rotator
 
     def _config_proxy(self):
         """Configure the rsync proxy."""
