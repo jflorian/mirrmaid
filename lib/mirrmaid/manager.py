@@ -60,7 +60,7 @@ class MirrorManager(object):
         # Override the configuration of all handlers on the root logger per
         # run-time options for the requested verbosity.
         for handler in logging.getLogger().handlers:
-            handler.setLevel(self.args.log_level * 10)
+            handler.setLevel(self.args.log_level)
             if isinstance(handler, logging.handlers.BaseRotatingHandler):
                 handler.rotator = race_friendly_rotator
 
@@ -151,8 +151,7 @@ class MirrorManager(object):
         self.parser = ArgumentParser()
         self.parser.set_defaults(
             config_filename=CONFIG_FILENAME,
-            debug=False,
-            log_level=2,
+            log_level=logging.WARNING
         )
         self.parser.add_argument(
             '-c', '--config',
@@ -161,14 +160,13 @@ class MirrorManager(object):
         )
         self.parser.add_argument(
             '-d', '--debug',
-            action='store_true', dest='debug',
-            help='enable logging to console'
+            action='store_const', dest='log_level', const=logging.DEBUG,
+            help='set logging level to DEBUG',
         )
         self.parser.add_argument(
-            '-l', '--level',
-            type='int', dest='log_level',
-            help=('set minimum logging threshold (1=debug, 2=info[default], '
-                  '3=warning, 4=error, 5=critical')
+            '-v', '--verbose',
+            action='store_const', dest='log_level', const=logging.INFO,
+            help='set logging level to INFO',
         )
         self.args = self.parser.parse_args()
 
