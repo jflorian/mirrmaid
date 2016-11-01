@@ -45,6 +45,8 @@ from mirrmaid.synchronizer import Synchronizer
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2016 John Florian"""
 
+_log = logging.getLogger('mirrmaid')
+
 
 class MirrorManager(object):
     def __init__(self, args):
@@ -69,23 +71,23 @@ class MirrorManager(object):
             except KeyError:
                 pass
             else:
-                self.log.warning(
+                _log.warning(
                     'environment variable {!r} has been unset; use the "proxy" '
                     'setting in {} instead if proxy support is required'.format(
                         RSYNC_PROXY,
                         self.options.config_filename,
                     )
                 )
-            self.log.debug('will not proxy rsync')
+            _log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
-            self.log.debug('will proxy rsync through {!r}'.format(proxy))
+            _log.debug('will proxy rsync through {!r}'.format(proxy))
 
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
         handler.setFormatter(LOGGING_FORMATTER)
         handler.setLevel(logging.ERROR)
-        self.log.addHandler(handler)
+        _log.addHandler(handler)
         # Ensure the summary is delivered regularly, even if no messages are
         # logged there during this run.
         if handler.summary_due:
@@ -136,9 +138,10 @@ class MirrorManager(object):
         with open(LOGGING_CONFIG_FILENAME) as f:
             logging.config.dictConfig(yaml.safe_load(f.read()))
 
-    def _log_environment(self):
+    @staticmethod
+    def _log_environment():
         for k in sorted(os.environ):
-            self.log.debug(
+            _log.debug(
                 'environment: {}={!r}'.format(k, os.environ[k])
             )
 
@@ -177,7 +180,7 @@ class MirrorManager(object):
     def _run(self):
         self._parse_options()
         self._config_logger()
-        self.log.debug(
+        _log.debug(
             'using config file: {!r}'.format(self.options.config_filename)
         )
         self.mirrmaid_conf = MirrmaidConfig(self.options.config_filename)
@@ -186,11 +189,11 @@ class MirrorManager(object):
         self._log_environment()
         self.default_conf = DefaultConfig(self.options.config_filename)
         self.mirrors_conf = MirrorsConfig(self.options.config_filename)
-        self.log.debug(
+        _log.debug(
             'enabled mirrors: {!r}'.format(self.mirrors_conf.mirrors)
         )
         for mirror in self.mirrors_conf.mirrors:
-            self.log.debug('processing mirror: {!r}'.format(mirror))
+            _log.debug('processing mirror: {!r}'.format(mirror))
             worker = Synchronizer(
                 self.default_conf,
                 MirrorConfig(self.options.config_filename, mirror)
@@ -202,18 +205,18 @@ class MirrorManager(object):
         try:
             self._run()
         except InvalidConfiguration as e:
-            self.log.critical('invalid configuration:\n{0}'.format(e))
+            _log.critical('invalid configuration:\n{0}'.format(e))
             self._exit(os.EX_CONFIG)
         except SynchronizerException as e:
-            self.log.critical(e)
+            _log.critical(e)
             self._exit(os.EX_OSERR, e)
         except KeyboardInterrupt:
-            self.log.error('interrupted via SIGINT')
+            _log.error('interrupted via SIGINT')
             self._exit(os.EX_OSERR)
         except SystemExit:
             pass  # presumably already handled
         except:
-            self.log.critical('unhandled exception:\n{0}'.format(format_exc()))
+            _log.critical('unhandled exception:\n{0}'.format(format_exc()))
             self._exit(os.EX_SOFTWARE)
         finally:
             logging.shutdown()
