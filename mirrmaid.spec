@@ -28,7 +28,6 @@ License:        GPLv3+
 URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python%{python3_pkgversion}-devel
 
@@ -39,7 +38,7 @@ Requires:       crontabs
 Requires:       python%{python3_pkgversion}
 Requires:       python3-doubledog
 Requires:       rsync
-Requires:       util-linux-ng
+Requires:       util-linux
 
 %description
 This package efficiently maintains synchronized target mirrors of source
@@ -58,7 +57,6 @@ other.
 
 # {{{1 install
 %install
-rm -rf %{buildroot}
 
 install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
@@ -71,10 +69,7 @@ install -Dp -m 0755 bin/%{name}                 %{buildroot}%{_bindir}/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
-# {{{1 clean, pre & post
-%clean
-rm -rf %{buildroot}
-
+# {{{1 pre
 %pre
 getent group %{name} >/dev/null || groupadd -f -g %{sys_gid} -r %{name}
 if ! getent passwd %{name} >/dev/null
@@ -89,12 +84,6 @@ then
     fi
 fi
 exit 0
-
-%post
-
-%preun
-
-%postun
 
 # {{{1 files
 %files
