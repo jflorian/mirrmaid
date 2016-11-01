@@ -68,6 +68,9 @@ LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
 # logging and operations summary features.
 LOG_STATE = '/var/lib/mirrmaid/log_state'
 
+# Where the rsync executable can be found.
+RSYNC = '/usr/bin/rsync'
+
 # Name of environment variable used to configure rsync for proxy usage.
 RSYNC_PROXY = 'RSYNC_PROXY'
 
