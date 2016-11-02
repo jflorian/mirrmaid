@@ -180,7 +180,7 @@ class Synchronizer(object):
         """
         self.log.info('mirror synchronization started')
         cmd = (
-            ['/usr/bin/rsync']
+            [RSYNC]
             + self._rsync_options
             + self._rsync_includes
             + self._rsync_excludes

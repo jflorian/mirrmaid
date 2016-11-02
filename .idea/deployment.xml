@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="narvi">
+    <serverData>
+      <paths name="narvi">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/etc/mirrmaid" local="$PROJECT_DIR$/etc" web="" />
+            <mapping deploy="/lib/python3.4/site-packages/mirrmaid" local="$PROJECT_DIR$/lib/mirrmaid" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

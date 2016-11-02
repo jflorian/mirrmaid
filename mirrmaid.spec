@@ -16,7 +16,7 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.23
+Version:        0.24
 Release:        1%{?dist}
 
 # {{{1 package meta-data
@@ -28,7 +28,6 @@ License:        GPLv3+
 URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  python%{python3_pkgversion}-devel
 
@@ -37,9 +36,10 @@ Requires(pre):  shadow-utils
 Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
-Requires:       python3-doubledog
+Requires:       python%{python3_pkgversion}-PyYAML
+Requires:       python3-doubledog >= 2.0.0
 Requires:       rsync
-Requires:       util-linux-ng
+Requires:       util-linux
 
 %description
 This package efficiently maintains synchronized target mirrors of source
@@ -58,7 +58,6 @@ other.
 
 # {{{1 install
 %install
-rm -rf %{buildroot}
 
 install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
@@ -66,15 +65,13 @@ install -d  -m 0755 %{buildroot}/run/lock/%{name}
 
 install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0755 bin/%{name}                 %{buildroot}%{_bindir}/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 
-# {{{1 clean, pre & post
-%clean
-rm -rf %{buildroot}
-
+# {{{1 pre
 %pre
 getent group %{name} >/dev/null || groupadd -f -g %{sys_gid} -r %{name}
 if ! getent passwd %{name} >/dev/null
@@ -90,17 +87,12 @@ then
 fi
 exit 0
 
-%post
-
-%preun
-
-%postun
-
 # {{{1 files
 %files
 %defattr(-,root,root,-)
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}/logging.yaml
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %dir %{python3_sitelib}/%{python_package_name}
 %doc doc/*
@@ -118,6 +110,19 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Wed Nov 02 2016 John Florian <jflorian@doubledog.org> 0.24-1
+- Change - log DEBUG/INFO to stdout; rest to stderr (jflorian@doubledog.org)
+- Change - adapt to python3-doubledog >= 2.0.0 (jflorian@doubledog.org)
+- Change - CLI verbosity options (jflorian@doubledog.org)
+- Change - use ArgumentParser instead of OptionParser (jflorian@doubledog.org)
+- Bug - FileNotFoundError raised in log rollover (jflorian@doubledog.org)
+- Change - move logger instances to class variable (jflorian@doubledog.org)
+- Refactor - move .summarizer to .logging.summarizer (jflorian@doubledog.org)
+- New - mirrmaid.logging package for Python (jflorian@doubledog.org)
+- New - configure logging via external YAML file (jflorian@doubledog.org)
+- Janitorial - modernize spec file (jflorian@doubledog.org)
+- Refactor - introduce RSYNC constant (jflorian@doubledog.org)
+
 * Tue Sep 13 2016 John Florian <jflorian@doubledog.org> 0.23-1
 - Change - Epytext to reStructeredText (jflorian@doubledog.org)
 - Janitorial - improve style of longer format() calls (jflorian@doubledog.org)
