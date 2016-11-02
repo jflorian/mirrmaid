@@ -39,6 +39,7 @@ from doubledog.config.sectioned import DefaultConfig, InvalidConfiguration
 from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
 from mirrmaid.constants import *
 from mirrmaid.exceptions import SynchronizerException
+from mirrmaid.logging.handlers import ConsoleHandler
 from mirrmaid.logging.kludge import race_friendly_rotator
 from mirrmaid.logging.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer
@@ -57,10 +58,9 @@ class MirrorManager(object):
         self._init_logger()
 
     def _config_logger(self):
-        # Override the configuration of all handlers on the root logger per
-        # run-time options for the requested verbosity.
         for handler in logging.getLogger().handlers:
-            handler.setLevel(self.args.log_level)
+            if isinstance(handler, ConsoleHandler):
+                handler.setLevel(self.args.log_level)
             if isinstance(handler, logging.handlers.BaseRotatingHandler):
                 handler.rotator = race_friendly_rotator
 
