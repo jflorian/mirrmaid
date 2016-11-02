@@ -16,7 +16,7 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.23
+Version:        0.24
 Release:        1%{?dist}
 
 # {{{1 package meta-data
@@ -110,6 +110,19 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Wed Nov 02 2016 John Florian <jflorian@doubledog.org> 0.24-1
+- Change - log DEBUG/INFO to stdout; rest to stderr (jflorian@doubledog.org)
+- Change - adapt to python3-doubledog >= 2.0.0 (jflorian@doubledog.org)
+- Change - CLI verbosity options (jflorian@doubledog.org)
+- Change - use ArgumentParser instead of OptionParser (jflorian@doubledog.org)
+- Bug - FileNotFoundError raised in log rollover (jflorian@doubledog.org)
+- Change - move logger instances to class variable (jflorian@doubledog.org)
+- Refactor - move .summarizer to .logging.summarizer (jflorian@doubledog.org)
+- New - mirrmaid.logging package for Python (jflorian@doubledog.org)
+- New - configure logging via external YAML file (jflorian@doubledog.org)
+- Janitorial - modernize spec file (jflorian@doubledog.org)
+- Refactor - introduce RSYNC constant (jflorian@doubledog.org)
+
 * Tue Sep 13 2016 John Florian <jflorian@doubledog.org> 0.23-1
 - Change - Epytext to reStructeredText (jflorian@doubledog.org)
 - Janitorial - improve style of longer format() calls (jflorian@doubledog.org)
