@@ -52,6 +52,9 @@ DEFAULT_SUMMARY_RECIPIENTS = '["root"]'
 # Default threshold to force premature sending of operations summary.
 DEFAULT_SUMMARY_SIZE = 20000
 
+# The default run-time configuration file.
+LOGGING_CONFIG_FILENAME = '/etc/mirrmaid/logging.yaml'
+
 # Format to be used when logging to the main log file and the operations
 # summary log file.
 LOGGING_FORMATTER = Formatter(
@@ -60,9 +63,6 @@ LOGGING_FORMATTER = Formatter(
 
 # Where run-time advisory lock files are created.
 LOCK_DIRECTORY = '/run/lock/mirrmaid/'
-
-# The main log file.
-LOG_FILENAME = '/var/log/mirrmaid/mirrmaid'
 
 # Where mirrmaid will persist internal data regarding the state of its
 # logging and operations summary features.

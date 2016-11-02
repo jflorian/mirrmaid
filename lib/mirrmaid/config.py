@@ -23,7 +23,7 @@ This module implements the Configuration_Parser, which parses the
 configuration file to make the directives readily available.
 """
 
-from doubledog.config import BaseConfig
+from doubledog.config.sectioned import BaseConfig
 
 from mirrmaid.constants import *
 
