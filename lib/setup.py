@@ -10,7 +10,10 @@ setup(
     author='John Florian',
     author_email='jflorian@doubledog.org',
     license='GPLv3+',
-    packages=['mirrmaid'],
+    packages=[
+        'mirrmaid',
+        'mirrmaid.logging',
+    ],
     package_dir={'': 'lib'},
     requires=[
         'yaml',
