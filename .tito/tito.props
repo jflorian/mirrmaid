@@ -13,4 +13,7 @@ disttag = .fc23
 [f24]
 disttag = .fc24
 
+[f25]
+disttag = .fc25
+
 # vim: filetype=configparser
