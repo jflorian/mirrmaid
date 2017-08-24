@@ -29,6 +29,9 @@ help:
 # target: clean - Remove all build and testing artifacts.
 clean: clean-pyc
 
+# target: dist - Produce a build for distribution.
+dist: koji-build
+
 # target: sources - Produce all forms of source distribution.
 sources: tarball
 
@@ -49,3 +52,7 @@ clean-pyc:
 	find . \
 		\( -name '*.pyc' -type f -delete \) , \
 		\( -name '__pycache__' -type d -delete \)
+
+# target: koji-build - Submit build RPM task into Koji.
+koji-build:
+	tito release all
