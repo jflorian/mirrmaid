@@ -37,7 +37,7 @@ Requires:       coreutils
 Requires:       crontabs
 Requires:       python%{python3_pkgversion}
 Requires:       python%{python3_pkgversion}-PyYAML
-Requires:       python3-doubledog >= 2.0.0
+Requires:       python3-doubledog >= 3.0.0, python3-doubledog < 4.0.0
 Requires:       rsync
 Requires:       util-linux
 
