@@ -29,6 +29,7 @@ URL:            http://www.doubledog.org/trac/%{name}/
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 
+BuildRequires:  pandoc
 BuildRequires:  python%{python3_pkgversion}-devel
 
 Requires(pre):  shadow-utils
@@ -59,6 +60,8 @@ make build
 # {{{1 install
 %install
 
+%{__python3} lib/%{name}/setup.py install -O1 --skip-build --root %{buildroot}
+
 install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
 install -d  -m 0755 %{buildroot}/run/lock/%{name}
@@ -68,7 +71,22 @@ install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{nam
 install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 
-%{__python3} lib/%{name}/setup.py install -O1 --skip-build --root %{buildroot}
+# Compress and install man pages.
+pushd share/man/
+for section in {1..8}
+do
+    glob=*.${section}.roff
+    if stat -t $glob &> /dev/null
+    then
+        for page in $glob
+        do
+            install -dp %{buildroot}/%{_mandir}/man${section}/
+            base=$(basename $page .roff)
+            gzip < $page > %{buildroot}/%{_mandir}/man${section}/${base}.gz
+        done
+    fi
+done
+popd
 
 # {{{1 pre
 %pre
@@ -93,6 +111,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/%{name}/logging.yaml
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %dir %{python3_sitelib}/%{python_package_name}
+%doc %{_mandir}/man[1-8]/*.*
 %doc doc/*
 %{_bindir}/%{name}
 %{python3_sitelib}/%{python_package_name}/*
