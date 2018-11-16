@@ -67,7 +67,6 @@ install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfi
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
-install -Dp -m 0755 bin/%{name}                 %{buildroot}%{_bindir}/%{name}
 
 %{__python3} lib/setup.py install -O1 --skip-build --root %{buildroot}
 

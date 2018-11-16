@@ -18,6 +18,9 @@ setup(
     requires=[
         'yaml',
     ],
+    scripts=[
+        'bin/mirrmaid',
+    ],
     long_description="""\
 This package efficiently maintains synchronized target mirrors of source
 resources.  This is primarily accomplished by a sophisticated wrapper around
