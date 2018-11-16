@@ -54,7 +54,7 @@ other.
 %setup -q
 
 %build
-%{__python3} lib/setup.py build
+make build
 
 # {{{1 install
 %install
