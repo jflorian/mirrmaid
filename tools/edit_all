@@ -1,3 +1,0 @@
-#!/bin/bash
-
-gvim *spec $(find -type f -name '*.py' \! -name '*__init__*')

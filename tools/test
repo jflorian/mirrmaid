@@ -1,5 +1,0 @@
-#!/bin/sh
-
-export PYTHONPATH=lib/
-python -B bin/mirrmaid.py "$@"
-echo "test harness exit status: $?"
