@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # coding=utf-8
 
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+#
+# This file is part of mirrmaid.
+
+
 from distutils.core import setup
 
 setup(
