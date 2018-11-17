@@ -16,7 +16,7 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.24
+Version:        0.25
 Release:        1%{?dist}
 
 # {{{1 package meta-data
@@ -127,6 +127,43 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Fri Nov 16 2018 John Florian <jflorian@doubledog.org> 0.25-1
+- New - mirrmaid.conf(5) man page (jflorian@doubledog.org)
+- Refactor - mv distutils build into Makefile (jflorian@doubledog.org)
+- Refactor - mv setup.py into module (jflorian@doubledog.org)
+- Drop - obsolete project tools (jflorian@doubledog.org)
+- Janitorial - abbreviate/ensure license in headers (jflorian@doubledog.org)
+- Janitorial - distutils should install scripts (jflorian@doubledog.org)
+- Bug - Fedora 29 requires newer python3-doubledog (jflorian@doubledog.org)
+- New - [PyCharm] codeStyles and scope_settings (jflorian@doubledog.org)
+- Change - [PyCharm] bump SDK to Python 3.6 (jflorian@doubledog.org)
+- Bug - summary_size incorrectly doc'd in config sample
+  (jflorian@doubledog.org)
+- New - [tito] targets for Fedora 29 (jflorian@doubledog.org)
+- [tito] - restructure epel targets (jflorian@doubledog.org)
+- New - [tito] fedora release target (jflorian@doubledog.org)
+- Drop - [tito] Fedora 25 release target (jflorian@doubledog.org)
+- Drop - [tito] Fedora 25 release target (jflorian@doubledog.org)
+- New - [tito] test-all release target (jflorian@doubledog.org)
+- Change - [tito] disttag for EL7 (jflorian@doubledog.org)
+- New - [tito] targets for Fedora 28 (jflorian@doubledog.org)
+- New - [tito] targets for Fedora 27 (jflorian@doubledog.org)
+- Bug - [Makefile] queryspec returns partial value (jflorian@doubledog.org)
+- New - [Makefile] 'dist' target (jflorian@doubledog.org)
+- New - [Makefile] 'clean' target (jflorian@doubledog.org)
+- New - [Makefile] vim folding for better organization (jflorian@doubledog.org)
+- New - [Makefile] 'help' target (jflorian@doubledog.org)
+- Change - [Makefile] don't hide exec of 'git archive' (jflorian@doubledog.org)
+- Refactor - [Makefile] rename all vars (jflorian@doubledog.org)
+- Drop - [tito] releaser for Fedora 24 (jflorian@doubledog.org)
+- New - [tito] releaser for Fedora 26 (jflorian@doubledog.org)
+- Drop - [tito] Dart-specific releasers (jflorian@doubledog.org)
+- Drop - default defattr directive (jflorian@doubledog.org)
+- Drop - tito releaser for Fedora 23 (jflorian@doubledog.org)
+- Change - redo of Makefile (jflorian@doubledog.org)
+- New - tito release target for Fedora 25 (jflorian@doubledog.org)
+- Drop - tito release target for EoL Fedora 22 (jflorian@doubledog.org)
+
 * Wed Nov 02 2016 John Florian <jflorian@doubledog.org> 0.24-1
 - Change - log DEBUG/INFO to stdout; rest to stderr (jflorian@doubledog.org)
 - Change - adapt to python3-doubledog >= 2.0.0 (jflorian@doubledog.org)
@@ -139,78 +176,3 @@ exit 0
 - New - configure logging via external YAML file (jflorian@doubledog.org)
 - Janitorial - modernize spec file (jflorian@doubledog.org)
 - Refactor - introduce RSYNC constant (jflorian@doubledog.org)
-
-* Tue Sep 13 2016 John Florian <jflorian@doubledog.org> 0.23-1
-- Change - Epytext to reStructeredText (jflorian@doubledog.org)
-- Janitorial - improve style of longer format() calls (jflorian@doubledog.org)
-- Change - simplify SummaryGroup initialization (jflorian@doubledog.org)
-- Bug - FileNotFoundError raised in log rollover (jflorian@doubledog.org)
-- Refactor - use simpler form of super() calls (jflorian@doubledog.org)
-- Refactor - convert summary_due() to property (jflorian@doubledog.org)
-- Refactor - convert _summary_body() to property (jflorian@doubledog.org)
-- Refactor - convert _reason() to property (jflorian@doubledog.org)
-- Refactor - convert __subject() to property (jflorian@doubledog.org)
-- Refactor - convert __log_filename() to property (jflorian@doubledog.org)
-- Bug - privileges dropped only when both UID/GID are wrong
-  (jflorian@doubledog.org)
-- Refactor - convert _get_target() to property (jflorian@doubledog.org)
-- Refactor - convert _get_source() to property (jflorian@doubledog.org)
-- Refactor - convert _get_rsync_options() to property (jflorian@doubledog.org)
-- Refactor - convert _get_rsync_includes() to property (jflorian@doubledog.org)
-- Refactor - convert _get_rsync_excludes() to property (jflorian@doubledog.org)
-- Refactor - convert _get_lock_name() to _lock_name property
-  (jflorian@doubledog.org)
-- Refactor - use string.format's intrinsic repr() (jflorian@doubledog.org)
-- Change - squelch 'module level import not at top of file'
-  (jflorian@doubledog.org)
-- Change - squelch 'import resolves to its containing file'
-  (jflorian@doubledog.org)
-- Bug - unresolved reference in format string (jflorian@doubledog.org)
-- Bug - unresolved reference 'SynchronizerException' (jflorian@doubledog.org)
-- Janitorial - complete project reformat (jflorian@doubledog.org)
-
-* Thu Aug 18 2016 John Florian <jflorian@doubledog.org> 0.22-1
-- Drop - run-time creation of lock directory (jflorian@doubledog.org)
-- Change - location of advisory lock files (jflorian@doubledog.org)
-- Change - use soft static user/group account allocation
-  (jflorian@doubledog.org)
-- Bug - missing Requires(pre) on shadow-utils (jflorian@doubledog.org)
-- Change - Python interpreter for Fedora 24 (jflorian@doubledog.org)
-
-* Tue Aug 09 2016 John Florian <jflorian@doubledog.org> 0.21-10
-- New - tito releaser for Fedora 24 (jflorian@doubledog.org)
-
-* Sun Jun 26 2016 John Florian <jflorian@doubledog.org> 0.21-9
-- Bug - python3-doubledog isn't python34-doubledog for EPEL
-  (jflorian@doubledog.org)
-- Bug - test releasers don't need git_url (jflorian@doubledog.org)
-
-* Mon Apr 25 2016 John Florian <jflorian@doubledog.org> 0.21-8
-- Bug - test targets using wrong releaser (jflorian@doubledog.org)
-
-* Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-7
-- Change - adapt spec for Fedora/EPEL builds (jflorian@doubledog.org)
-
-* Wed Apr 20 2016 John Florian <jflorian@doubledog.org> 0.21-6
-- Change - several tito configuration issues (jflorian@doubledog.org)
-
-* Mon Mar 07 2016 John Florian <jflorian@doubledog.org> 0.21-5
-- Janitorial - update copyrights (jflorian@doubledog.org)
-- Change - redo tito config for koji (jflorian@doubledog.org)
-- Change - rename tito's subdir (jflorian@doubledog.org)
-
-* Tue Jul 07 2015 John Florian <jflorian@doubledog.org> 0.21-4
-- New - f22 target for Koji at Dart (jflorian@doubledog.org)
-
-* Mon May 11 2015 John Florian <john_florian@dart.biz> 0.21-3
-- New - f21 target for Koji at Dart (john_florian@dart.biz)
-
-* Wed May 06 2015 John Florian <jflorian@doubledog.org> 0.21-2
- - Change - use ReleaseTagger instead of VersionTagger (jflorian@doubledog.org)
- - New - "koji" and "koji-dart" release targets (jflorian@doubledog.org)
-
-* Fri Feb 27 2015 John Florian <jflorian@doubledog.org> - 0.21-1
- - Janitorial - update Copyrights (jflorian@doubledog.org)
- - New - Fedora 21 release targets (jflorian@doubledog.org)
- - Change - new packaging requirements for cron jobs (jflorian@doubledog.org)
- - New - optimized tito releaser configuration (jflorian@doubledog.org)
