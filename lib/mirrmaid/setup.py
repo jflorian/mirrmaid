@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # coding=utf-8
 
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+#
+# This file is part of mirrmaid.
+
+
 from distutils.core import setup
 
 setup(
@@ -17,6 +23,9 @@ setup(
     package_dir={'': 'lib'},
     requires=[
         'yaml',
+    ],
+    scripts=[
+        'bin/mirrmaid',
     ],
     long_description="""\
 This package efficiently maintains synchronized target mirrors of source

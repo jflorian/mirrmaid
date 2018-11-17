@@ -5,15 +5,14 @@ changelog_do_not_remove_cherrypick = 0
 changelog_format = %s (%ae)
 
 [epel7]
-disttag = .el7.centos
+disttag = .el7
 
-[f22]
-disttag = .fc22
+[f27]
+disttag = .fc27
 
-[f23]
-disttag = .fc23
+[f28]
+disttag = .fc28
 
-[f24]
-disttag = .fc24
+[f29]
+disttag = .fc29
 
-# vim: filetype=configparser

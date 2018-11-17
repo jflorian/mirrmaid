@@ -1,0 +1,87 @@
+#!/bin/sh
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2018 John Florian <jflorian@doubledog.org>
+#
+# This file is part of mirrmaid.
+
+SELF="$(basename $0)"
+
+DEFAULT='share/man/mirrmaid.conf.5'
+
+usage() {
+    cat >&2 <<EOF
+Usage:
+${SELF} [OPTION]... [MAN_PAGE]
+
+Options:
+    -h
+        Display this help and exit.
+
+    -r
+        Use automatic repeat mode.  Once you quit viewing the man page, it
+        will be relaunched, presumably with updated content.  This works very
+        well for rapid change/test cycles.
+
+Examples:
+${SELF} -r
+    This will view the default man page (${DEFAULT}) repeatedly.
+
+${SELF} man/foo.8
+    This will view the man page at man/foo.8 once.
+
+EOF
+}
+
+get_options_and_arguments() {
+    auto_repeat="no"
+    OPTIND=1
+    while getopts ":hCm:rRt:" opt
+    do
+        case "$opt" in
+            h) usage && exit 0 ;;
+            r) auto_repeat="yes";;
+            \?) fail -h "invalid option: -$OPTARG" ;;
+            \:) fail -h "option -$OPTARG requires an argument" ;;
+        esac
+    done
+    shift $((OPTIND-1)); OPTIND=1
+    page="${1:-$DEFAULT}"
+    page="$(dirname ${page})/$(basename ${page} .md).roff"
+}
+
+man() {
+    env \
+        GROFF_NO_SGR=1 \
+        LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+        LESS_TERMCAP_md=$(printf "\e[1;31m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[0;37;102m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[4;32m") \
+        man "$@"
+}
+
+regen_page() {
+    make docs-man
+}
+
+view_page() {
+    man -l ${page}
+}
+
+main() {
+    get_options_and_arguments "$@"
+    while true
+    do
+        regen_page
+        view_page
+        [ ${auto_repeat} = "no" ] && break
+        echo "## restarting in one second; press Ctrl-C to halt ..."
+        sleep 1
+    done
+}
+
+
+main "$@"
