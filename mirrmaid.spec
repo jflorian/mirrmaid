@@ -16,7 +16,7 @@
 %global sys_gid 468
 
 Name:           mirrmaid
-Version:        0.25
+Version:        0.25.1
 Release:        1%{?dist}
 
 # {{{1 package meta-data
@@ -127,6 +127,9 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Mon Nov 19 2018 John Florian <jflorian@doubledog.org> 0.25.1-1
+- Bug - cannot import renamed module (jflorian@doubledog.org)
+
 * Fri Nov 16 2018 John Florian <jflorian@doubledog.org> 0.25-1
 - New - mirrmaid.conf(5) man page (jflorian@doubledog.org)
 - Refactor - mv distutils build into Makefile (jflorian@doubledog.org)
