@@ -15,7 +15,7 @@ utilized.
 import logging
 import os
 
-from doubledog.async import AsynchronousStreamingSubprocess
+from doubledog.asynchronous import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
 
 from mirrmaid.constants import *
