@@ -1,5 +1,6 @@
 # vim: foldmethod=marker
 
+%global min_py_ver 3.6
 %global python_package_name mirrmaid
 
 # These values were arbitrarily chosen so as to be within the range of modern
@@ -36,7 +37,7 @@ Requires(pre):  shadow-utils
 
 Requires:       coreutils
 Requires:       crontabs
-Requires:       python%{python3_pkgversion}
+Requires:       python%{python3_pkgversion} >= %{min_py_ver}
 Requires:       python%{python3_pkgversion}-PyYAML
 Requires:       python3-doubledog >= 3.0.0, python3-doubledog < 4.0.0
 Requires:       rsync
