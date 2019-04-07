@@ -18,7 +18,7 @@
 
 Name:           mirrmaid
 Version:        0.25.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -128,6 +128,12 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Sun Apr 07 2019 John Florian <jflorian@doubledog.org> 0.25.1-2
+- Change - bump for EPEL moving to Python 3.6 (jflorian@doubledog.org)
+- New - [tito] test targets per Fedora release (jflorian@doubledog.org)
+- Change - [tito] use HTTPS instead of HTTP (jflorian@doubledog.org)
+- Drop - [tito] targets for Fedora 27 (jflorian@doubledog.org)
+
 * Mon Nov 19 2018 John Florian <jflorian@doubledog.org> 0.25.1-1
 - Bug - cannot import renamed module (jflorian@doubledog.org)
 
