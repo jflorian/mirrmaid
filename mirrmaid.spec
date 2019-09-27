@@ -18,7 +18,7 @@
 
 Name:           mirrmaid
 Version:        0.25.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -32,6 +32,11 @@ BuildArch:      noarch
 
 BuildRequires:  pandoc
 BuildRequires:  python%{python3_pkgversion}-devel
+%if 0%{?rhel} || 0%{?fedora} && 0%{?fedora} < 30
+BuildRequires:  systemd
+%else
+BuildRequires:  systemd-rpm-macros
+%endif
 
 Requires(pre):  shadow-utils
 
@@ -67,10 +72,10 @@ install -d  -m 0755 %{buildroot}%{_var}/lib/%{name}
 install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
 install -d  -m 0755 %{buildroot}/run/lock/%{name}
 
-install -DP -m 0644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
-install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
+install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
+install -Dp -m 0644 lib/tmpfiles.d/%{name}.conf %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Compress and install man pages.
 pushd share/man/
@@ -120,7 +125,7 @@ exit 0
 
 %defattr(-,%{name},%{name},-)
 
-%{_sysconfdir}/tmpfiles.d/%{name}.conf
+%{_tmpfilesdir}/%{name}.conf
 %{_var}/lib/%{name}
 %{_var}/log/%{name}
 /run/lock/%{name}
@@ -128,6 +133,12 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Fri Sep 27 2019 John Florian <jflorian@doubledog.org> 0.25.1-3
+- Bug - [spec] systemd-tmpfiles s/b under /usr not /etc
+  (jflorian@doubledog.org)
+- Drop - [tito] targets for Fedora 28 (jflorian@doubledog.org)
+- New - [tito] targets for Fedora 30 (jflorian@doubledog.org)
+
 * Sun Apr 07 2019 John Florian <jflorian@doubledog.org> 0.25.1-2
 - Change - bump for EPEL moving to Python 3.6 (jflorian@doubledog.org)
 - New - [tito] test targets per Fedora release (jflorian@doubledog.org)
