@@ -18,7 +18,7 @@
 
 Name:           mirrmaid
 Version:        0.25.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 # {{{1 package meta-data
 Summary:        efficient mirror manager
@@ -133,6 +133,12 @@ exit 0
 
 # {{{1 changelog
 %changelog
+* Fri Sep 27 2019 John Florian <jflorian@doubledog.org> 0.25.1-3
+- Bug - [spec] systemd-tmpfiles s/b under /usr not /etc
+  (jflorian@doubledog.org)
+- Drop - [tito] targets for Fedora 28 (jflorian@doubledog.org)
+- New - [tito] targets for Fedora 30 (jflorian@doubledog.org)
+
 * Sun Apr 07 2019 John Florian <jflorian@doubledog.org> 0.25.1-2
 - Change - bump for EPEL moving to Python 3.6 (jflorian@doubledog.org)
 - New - [tito] test targets per Fedora release (jflorian@doubledog.org)
