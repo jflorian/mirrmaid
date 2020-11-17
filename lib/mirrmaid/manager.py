@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -24,7 +24,7 @@ from traceback import format_exc
 import yaml
 from doubledog.config.sectioned import DefaultConfig, InvalidConfiguration
 
-from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
+from mirrmaid.config import MirrmaidConfig, MirrorConfig, MirrorsConfig
 from mirrmaid.constants import *
 from mirrmaid.exceptions import SynchronizerException
 from mirrmaid.logging.handlers import ConsoleHandler
@@ -33,7 +33,7 @@ from mirrmaid.logging.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2018 John Florian"""
+__copyright__ = """Copyright 2009-2020 John Florian"""
 
 _log = logging.getLogger('mirrmaid')
 

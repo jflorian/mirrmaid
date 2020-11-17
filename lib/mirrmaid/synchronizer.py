@@ -171,10 +171,10 @@ class Synchronizer(Thread):
         """
         self.log.info('mirror synchronization started')
         cmd = (
-            [RSYNC]
-            + self._rsync_options
-            + self._rsync_includes
-            + self._rsync_excludes
+                [RSYNC]
+                + self._rsync_options
+                + self._rsync_includes
+                + self._rsync_excludes
         )
         cmd.append(self._source_uri)
         cmd.append(self._target_uri)

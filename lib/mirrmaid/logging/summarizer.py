@@ -17,7 +17,7 @@ import sys
 from hashlib import md5
 from logging import LogRecord
 from socket import getfqdn
-from time import time, ctime, asctime
+from time import asctime, ctime, time
 from typing import Optional
 
 from doubledog.mail import MiniMailer
