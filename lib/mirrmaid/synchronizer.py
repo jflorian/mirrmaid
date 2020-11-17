@@ -89,7 +89,7 @@ class Synchronizer(object):
         return self.default_conf.get_list('rsync_options')
 
     @property
-    def _source(self) -> str:
+    def _source_uri(self) -> str:
         """
         :return:
             The fully-qualified rsync URI for the source of the directory
@@ -173,7 +173,7 @@ class Synchronizer(object):
             + self._rsync_includes
             + self._rsync_excludes
         )
-        cmd.append(self._source)
+        cmd.append(self._source_uri)
         cmd.append(self._target_uri)
         self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
