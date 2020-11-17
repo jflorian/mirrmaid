@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2016-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2016-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -15,7 +15,7 @@ import logging.handlers
 import os
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2016-2018 John Florian"""
+__copyright__ = """Copyright 2016-2020 John Florian"""
 
 _log = logging.getLogger()
 
@@ -36,6 +36,4 @@ def race_friendly_rotator(source: str, dest: str):
     try:
         os.rename(source, dest)
     except FileNotFoundError as e:
-        _log.debug(
-            'ignoring {} since it is likely due to a race condition'.format(e)
-        )
+        _log.debug('ignoring %s since it is likely due to a race condition', e)

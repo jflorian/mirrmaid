@@ -128,34 +128,21 @@ class Synchronizer(Thread):
         try:
             self.lock_file.exclusive_lock()
         except LockException:
-            self.log.info(
-                '{!r} already locked by another process'.format(
-                    self.lock_file.name,
-                )
-            )
+            self.log.info('%r already locked by another process',
+                          self.lock_file.name)
             return False
         else:
-            self.log.info(
-                'gained exclusive-lock on {!r}'.format(
-                    self.lock_file.name,
-                )
-            )
+            self.log.info('gained exclusive-lock on %r', self.lock_file.name)
             return True
 
     def _unlock_replica(self):
         """Release the lock on the target replica."""
         try:
             self.lock_file.unlock(delete_file=True)
-            self.log.info(
-                'released exclusive-lock on {!r}'.format(self.lock_file.name)
-            )
+            self.log.info('released exclusive-lock on %r', self.lock_file.name)
         except OSError as e:
-            self.log.error(
-                'failed to remove lock-file: {!r} because:\n{}'.format(
-                    self.lock_file.name,
-                    e,
-                )
-            )
+            self.log.error('failed to remove lock-file: %r because:\n%s',
+                           self.lock_file.name, e)
 
     def _update_replica(self) -> int:
         """
@@ -178,18 +165,16 @@ class Synchronizer(Thread):
         )
         cmd.append(self._source_uri)
         cmd.append(self._target_uri)
-        self.log.debug('spawning {!r}'.format(cmd))
-        self.log.debug('AKA      {0}'.format(' '.join(cmd)))
+        self.log.debug('spawning %r', cmd)
+        self.log.debug('AKA      %s', ' '.join(cmd))
         process = AsynchronousStreamingSubprocess(cmd)
-        self.log.info('rsync pid={!r}'.format(process.pid))
+        self.log.info('rsync pid=%r', process.pid)
         exit_code = process.collect(self.log.info, self.log.error)
         if exit_code < 0:
-            self.log.warn(
-                'rsync terminated; caught signal {!r}'.format(-exit_code)
-            )
+            self.log.warning('rsync terminated; caught signal %r', -exit_code)
         else:
             level = [logging.INFO, logging.DEBUG][exit_code == os.EX_OK]
-            self.log.log(level, 'rsync exit code={!r}'.format(exit_code))
+            self.log.log(level, 'rsync exit code=%r', exit_code)
         self.log.info('mirror synchronization finished')
         return exit_code
 
