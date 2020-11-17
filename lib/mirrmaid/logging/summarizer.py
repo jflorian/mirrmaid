@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2012-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -18,13 +18,14 @@ from hashlib import md5
 from logging import LogRecord
 from socket import getfqdn
 from time import time, ctime, asctime
+from typing import Optional
 
 from doubledog.mail import MiniMailer
 
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012-2018 John Florian"""
+__copyright__ = """Copyright 2012-2020 John Florian"""
 
 
 class SummaryGroup(object):
@@ -52,7 +53,7 @@ class LogState(object):
         return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
 
     @property
-    def last_rollover(self) -> float:
+    def last_rollover(self) -> Optional[float]:
         """
         :return:
             The number of seconds since the last rollover.
