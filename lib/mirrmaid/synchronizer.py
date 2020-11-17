@@ -14,6 +14,7 @@ utilized.
 """
 import logging
 import os
+from threading import Thread
 
 from doubledog.asynchronous import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
@@ -24,14 +25,14 @@ __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2020 John Florian"""
 
 
-class Synchronizer(object):
+class Synchronizer(Thread):
     """
-    This is effectively a Python wrapper around the venerable rsync, but made
-    suitable for mirrmaid use.  The options and arguments for rsync are mostly
-    derived from the mirrmaid configuration file.  A Synchronizer object works
-    on a single mirror.  Multiple Synchronizers may run concurrently provided
-    they are operating on distinct mirrors.  This is enforced via lock-files
-    on a per-mirror basis.
+    A thread to wrap around the venerable rsync, but made suitable for
+    mirrmaid use.  The options and arguments for rsync are mostly derived from
+    the mirrmaid configuration file.  A Synchronizer object works on a single
+    mirror.  Multiple Synchronizers may run concurrently provided they are
+    operating on distinct mirrors.  This is enforced via lock-files on
+    a per-mirror basis.
     """
 
     def __init__(self, default_conf, mirror_conf):
@@ -41,12 +42,14 @@ class Synchronizer(object):
         This will happen according to the default and mirror-specific
         sections of the configuration file..
         """
+        super().__init__()
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
         self.log = logging.getLogger(
             'mirrmaid.{0}'.format(self.mirror_conf.mirror_name)
         )
         self.lock_file = LockFile(self._lock_name, pid=os.getpid())
+        self.name = self.mirror_conf.mirror_name
 
     @property
     def _lock_name(self) -> str:
@@ -192,6 +195,7 @@ class Synchronizer(object):
 
     def run(self):
         """Acquire a lock and if successful, update the target replica."""
+        self.log.info('starting thread')
         if self._lock_replica():
             try:
                 self._update_replica()

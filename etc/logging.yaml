@@ -20,7 +20,7 @@ formatters:
     style:          '{'
 
   short:
-    format:         '{levelname} - {message}'
+    format:         '{levelname:7s} {threadName} - {message}'
     style:          '{'
 
   # Want more context?  No need to change the format here.  Just use:
