@@ -86,6 +86,7 @@ class LogState(object):
                 shelf.close()
 
 
+# noinspection PyPep8Naming
 class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     """
     This class extends the RotatingFileHandler with an additional rollover
