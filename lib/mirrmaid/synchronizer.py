@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -21,7 +21,7 @@ from doubledog.lock import LockException, LockFile
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2018 John Florian"""
+__copyright__ = """Copyright 2009-2020 John Florian"""
 
 
 class Synchronizer(object):
@@ -101,7 +101,7 @@ class Synchronizer(object):
         return source
 
     @property
-    def _target(self) -> str:
+    def _target_uri(self) -> str:
         """
         :return:
             The fully-qualified rsync URI for the target target of the mirroring
@@ -174,7 +174,7 @@ class Synchronizer(object):
             + self._rsync_excludes
         )
         cmd.append(self._source)
-        cmd.append(self._target)
+        cmd.append(self._target_uri)
         self.log.debug('spawning {!r}'.format(cmd))
         self.log.debug('AKA      {0}'.format(' '.join(cmd)))
         process = AsynchronousStreamingSubprocess(cmd)
