@@ -50,6 +50,7 @@ class Synchronizer(Thread):
         )
         self.lock_file = LockFile(self._lock_name, pid=os.getpid())
         self.name = self.mirror_conf.mirror_name
+        self._subprocess = None
 
     @property
     def _lock_name(self) -> str:
@@ -167,9 +168,9 @@ class Synchronizer(Thread):
         cmd.append(self._target_uri)
         self.log.debug('spawning %r', cmd)
         self.log.debug('AKA      %s', ' '.join(cmd))
-        process = AsynchronousStreamingSubprocess(cmd)
-        self.log.info('rsync pid=%r', process.pid)
-        exit_code = process.collect(self.log.info, self.log.error)
+        self._subprocess = AsynchronousStreamingSubprocess(cmd)
+        self.log.info('rsync pid=%r', self._subprocess.pid)
+        exit_code = self._subprocess.collect(self.log.info, self.log.error)
         if exit_code < 0:
             self.log.warning('rsync terminated; caught signal %r', -exit_code)
         else:
