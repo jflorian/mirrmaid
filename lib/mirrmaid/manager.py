@@ -98,15 +98,9 @@ class MirrorManager(object):
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self._exit(
-                    os.EX_OSERR,
-                    'could not drop privileges to USER/GROUP {!r}/{!r} '
-                    'because: {}'.format(
-                        RUNTIME_USER,
-                        RUNTIME_GROUP,
-                        e,
-                    )
-                )
+                self._exit(os.EX_OSERR,
+                           f'could not drop privileges to USER/GROUP'
+                           f' {RUNTIME_USER!r}/{RUNTIME_GROUP!r} because: {e}')
         os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
@@ -123,7 +117,7 @@ class MirrorManager(object):
             self.parser.print_help()
         if message:
             if exit_code:
-                sys.stderr.write('\n** Error: {0}\n'.format(message))
+                sys.stderr.write(f'\n** Error: {message}\n')
             else:
                 sys.stderr.write(message)
         sys.exit(exit_code)

@@ -50,9 +50,7 @@ class Synchronizer(Thread):
         super().__init__()
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
-        self.log = logging.getLogger(
-            'mirrmaid.{0}'.format(self.mirror_conf.mirror_name)
-        )
+        self.log = logging.getLogger(f'mirrmaid.{self.mirror_conf.mirror_name}')
         self.lock_file = LockFile(self._lock_name, pid=os.getpid())
         self.name = self.mirror_conf.mirror_name
         self._subprocess = None
