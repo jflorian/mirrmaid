@@ -12,9 +12,12 @@ a perfect target replica of a source directory structure.  To ensure that only
 one synchronizer is working on a target replica at a time, advisory locking is
 utilized.
 """
+import errno
 import logging
 import os
-from threading import Thread
+from subprocess import Popen
+from threading import Thread, Timer
+from time import sleep
 
 from doubledog.asynchronous import AsynchronousStreamingSubprocess
 from doubledog.lock import LockException, LockFile
@@ -23,6 +26,8 @@ from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
 __copyright__ = """Copyright 2009-2020 John Florian"""
+
+STOP_TIMEOUT = 30
 
 
 class Synchronizer(Thread):
@@ -187,3 +192,28 @@ class Synchronizer(Thread):
                 self._update_replica()
             finally:
                 self._unlock_replica()
+
+    def stop(self):
+        """Force termination of the rsync subprocess."""
+
+        def halt(msg, method):
+            self.log.info('%s %s', msg, self)
+            try:
+                method()
+            except OSError as e:
+                if e.errno != errno.ESRCH:  # no such process
+                    raise
+
+        if self._subprocess:
+            p: Popen = self._subprocess.process
+            halt('stopping', p.terminate)
+            t = Timer(STOP_TIMEOUT, halt, ('killing', p.kill))
+            t.start()
+            # exit quickly when possible
+            while t.is_alive():
+                if p.poll() is None:
+                    sleep(1)
+                else:
+                    t.cancel()
+                    self.log.info('%s stopped gracefully', self)
+                    break

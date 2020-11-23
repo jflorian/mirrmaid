@@ -22,5 +22,14 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 
 -->
 
+## [0.26.0] WIP
+### Added
+- `mirrmaid.synchronizer.Synchronizer.stop` method
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## [0.25.1] 2018-11-19
 This and prior versions predate this Change Log.  Please see the Git log.
