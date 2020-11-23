@@ -25,10 +25,16 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 ## [0.26.0] WIP
 ### Added
 - `mirrmaid.synchronizer.Synchronizer.stop` method
+- `mirrmaid.manager.MirrorManager._config_signal_handler` method
+- `mirrmaid.exceptions.MirrmaidRootException` class
+- `mirrmaid.exceptions.SignalException` class
 ### Changed
+- `mirrmaid.manager.MirrorManager` now catches signals to bring about graceful shutdowns
+- `mirrmaid.exceptions.SynchronizerException` now subclasses `MirrmaidRootException`
 ### Deprecated
 ### Removed
 ### Fixed
+- `rsync` subprocesses often left running after `mirrmaid` is stopped/killed
 ### Security
 
 ## [0.25.1] 2018-11-19
