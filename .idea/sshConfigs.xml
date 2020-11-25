@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="narvi.doubledog.org" id="70216b3b-d7ae-4996-b566-3096fc3a61d4" port="22" customName="narvi" nameFormat="CUSTOM">
+        <option name="customName" value="narvi" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
