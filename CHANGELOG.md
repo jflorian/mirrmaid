@@ -30,6 +30,8 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 - `mirrmaid.exceptions.SignalException` class
 - `mirrmaid.synchronizer.Synchronizer.is_running` property
 - `max_workers` configuration option to limit concurrency
+- `mirrmaid.cli` module
+- `mirrmaid.cli.MirrmaidCLI` class
 ### Changed
 - `mirrmaid.manager.MirrorManager` now catches signals to bring about graceful shutdowns
 - `mirrmaid.exceptions.SynchronizerException` now subclasses `MirrmaidRootException`
