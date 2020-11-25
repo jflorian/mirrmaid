@@ -118,7 +118,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %dir %{python3_sitelib}/%{python_package_name}
 %doc %{_mandir}/man[1-8]/*.*
-%doc CHANGELOG.md
+%doc CHANGELOG.md README.md
 %doc doc/*
 %{_bindir}/%{name}
 %{python3_sitelib}/%{python_package_name}/*
