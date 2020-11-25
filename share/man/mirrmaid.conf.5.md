@@ -1,7 +1,7 @@
 %MIRRMAID.CONF(5) | File Formats
 <!---
 SPDX-License-Identifier: GPL-3.0-or-later
-Copyright 2018 John Florian
+Copyright 2018-2020 John Florian
 
 This file is part of mirrmaid.
 -->
@@ -96,6 +96,16 @@ above.  However, it does have one required setting (below).
 The following options are recognized within the `[MIRRMAID]` section.  These
 control how this _mirrmaid_ behaves while maintaining any of the mirrors
 described in the `[MIRRORS]` section.
+
+
+`max_workers` (optional)
+
+:   Limits the number of concurrent _rsync_ processes that each instance of
+    _mirrmaid_ will start.  Keep in mind that this number may be exceeded if
+    more than one instance of _mirrmaid_ is running concurrently.  A minimum
+    value of one is silently enforced.
+
+    The default is 2.
 
 
 `proxy` (optional)

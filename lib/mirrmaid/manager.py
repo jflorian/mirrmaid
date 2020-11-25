@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -19,21 +19,23 @@ import os
 import pwd
 import sys
 from argparse import ArgumentParser
+from signal import SIGHUP, SIGINT, SIGQUIT, SIGTERM, signal
+from time import sleep
 from traceback import format_exc
 
 import yaml
 from doubledog.config.sectioned import DefaultConfig, InvalidConfiguration
 
-from mirrmaid.config import MirrorConfig, MirrorsConfig, MirrmaidConfig
+from mirrmaid.config import MirrmaidConfig, MirrorConfig, MirrorsConfig
 from mirrmaid.constants import *
-from mirrmaid.exceptions import SynchronizerException
+from mirrmaid.exceptions import SignalException, SynchronizerException
 from mirrmaid.logging.handlers import ConsoleHandler
 from mirrmaid.logging.kludge import race_friendly_rotator
 from mirrmaid.logging.summarizer import LogSummarizingHandler
 from mirrmaid.synchronizer import Synchronizer
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2018 John Florian"""
+__copyright__ = """Copyright 2009-2020 John Florian"""
 
 _log = logging.getLogger('mirrmaid')
 
@@ -43,7 +45,17 @@ class MirrorManager(object):
         self.args = args
         self._drop_privileges()
         self.parser = None
+        self._workers = None
         self._init_logger()
+
+    @property
+    def _number_of_active_workers(self) -> int:
+        worker: Synchronizer
+        count = 0
+        for worker in self._workers:
+            if worker.is_alive():
+                count += 1
+        return count
 
     def _config_logger(self):
         for handler in logging.getLogger().handlers:
@@ -61,17 +73,20 @@ class MirrorManager(object):
             except KeyError:
                 pass
             else:
-                _log.warning(
-                    'environment variable {!r} has been unset; use the "proxy" '
-                    'setting in {} instead if proxy support is required'.format(
-                        RSYNC_PROXY,
-                        self.args.config_filename,
-                    )
-                )
+                _log.warning('environment variable %r has been unset; '
+                             'use the "proxy" setting in %r instead if proxy '
+                             'support is required',
+                             RSYNC_PROXY, self.args.config_filename)
             _log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
-            _log.debug('will proxy rsync through {!r}'.format(proxy))
+            _log.debug('will proxy rsync through %r', proxy)
+
+    def _config_signal_handler(self):
+        """Register a signal handler for graceful shutdowns."""
+        for signal_ in [SIGHUP, SIGINT, SIGQUIT, SIGTERM]:
+            _log.debug('setting trap for signal %r', signal_)
+            signal(signal_, self._signal_handler)
 
     def _config_summarizer(self):
         handler = LogSummarizingHandler(self.mirrmaid_conf)
@@ -93,15 +108,9 @@ class MirrorManager(object):
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self._exit(
-                    os.EX_OSERR,
-                    'could not drop privileges to USER/GROUP {!r}/{!r} '
-                    'because: {}'.format(
-                        RUNTIME_USER,
-                        RUNTIME_GROUP,
-                        e,
-                    )
-                )
+                self._exit(os.EX_OSERR,
+                           f'could not drop privileges to USER/GROUP'
+                           f' {RUNTIME_USER!r}/{RUNTIME_GROUP!r} because: {e}')
         os.umask(0o077)
 
     def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
@@ -118,7 +127,7 @@ class MirrorManager(object):
             self.parser.print_help()
         if message:
             if exit_code:
-                sys.stderr.write('\n** Error: {0}\n'.format(message))
+                sys.stderr.write(f'\n** Error: {message}\n')
             else:
                 sys.stderr.write(message)
         sys.exit(exit_code)
@@ -131,9 +140,7 @@ class MirrorManager(object):
     @staticmethod
     def _log_environment():
         for k in sorted(os.environ):
-            _log.debug(
-                'environment: {}={!r}'.format(k, os.environ[k])
-            )
+            _log.debug('environment: %s=%r', k, os.environ[k])
 
     def _parse_args(self):
         self.parser = ArgumentParser()
@@ -161,43 +168,61 @@ class MirrorManager(object):
     def _run(self):
         self._parse_args()
         self._config_logger()
-        _log.debug(
-            'using config file: {!r}'.format(self.args.config_filename)
-        )
+        _log.debug('using config file: %r', self.args.config_filename)
         self.mirrmaid_conf = MirrmaidConfig(self.args.config_filename)
         self._config_proxy()
         self._config_summarizer()
         self._log_environment()
         self.default_conf = DefaultConfig(self.args.config_filename)
         self.mirrors_conf = MirrorsConfig(self.args.config_filename)
-        _log.debug(
-            'enabled mirrors: {!r}'.format(self.mirrors_conf.mirrors)
-        )
+        _log.debug('enabled mirrors: %r', self.mirrors_conf.mirrors)
+        self._config_signal_handler()
+        self._workers = []
         for mirror in self.mirrors_conf.mirrors:
-            _log.debug('processing mirror: {!r}'.format(mirror))
+            self._wait_for_worker_limits()
+            _log.debug('processing mirror: %r', mirror)
             worker = Synchronizer(
                 self.default_conf,
                 MirrorConfig(self.args.config_filename, mirror)
             )
-            worker.run()
+            self._workers.append(worker)
+            worker.start()
+
+    def _signal_handler(self, signal_, _):
+        """React to signals to bring about graceful shutdown of workers."""
+        worker: Synchronizer
+        _log.debug('caught signal %r; halting all workers', signal_)
+        for worker in self._workers:
+            worker.stop()
+        _log.debug('all workers stopped or killed; shutting down')
+        raise SignalException(f'caught signal {signal_!r}')
+
+    def _wait_for_worker_limits(self):
+        """Sleep until capacity is below resource limits."""
+        while self._number_of_active_workers >= self.mirrmaid_conf.max_workers:
+            _log.debug('%d of %d max workers are active',
+                       self._number_of_active_workers,
+                       self.mirrmaid_conf.max_workers)
+            _log.debug('waiting for a worker to retire before starting more')
+            sleep(60)
 
     def run(self):
         # noinspection PyBroadException
         try:
             self._run()
         except InvalidConfiguration as e:
-            _log.critical('invalid configuration:\n{0}'.format(e))
+            _log.critical('invalid configuration:\n%s', e)
             self._exit(os.EX_CONFIG)
         except SynchronizerException as e:
             _log.critical(e)
             self._exit(os.EX_OSERR, e)
-        except KeyboardInterrupt:
-            _log.error('interrupted via SIGINT')
+        except (KeyboardInterrupt, SignalException) as e:
+            _log.error('interrupted via %s', e)
             self._exit(os.EX_OSERR)
         except SystemExit:
             pass  # presumably already handled
         except:
-            _log.critical('unhandled exception:\n{0}'.format(format_exc()))
+            _log.critical('unhandled exception:\n%s', format_exc())
             self._exit(os.EX_SOFTWARE)
         finally:
             logging.shutdown()

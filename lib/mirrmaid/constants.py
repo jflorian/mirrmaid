@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2012-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -12,13 +12,16 @@ This defines various constants for the mirrmaid package.
 from logging import Formatter
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012-2018 John Florian"""
+__copyright__ = """Copyright 2012-2020 John Florian"""
 
 # The default run-time configuration file.
 CONFIG_FILENAME = '/etc/mirrmaid/mirrmaid.conf'
 
 # Format to be used when logging to console (i.e., when using the '-d' option).
 CONSOLE_FORMATTER = Formatter('%(name)s %(levelname)-8s %(message)s')
+
+# Default number of synchronization workers (rsync threads).
+DEFAULT_MAX_WORKERS = 2
 
 # Default rsync proxy to use in 'HOST:PORT' format or None if no proxy is
 # required.
