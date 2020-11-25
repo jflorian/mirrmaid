@@ -3,18 +3,14 @@
 
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
 
-import os
-import sys
-
-from mirrmaid.manager import MirrorManager
+from mirrmaid.cli import MirrmaidCLI
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2018 John Florian"""
+__copyright__ = """Copyright 2009-2020 John Florian"""
 
-MirrorManager(sys.argv[1:]).run()
-sys.exit(os.EX_OK)
+MirrmaidCLI()

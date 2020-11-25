@@ -17,18 +17,15 @@ import logging.config
 import logging.handlers
 import os
 import pwd
-import sys
-from argparse import ArgumentParser
 from signal import SIGHUP, SIGINT, SIGQUIT, SIGTERM, signal
 from time import sleep
-from traceback import format_exc
 
 import yaml
-from doubledog.config.sectioned import DefaultConfig, InvalidConfiguration
+from doubledog.config.sectioned import DefaultConfig
 
 from mirrmaid.config import MirrmaidConfig, MirrorConfig, MirrorsConfig
 from mirrmaid.constants import *
-from mirrmaid.exceptions import SignalException, SynchronizerException
+from mirrmaid.exceptions import SignalException
 from mirrmaid.logging.handlers import ConsoleHandler
 from mirrmaid.logging.kludge import race_friendly_rotator
 from mirrmaid.logging.summarizer import LogSummarizingHandler
@@ -41,11 +38,17 @@ _log = logging.getLogger('mirrmaid')
 
 
 class MirrorManager(object):
-    def __init__(self, args):
-        self.args = args
-        self._drop_privileges()
-        self.parser = None
+    def __init__(self, cli):
+        """
+        :param cli:
+            The MirrmaidCLI instance using this MirrorManager.
+        """
+        self.cli = cli
+        self.mirrmaid_conf = None
+        self.default_conf = None
+        self.mirrors_conf = None
         self._workers = None
+        self._drop_privileges()
         self._init_logger()
 
     @property
@@ -60,7 +63,7 @@ class MirrorManager(object):
     def _config_logger(self):
         for handler in logging.getLogger().handlers:
             if isinstance(handler, ConsoleHandler):
-                handler.setLevel(self.args.log_level)
+                handler.setLevel(self.cli.args.log_level)
             if isinstance(handler, logging.handlers.BaseRotatingHandler):
                 handler.rotator = race_friendly_rotator
 
@@ -76,7 +79,7 @@ class MirrorManager(object):
                 _log.warning('environment variable %r has been unset; '
                              'use the "proxy" setting in %r instead if proxy '
                              'support is required',
-                             RSYNC_PROXY, self.args.config_filename)
+                             RSYNC_PROXY, self.cli.args.config_filename)
             _log.debug('will not proxy rsync')
         else:
             os.environ[RSYNC_PROXY] = proxy
@@ -108,29 +111,11 @@ class MirrorManager(object):
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self._exit(os.EX_OSERR,
-                           f'could not drop privileges to USER/GROUP'
-                           f' {RUNTIME_USER!r}/{RUNTIME_GROUP!r} because: {e}')
+                self.cli.exit(os.EX_OSERR,
+                              f'could not drop privileges to USER/GROUP '
+                              f'{RUNTIME_USER!r}/{RUNTIME_GROUP!r} '
+                              f'because: {e}')
         os.umask(0o077)
-
-    def _exit(self, exit_code=os.EX_OK, message=None, show_help=False):
-        """
-        Cause the current command to exit.
-
-        If provided, the message will be shown; presumably containing the
-        reason.  An exit code will be provided for the caller and if this
-        value is non-zero, the message will be prefixed to indicate that it is
-        an error.  The caller of this method may also request that the help
-        also be shown.
-        """
-        if show_help:
-            self.parser.print_help()
-        if message:
-            if exit_code:
-                sys.stderr.write(f'\n** Error: {message}\n')
-            else:
-                sys.stderr.write(message)
-        sys.exit(exit_code)
 
     @staticmethod
     def _init_logger():
@@ -141,52 +126,6 @@ class MirrorManager(object):
     def _log_environment():
         for k in sorted(os.environ):
             _log.debug('environment: %s=%r', k, os.environ[k])
-
-    def _parse_args(self):
-        self.parser = ArgumentParser()
-        self.parser.set_defaults(
-            config_filename=CONFIG_FILENAME,
-            log_level=logging.WARNING
-        )
-        self.parser.add_argument(
-            '-c', '--config',
-            dest='config_filename',
-            help='use alternate configuration file'
-        )
-        self.parser.add_argument(
-            '-d', '--debug',
-            action='store_const', dest='log_level', const=logging.DEBUG,
-            help='set logging level to DEBUG',
-        )
-        self.parser.add_argument(
-            '-v', '--verbose',
-            action='store_const', dest='log_level', const=logging.INFO,
-            help='set logging level to INFO',
-        )
-        self.args = self.parser.parse_args()
-
-    def _run(self):
-        self._parse_args()
-        self._config_logger()
-        _log.debug('using config file: %r', self.args.config_filename)
-        self.mirrmaid_conf = MirrmaidConfig(self.args.config_filename)
-        self._config_proxy()
-        self._config_summarizer()
-        self._log_environment()
-        self.default_conf = DefaultConfig(self.args.config_filename)
-        self.mirrors_conf = MirrorsConfig(self.args.config_filename)
-        _log.debug('enabled mirrors: %r', self.mirrors_conf.mirrors)
-        self._config_signal_handler()
-        self._workers = []
-        for mirror in self.mirrors_conf.mirrors:
-            self._wait_for_worker_limits()
-            _log.debug('processing mirror: %r', mirror)
-            worker = Synchronizer(
-                self.default_conf,
-                MirrorConfig(self.args.config_filename, mirror)
-            )
-            self._workers.append(worker)
-            worker.start()
 
     def _signal_handler(self, signal_, _):
         """React to signals to bring about graceful shutdown of workers."""
@@ -207,22 +146,23 @@ class MirrorManager(object):
             sleep(60)
 
     def run(self):
-        # noinspection PyBroadException
-        try:
-            self._run()
-        except InvalidConfiguration as e:
-            _log.critical('invalid configuration:\n%s', e)
-            self._exit(os.EX_CONFIG)
-        except SynchronizerException as e:
-            _log.critical(e)
-            self._exit(os.EX_OSERR, e)
-        except (KeyboardInterrupt, SignalException) as e:
-            _log.error('interrupted via %s', e)
-            self._exit(os.EX_OSERR)
-        except SystemExit:
-            pass  # presumably already handled
-        except:
-            _log.critical('unhandled exception:\n%s', format_exc())
-            self._exit(os.EX_SOFTWARE)
-        finally:
-            logging.shutdown()
+        self._config_logger()
+        _log.debug('using config file: %r', self.cli.args.config_filename)
+        self.mirrmaid_conf = MirrmaidConfig(self.cli.args.config_filename)
+        self._config_proxy()
+        self._config_summarizer()
+        self._log_environment()
+        self.default_conf = DefaultConfig(self.cli.args.config_filename)
+        self.mirrors_conf = MirrorsConfig(self.cli.args.config_filename)
+        _log.debug('enabled mirrors: %r', self.mirrors_conf.mirrors)
+        self._config_signal_handler()
+        self._workers = []
+        for mirror in self.mirrors_conf.mirrors:
+            self._wait_for_worker_limits()
+            _log.debug('processing mirror: %r', mirror)
+            worker = Synchronizer(
+                self.default_conf,
+                MirrorConfig(self.cli.args.config_filename, mirror)
+            )
+            self._workers.append(worker)
+            worker.start()
