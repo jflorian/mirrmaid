@@ -77,6 +77,14 @@ install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.
 install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
 install -Dp -m 0644 lib/tmpfiles.d/%{name}.conf %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
+# Install bash-completion facilities.
+pushd share/bash-completion
+for f in *
+do
+    install -Dp -m 0644 $f  %{buildroot}%{_datadir}/bash-completion/completions/$f
+done
+popd
+
 # Compress and install man pages.
 pushd share/man/
 for section in {1..8}
@@ -121,6 +129,7 @@ exit 0
 %doc CHANGELOG.md README.md
 %doc doc/*
 %{_bindir}/%{name}
+%{_datadir}/bash-completion/completions/
 %{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
