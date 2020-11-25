@@ -20,6 +20,7 @@ import pwd
 import sys
 from argparse import ArgumentParser
 from signal import SIGHUP, SIGINT, SIGQUIT, SIGTERM, signal
+from time import sleep
 from traceback import format_exc
 
 import yaml
@@ -46,6 +47,15 @@ class MirrorManager(object):
         self.parser = None
         self._workers = None
         self._init_logger()
+
+    @property
+    def _number_of_active_workers(self) -> int:
+        worker: Synchronizer
+        count = 0
+        for worker in self._workers:
+            if worker.is_alive():
+                count += 1
+        return count
 
     def _config_logger(self):
         for handler in logging.getLogger().handlers:
@@ -169,6 +179,7 @@ class MirrorManager(object):
         self._config_signal_handler()
         self._workers = []
         for mirror in self.mirrors_conf.mirrors:
+            self._wait_for_worker_limits()
             _log.debug('processing mirror: %r', mirror)
             worker = Synchronizer(
                 self.default_conf,
@@ -185,6 +196,15 @@ class MirrorManager(object):
             worker.stop()
         _log.debug('all workers stopped or killed; shutting down')
         raise SignalException(f'caught signal {signal_!r}')
+
+    def _wait_for_worker_limits(self):
+        """Sleep until capacity is below resource limits."""
+        while self._number_of_active_workers >= self.mirrmaid_conf.max_workers:
+            _log.debug('%d of %d max workers are active',
+                       self._number_of_active_workers,
+                       self.mirrmaid_conf.max_workers)
+            _log.debug('waiting for a worker to retire before starting more')
+            sleep(60)
 
     def run(self):
         # noinspection PyBroadException

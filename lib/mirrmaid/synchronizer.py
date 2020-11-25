@@ -182,6 +182,21 @@ class Synchronizer(Thread):
         self.log.info('mirror synchronization finished')
         return exit_code
 
+    @property
+    def is_running(self) -> bool:
+        """
+        :returns:
+            ``True`` iff the rsync subprocess is currently running.
+        """
+        if self._subprocess and self._subprocess.pid:
+            try:
+                os.kill(self._subprocess.pid, 0)
+            except ProcessLookupError:
+                pass
+            else:
+                return True
+        return False
+
     def run(self):
         """Acquire a lock and if successful, update the target replica."""
         self.log.info('starting thread')

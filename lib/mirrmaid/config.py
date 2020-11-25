@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2009-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2009-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -16,7 +16,7 @@ from doubledog.config.sectioned import BaseConfig
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2009-2018 John Florian"""
+__copyright__ = """Copyright 2009-2020 John Florian"""
 
 
 class MirrmaidConfig(BaseConfig):
@@ -36,6 +36,19 @@ class MirrmaidConfig(BaseConfig):
         """
         BaseConfig.__init__(self, filename)
         self._set_section('MIRRMAID')
+
+    @property
+    def max_workers(self) -> int:
+        """
+        :return:
+            The value of the optional ``'max_workers'`` setting.  If unset, the
+            application default will be returned instead.
+        """
+        return max(
+            1,
+            self.get_int('max_workers', required=False,
+                         default=DEFAULT_MAX_WORKERS)
+        )
 
     @property
     def proxy(self) -> str:
