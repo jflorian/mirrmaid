@@ -32,6 +32,7 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 - `max_workers` configuration option to limit concurrency
 - `mirrmaid.cli` module
 - `mirrmaid.cli.MirrmaidCLI` class
+- `mirrmaid`(1) man page
 ### Changed
 - `mirrmaid.manager.MirrorManager` now catches signals to bring about graceful shutdowns
 - `mirrmaid.exceptions.SynchronizerException` now subclasses `MirrmaidRootException`
