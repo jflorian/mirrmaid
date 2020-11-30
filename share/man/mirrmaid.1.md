@@ -68,6 +68,13 @@ features:
     last one on the command-line is honored.
 
 
+`-n`, `--dry-run`
+
+:   Perform a trial run without actually changing the mirror target(s) as might
+    be useful when changing the configuration and you are uncertain what would
+    happen.
+
+
 `-v`, `--verbose`
 
 :   Enable info-level messages for the _mirrmaid_ command.  The verbose and

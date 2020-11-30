@@ -34,6 +34,8 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 - `mirrmaid.cli.MirrmaidCLI` class
 - `mirrmaid`(1) man page
 - bash-completion facilities
+- `mirrmaid.synchronizer.Synchronizer.dry_run` parameter/property
+- `--dry-run` (`-n`) option for direct pass-thru to `rsync`
 ### Changed
 - `mirrmaid.manager.MirrorManager` now catches signals to bring about graceful shutdowns
 - `mirrmaid.exceptions.SynchronizerException` now subclasses `MirrmaidRootException`

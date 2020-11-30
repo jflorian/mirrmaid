@@ -46,6 +46,11 @@ class MirrmaidCLI(object):
             help='set logging level to DEBUG',
         )
         self._parser.add_argument(
+            '-n', '--dry-run',
+            action='store_true',
+            help='perform a trial run with no changes made',
+        )
+        self._parser.add_argument(
             '-v', '--verbose',
             action='store_const', dest='log_level', const=logging.INFO,
             help='set logging level to INFO',

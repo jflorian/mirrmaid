@@ -162,7 +162,8 @@ class MirrorManager(object):
             _log.debug('processing mirror: %r', mirror)
             worker = Synchronizer(
                 self.default_conf,
-                MirrorConfig(self.cli.args.config_filename, mirror)
+                MirrorConfig(self.cli.args.config_filename, mirror),
+                dry_run=self.cli.args.dry_run,
             )
             self._workers.append(worker)
             worker.start()

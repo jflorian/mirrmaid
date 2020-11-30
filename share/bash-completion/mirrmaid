@@ -13,6 +13,7 @@ __mirrmaid_cmds='
 __mirrmaid_opts="
     --config
     --debug
+    --dry-run
     --help
     --verbose
 "

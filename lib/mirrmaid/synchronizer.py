@@ -40,16 +40,20 @@ class Synchronizer(Thread):
     a per-mirror basis.
     """
 
-    def __init__(self, default_conf, mirror_conf):
+    def __init__(self, default_conf, mirror_conf, dry_run=False):
         """
         Initialize the Synchronizer object.
 
         This will happen according to the default and mirror-specific
         sections of the configuration file..
+
+        :param dry_run:
+            If true, rsync will be run in its dry-run mode.
         """
         super().__init__()
         self.default_conf = default_conf
         self.mirror_conf = mirror_conf
+        self.dry_run = dry_run
         self.log = logging.getLogger(f'mirrmaid.{self.mirror_conf.mirror_name}')
         self.lock_file = LockFile(self._lock_name, pid=os.getpid())
         self.name = self.mirror_conf.mirror_name
@@ -91,9 +95,12 @@ class Synchronizer(Thread):
     def _rsync_options(self) -> list:
         """
         :return:
-            The default rsync options to be used.
+            The rsync options to be used.
         """
-        return self.default_conf.get_list('rsync_options')
+        opts: list = self.default_conf.get_list('rsync_options')
+        if self.dry_run:
+            opts.append('--dry-run')
+        return opts
 
     @property
     def _source_uri(self) -> str:
