@@ -72,10 +72,7 @@ class MirrmaidCLI(object):
         if show_help:
             self._parser.print_help()
         if message:
-            if exit_code:
-                sys.stderr.write(f'\n** Error: {message}\n')
-            else:
-                sys.stderr.write(message)
+            _log.log(logging.CRITICAL if exit_code else logging.INFO, message)
         sys.exit(exit_code)
 
     def run(self):
@@ -84,18 +81,14 @@ class MirrmaidCLI(object):
             self.args = self._parser.parse_args()
             MirrorManager(self).run()
         except InvalidConfiguration as e:
-            _log.critical('invalid configuration:\n%s', e)
-            self.exit(os.EX_CONFIG)
+            self.exit(os.EX_CONFIG, f'invalid configuration:\n{e}')
         except (MirrmaidRuntimeException, SynchronizerException) as e:
-            _log.critical(e)
             self.exit(os.EX_OSERR, e)
         except (KeyboardInterrupt, SignalException) as e:
-            _log.error('interrupted via %s', e)
-            self.exit(os.EX_OSERR)
+            self.exit(os.EX_OSERR, f'interrupted via {e}')
         except SystemExit:
             pass  # presumably already handled
         except Exception:
-            _log.critical('unhandled exception:\n%s', format_exc())
-            self.exit(os.EX_SOFTWARE)
+            self.exit(os.EX_SOFTWARE, f'unhandled exception:\n{format_exc()}')
         finally:
             logging.shutdown()

@@ -45,6 +45,7 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 ### Removed
 ### Fixed
 - `rsync` subprocesses often left running after `mirrmaid` is stopped/killed
+- some failures could result in duplicate messages
 ### Security
 
 ## [0.25.1] 2018-11-19
