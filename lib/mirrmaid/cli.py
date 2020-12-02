@@ -14,7 +14,10 @@ from traceback import format_exc
 from doubledog.config.sectioned import InvalidConfiguration
 
 from mirrmaid.constants import CONFIG_FILENAME
-from mirrmaid.exceptions import SignalException, SynchronizerException
+from mirrmaid.exceptions import (
+    MirrmaidRuntimeException, SignalException,
+    SynchronizerException,
+)
 from mirrmaid.manager import MirrorManager
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
@@ -83,7 +86,7 @@ class MirrmaidCLI(object):
         except InvalidConfiguration as e:
             _log.critical('invalid configuration:\n%s', e)
             self.exit(os.EX_CONFIG)
-        except SynchronizerException as e:
+        except (MirrmaidRuntimeException, SynchronizerException) as e:
             _log.critical(e)
             self.exit(os.EX_OSERR, e)
         except (KeyboardInterrupt, SignalException) as e:

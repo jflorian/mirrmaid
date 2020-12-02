@@ -18,6 +18,10 @@ class MirrmaidRootException(Exception):
     pass
 
 
+class MirrmaidRuntimeException(Exception):
+    pass
+
+
 class SignalException(MirrmaidRootException):
     pass
 

@@ -25,7 +25,7 @@ from doubledog.config.sectioned import DefaultConfig
 
 from mirrmaid.config import MirrmaidConfig, MirrorConfig, MirrorsConfig
 from mirrmaid.constants import *
-from mirrmaid.exceptions import SignalException
+from mirrmaid.exceptions import MirrmaidRuntimeException, SignalException
 from mirrmaid.logging.handlers import ConsoleHandler
 from mirrmaid.logging.kludge import race_friendly_rotator
 from mirrmaid.logging.summarizer import LogSummarizingHandler
@@ -101,20 +101,29 @@ class MirrorManager(object):
         if handler.summary_due:
             handler.force_rollover()
 
-    def _drop_privileges(self):
+    @staticmethod
+    def _drop_privileges():
         """Drop privileges, if necessary, to run as correct user/group."""
-        runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
-        runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
+        fail_msg = (f'could not drop privileges to USER/GROUP '
+                    f'{RUNTIME_USER!r}/{RUNTIME_GROUP!r} '
+                    f'because:')
+        try:
+            runtime_uid = pwd.getpwnam(RUNTIME_USER).pw_uid
+        except KeyError:
+            raise MirrmaidRuntimeException(
+                f'{fail_msg} user {RUNTIME_USER!r} not found') from None
+        try:
+            runtime_gid = grp.getgrnam(RUNTIME_GROUP).gr_gid
+        except KeyError:
+            raise MirrmaidRuntimeException(
+                f'{fail_msg} group {RUNTIME_USER!r} not found') from None
         if os.getuid() != runtime_uid or os.getgid() != runtime_gid:
             try:
                 os.setgroups([])
                 os.setgid(runtime_gid)
                 os.setuid(runtime_uid)
             except OSError as e:
-                self.cli.exit(os.EX_OSERR,
-                              f'could not drop privileges to USER/GROUP '
-                              f'{RUNTIME_USER!r}/{RUNTIME_GROUP!r} '
-                              f'because: {e}')
+                raise MirrmaidRuntimeException(f'{fail_msg} {e}') from None
         os.umask(0o077)
 
     @staticmethod

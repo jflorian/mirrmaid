@@ -36,9 +36,11 @@ All notable changes to this project (since v0.25.1) will be documented in this f
 - bash-completion facilities
 - `mirrmaid.synchronizer.Synchronizer.dry_run` parameter/property
 - `--dry-run` (`-n`) option for direct pass-thru to `rsync`
+- `mirrmaid.exceptions.MirrmaidRuntimeException` class
 ### Changed
 - `mirrmaid.manager.MirrorManager` now catches signals to bring about graceful shutdowns
 - `mirrmaid.exceptions.SynchronizerException` now subclasses `MirrmaidRootException`
+- exit/fail more gracefully when dropping privileges if user or group are undefined
 ### Deprecated
 ### Removed
 ### Fixed
