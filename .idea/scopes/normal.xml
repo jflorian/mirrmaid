@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="normal" pattern="file[mirrmaid]:*/&amp;&amp;!file:share/man/*.html&amp;&amp;!file:share/man/*.roff" />
+</component>
