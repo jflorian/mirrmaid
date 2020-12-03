@@ -1,0 +1,66 @@
+# bash completion support for mirrmaid
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2020 John Florian
+#
+# This file is part of mirrmaid.
+
+
+# No sub-commands yet at this time.
+__mirrmaid_cmds='
+'
+
+__mirrmaid_opts="
+    --config
+    --debug
+    --dry-run
+    --help
+    --verbose
+"
+
+# @stdout: The mirrmaid command entered already, else a null string.
+__mirrmaid_cmd() {
+    local cmd
+    for cmd in ${__mirrmaid_cmds}
+    do
+        if [[ " ${words[@]} " =~ " ${cmd} " ]]
+        then
+            echo ${cmd}
+            return
+        fi
+    done
+}
+
+_mirrmaid() {
+    local cur prev words cword  # all required by _init_completion
+    _init_completion || return
+
+    case "${prev}" in
+
+        --help | --if-aged )
+            return 0
+            ;;
+
+        --color )
+            COMPREPLY=( \
+                $(compgen -W "${__mirrmaid_color_opts}" -- ${cur}) \
+            )
+            return 0
+            ;;
+
+    esac
+
+    case "$(__mirrmaid_cmd)" in
+
+        * )
+            COMPREPLY=( \
+                $(compgen -W "${__mirrmaid_opts}" -- ${cur}) \
+            )
+            return 0
+            ;;
+
+    esac
+
+}
+
+complete -F _mirrmaid mirrmaid

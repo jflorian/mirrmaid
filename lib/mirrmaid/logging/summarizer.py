@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2012-2018 John Florian <jflorian@doubledog.org>
+# Copyright 2012-2020 John Florian <jflorian@doubledog.org>
 #
 # This file is part of mirrmaid.
 
@@ -17,14 +17,15 @@ import sys
 from hashlib import md5
 from logging import LogRecord
 from socket import getfqdn
-from time import time, ctime, asctime
+from time import asctime, ctime, time
+from typing import Optional
 
 from doubledog.mail import MiniMailer
 
 from mirrmaid.constants import *
 
 __author__ = """John Florian <jflorian@doubledog.org>"""
-__copyright__ = """Copyright 2012-2018 John Florian"""
+__copyright__ = """Copyright 2012-2020 John Florian"""
 
 
 class SummaryGroup(object):
@@ -49,10 +50,10 @@ class LogState(object):
             self.last_rollover = time()
 
     def __log_state_filename(self):
-        return '{0}.{1}'.format(LOG_STATE, self.summary_group.hash)
+        return f'{LOG_STATE}.{self.summary_group.hash}'
 
     @property
-    def last_rollover(self) -> float:
+    def last_rollover(self) -> Optional[float]:
         """
         :return:
             The number of seconds since the last rollover.
@@ -85,6 +86,7 @@ class LogState(object):
                 shelf.close()
 
 
+# noinspection PyPep8Naming
 class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     """
     This class extends the RotatingFileHandler with an additional rollover
@@ -111,13 +113,12 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
 
     @property
     def __log_filename(self):
-        return '{0}.{1}'.format(SUMMARY_FILENAME, self.summary_group.hash)
+        return f'{SUMMARY_FILENAME}.{self.summary_group.hash}'
 
     @property
     def __subject(self):
-        return 'mirrmaid Activity Summary for {0}'.format(
-            self.mirrmaid_config.summary_group,
-        )
+        return (f'mirrmaid Activity Summary for '
+                f'{self.mirrmaid_config.summary_group}')
 
     @property
     def _reason(self) -> str:
@@ -131,7 +132,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         if self._rolled_for_size:
             reasons.append('size')
         if len(reasons):
-            return '{0} of logged messages'.format(' and '.join(reasons))
+            return f'{" and ".join(reasons)} of logged messages'
         else:
             return 'forced'
 
@@ -139,13 +140,12 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
     def _summary_body(self):
         since = ctime(self._log_state.last_rollover)
         until = asctime()
-        with open('{0}.1'.format(self.baseFilename)) as f:
+        with open(f'{self.baseFilename}.1') as f:
             log_content = f.read()
-        heading = '{0:>25}:  {1}'
         body = [
-            heading.format('Since', since),
-            heading.format('Until', until),
-            heading.format('Reason for Notification', self._reason),
+            f'{"Since":>25}:  {since}',
+            f'{"Until":>25}:  {until}',
+            f'{"Reason for Notification":>25}:  {self._reason}',
             '\n',
         ]
         if log_content.strip() == '':
@@ -174,7 +174,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
         return due
 
     def _mail_summary(self):
-        sender = 'mirrmaid@{0}'.format(getfqdn())
+        sender = f'mirrmaid@{getfqdn()}'
         try:
             MiniMailer().send(
                 sender,
@@ -183,7 +183,7 @@ class LogSummarizingHandler(logging.handlers.RotatingFileHandler):
                 self._summary_body
             )
         except ConnectionError as e:
-            sys.stderr.write('Unable to mail log summary: {}\n'.format(e))
+            sys.stderr.write(f'Unable to mail log summary: {e}\n')
         self._reset_reasons()
 
     def _reset_reasons(self):
