@@ -16,3 +16,6 @@ disttag = .fc33
 [f35]
 disttag = .fc35
 
+[f36]
+disttag = .fc36
+
