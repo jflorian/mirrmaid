@@ -1,0 +1,12 @@
+# This file is part of mirrmaid.
+# Copyright 2024 John Florian <jflorian@doubledog.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Unit]
+Description=efficient mirror manager
+
+[Timer]
+OnCalendar=23:45
+
+[Install]
+WantedBy=basic.target
