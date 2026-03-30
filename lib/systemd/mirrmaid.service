@@ -1,0 +1,15 @@
+# This file is part of mirrmaid.
+# Copyright 2024 John Florian <jflorian@doubledog.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Unit]
+Description=efficient mirror manager
+
+[Service]
+Type=oneshot
+TimeoutStartSec=6 hours
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+ExecStart=/usr/bin/mirrmaid
+User=mirrmaid

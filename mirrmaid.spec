@@ -32,29 +32,24 @@ BuildArch:      noarch
 
 BuildRequires:  pandoc
 BuildRequires:  python%{python3_pkgversion}-devel
-%if 0%{?rhel} || 0%{?fedora} && 0%{?fedora} < 30
 BuildRequires:  systemd
-%else
-BuildRequires:  systemd-rpm-macros
-%endif
 
 Requires(pre):  shadow-utils
 
 Requires:       coreutils
-Requires:       crontabs
 Requires:       python%{python3_pkgversion} >= %{min_py_ver}
 Requires:       python%{python3_pkgversion}-PyYAML
 Requires:       python3-doubledog >= 3.0.0, python3-doubledog < 4.0.0
 Requires:       rsync
+Requires:       systemd
 Requires:       util-linux
 
 %description
 This package efficiently maintains synchronized target mirrors of source
 resources.  This is primarily accomplished by a sophisticated wrapper around
 the venerable rsync package.  The primary advantage of this package over rsync
-is the simple yet powerful configuration, automatic cron scheduling and
-locking to prevent concurrently running instances from working against each
-other.
+is the simple yet powerful configuration, systemd service timer and locking to
+prevent concurrently running instances from working against each other.
 
 # {{{1 prep & build
 %prep
@@ -73,8 +68,9 @@ install -d  -m 0755 %{buildroot}%{_var}/log/%{name}
 install -d  -m 0755 %{buildroot}/run/lock/%{name}
 
 install -Dp -m 0644 etc/%{name}.conf            %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
-install -Dp -m 0644 etc/%{name}.cron            %{buildroot}%{_sysconfdir}/cron.d/%{name}
 install -Dp -m 0644 etc/logging.yaml            %{buildroot}%{_sysconfdir}/%{name}/logging.yaml
+install -Dp -m 0644 lib/systemd/%{name}.service %{buildroot}%{_unitdir}/%{name}.service
+install -Dp -m 0644 lib/systemd/%{name}.timer   %{buildroot}%{_unitdir}/%{name}.timer
 install -Dp -m 0644 lib/tmpfiles.d/%{name}.conf %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install bash-completion facilities.
@@ -118,12 +114,26 @@ then
 fi
 exit 0
 
+# {{{1 post
+%post
+
+%systemd_post %{name}.service
+
+# {{{1 preun
+%preun
+
+%systemd_preun %{name}.service
+
+# {{{1 postun
+%postun
+
+%systemd_postun %{name}.service
+
 # {{{1 files
 %files
 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/%{name}/logging.yaml
-%config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %dir %{_sysconfdir}/%{name}
 %dir %{python3_sitelib}/%{python_package_name}
 %doc %{_mandir}/man[1-8]/*.*
@@ -131,6 +141,8 @@ exit 0
 %doc doc/*
 %{_bindir}/%{name}
 %{_datadir}/bash-completion/completions/
+%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}.timer
 %{python3_sitelib}/%{python_package_name}/*
 %{python3_sitelib}/*egg-info
 
